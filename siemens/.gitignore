@@ -1,0 +1,13 @@
+node_modules/
+.env
+*.log
+*.txt
+
+node_modules/
+.env
+*.log
+controllers/threeTableCall/testData.js
+db/backup/*.tar
+deltaStore
+*.sh
+*.pem
