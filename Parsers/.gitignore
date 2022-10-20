@@ -11,3 +11,4 @@ db/backup/*.tar
 deltaStore
 *.sh
 *.pem
+test_data/
