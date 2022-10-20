@@ -2,10 +2,10 @@
 require("dotenv").config({ path: "../../.env" });
 const fs = require("fs");
 const readline = require("readline");
-const { log } = require("../logger");
-const { testTabs, get_sme_modality } = require("../utils/regExTests");
-const { win_10_re } = require("../utils/regEx");
-const bulkInsert = require("../utils/queryBuilder");
+const { log } = require("../../logger");
+const { testTabs, get_sme_modality } = require("../../utils/regExTests");
+const { win_10_re } = require("../../utils/regEx");
+const bulkInsert = require("../../utils/queryBuilder");
 
 const parse_win_10 = async (filePath) => {
   // Data will be populated with the row array to set up bulk insert

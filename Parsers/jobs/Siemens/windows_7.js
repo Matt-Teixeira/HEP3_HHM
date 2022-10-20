@@ -1,11 +1,11 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
 const fs = require("node:fs").promises;
-const { log } = require("../logger");
-const { get_sme_modality } = require("../utils/regExTests");
-const { win_7_re } = require("../utils/regEx");
-const bulkInsert = require("../utils/queryBuilder");
-const convertDates = require("../utils/dates");
+const { log } = require("../../logger");
+const { get_sme_modality } = require("../../utils/regExTests");
+const { win_7_re } = require("../../utils/regEx");
+const bulkInsert = require("../../utils/queryBuilder");
+const convertDates = require("../../utils/dates");
 
 const parse_win_7 = async (filePath) => {
   const data = [];
@@ -16,6 +16,7 @@ const parse_win_7 = async (filePath) => {
   try {
     await log("info", "NA", "NA", "parse_win_7", "FN CALL", {
       sme: SME,
+      modality,
       file: filePath,
     });
 

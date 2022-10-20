@@ -1,8 +1,8 @@
 ("use strict");
 require("dotenv").config();
 const { log } = require("./logger");
-const parse_win_7 = require("./jobs/windows_7");
-const parse_win_10 = require("./jobs/windows_10");
+const parse_win_7 = require("./jobs/Siemens/windows_7");
+const parse_win_10 = require("./jobs/Siemens/windows_10");
 // CT: SME00811 SME00812(syntax error at or near "(") SME00816
 // MRI: SME01107 SME01109 SME01112
 // /opt/hhm-files/C0137/SHIP009/SME00812/EvtApplication_Today.txt
@@ -12,7 +12,7 @@ const newPath =
   "/opt/mirror/C0137/SHIP009/SME01112/MRI/EvtApplication_Today.txt";
 //const newPath = "/opt/mirror/C0137/SHIP009/SME00811/CT/EvtApplication_Today.txt"
 
-const oldPath = "SME00001_CT.txt";
+const oldPath = "SME00817_CT.txt";
 
 const runJob = async (filePath) => {
   await log("info", "NA", "NA", "runJob", "FN CALL", {
@@ -45,4 +45,4 @@ const onBoot = async (filePath) => {
   }
 };
 
-onBoot(newPath);
+onBoot(oldPath);
