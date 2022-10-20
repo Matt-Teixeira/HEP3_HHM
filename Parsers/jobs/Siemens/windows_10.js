@@ -9,6 +9,7 @@ const bulkInsert = require("../../utils/queryBuilder");
 
 const parse_win_10 = async (filePath) => {
   // Data will be populated with the row array to set up bulk insert
+  const version = "10";
   const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
@@ -59,16 +60,9 @@ const parse_win_10 = async (filePath) => {
     await bulkInsert(
       data,
       modality,
-      [
-        "equipment_id",
-        "host_state",
-        "host_date",
-        "host_time",
-        "source_group",
-        "type_group",
-        "text_group",
-      ],
-      filePath
+      filePath,
+      version,
+      SME
     );
     return true;
   } catch (error) {

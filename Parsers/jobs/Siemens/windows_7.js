@@ -8,6 +8,7 @@ const bulkInsert = require("../../utils/queryBuilder");
 const convertDates = require("../../utils/dates");
 
 const parse_win_7 = async (filePath) => {
+  const version = 7;
   const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
@@ -58,17 +59,9 @@ const parse_win_7 = async (filePath) => {
     await bulkInsert(
       data,
       modality,
-      [
-        "equipment_id",
-        "source_group",
-        "host_date",
-        "host_time",
-        "domain_group",
-        "type_group",
-        "id_group",
-        "text_group",
-      ],
-      filePath
+      filePath,
+      version,
+      SME
     );
   } catch (error) {
     await log("error", "NA", `${SME}`, "parse_win_7", "FN CATCH", {
