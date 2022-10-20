@@ -16,6 +16,10 @@ async function testTabs(matches, SME, count) {
 
 function get_sme_modality(filePath) {
   const smeRe = /(?<sme>SME\d{5})[\/_](?<modality>[A-Z]+)/;
+  if (filePath.match(smeRe) === null) {
+    const smeRe = /(?<modality>[A-Z]+)[\/_](?<sme>SME\d{5})/
+    return filePath.match(smeRe);
+  }
   return filePath.match(smeRe);
 }
 
