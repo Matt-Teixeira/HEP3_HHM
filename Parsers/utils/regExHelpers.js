@@ -23,7 +23,17 @@ function get_sme_modality(filePath) {
   return filePath.match(smeRe);
 }
 
+function get_sme(filePath) {
+  const smeRe = /(?<sme>SME\d{5})/;
+  if (filePath.match(smeRe) === null) {
+    const smeRe = /(?<sme>SME\d{5})/
+    return filePath.match(smeRe)[0];
+  }
+  return filePath.match(smeRe)[0];
+}
+
 module.exports = {
   testTabs,
   get_sme_modality,
+  get_sme
 };

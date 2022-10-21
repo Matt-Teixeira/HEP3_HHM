@@ -3,6 +3,9 @@ require("dotenv").config();
 const { log } = require("./logger");
 const siemens_parser = require("./jobs/Siemens");
 const philips_parser = require("./jobs/Philips");
+const ge_parser = require("./jobs/GE")
+const pgPool = require("./db/pg-pool");
+const { get_sme } = require("./utils/regExHelpers");
 
 // CT: SME00811 SME00812(syntax error at or near "(") SME00816
 // MRI: SME01107 SME01109 SME01112
@@ -17,14 +20,17 @@ const oldPath = "./test_data/SME00001_CT.txt";
 
 const manufacturers = {
   siemens: "siemens",
-  ge: "GE",
+  ge: "ge",
   philips: "philips",
 };
 
 const filePaths = {
   philips: {
     ct_eal: "./test_data/Philips/CT/SME00246/ealinfo.csv",
-    ct_events: "./test_data/Philips/CT/SME00246/events.csv"
+    ct_events: "./test_data/Philips/CT/SME00246/events.csv",
+  },
+  ge: {
+    gesys: "./test_data/GE/MRI/SME01096/gesys_mroc.log",
   },
 };
 
@@ -34,13 +40,16 @@ const runJob = async (filePath, manufacturer) => {
   });
 
   try {
-    console.log(manufacturer);
+    console.log(manufacturer, filePath);
     switch (manufacturer) {
       case "siemens":
         await siemens_parser(filePath);
         break;
       case "philips":
         await philips_parser(filePath);
+        break;
+        case "ge":
+        await ge_parser(filePath);
         break;
       default:
         break;
@@ -63,4 +72,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.philips.ct_events, manufacturers.philips);
+onBoot(filePaths.ge.gesys, manufacturers.ge);

@@ -2,8 +2,8 @@
 require("dotenv").config({ path: "../../.env" });
 const fs = require("node:fs").promises;
 const { log } = require("../../logger");
-const { get_sme_modality } = require("../../utils/regExTests");
-const { win_7_re } = require("../../utils/regEx");
+const { get_sme_modality } = require("../../utils/regExHelpers");
+const { win_7_re } = require("../../utils/parsers");
 const bulkInsert = require("../../utils/queryBuilder");
 const convertDates = require("../../utils/dates");
 

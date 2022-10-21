@@ -8,9 +8,10 @@ async function bulkInsert(data, modality, file, version, sme) {
     const payload = await convertRowsToColumns("1", sme, data, file);
     const query = queries[modality + "_" + version];
 
+    console.log(data);
     console.log("Version: " + version);
-    console.log(query);
-    console.log(modality);
+    console.log("SME: "+sme, "Modality: "+modality, "File Path: "+file);
+    //console.log(query);
 
     await pgPool.query(query, payload);
   } catch (error) {
