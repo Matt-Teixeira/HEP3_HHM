@@ -6,9 +6,11 @@ const { get_sme_modality } = require("../../utils/regExHelpers");
 const { win_7_re } = require("../../utils/parsers");
 const bulkInsert = require("../../utils/queryBuilder");
 const convertDates = require("../../utils/dates");
+const groupsToArrayObj = require("../../utils/prep-groups-for-array");
 
 const parse_win_7 = async (filePath) => {
-  const version = 7;
+  const manufacturer = "siemens";
+  const version = "win_7";
   const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
@@ -27,13 +29,15 @@ const parse_win_7 = async (filePath) => {
     let matchesArray = [...matches];
 
     for await (let match of matchesArray) {
-      let row = [];
-
       let matchGroups = match.groups.big_group.match(win_7_re.small_group);
 
       convertDates(matchGroups.groups);
 
-      row.push(
+      const matchData = groupsToArrayObj(SME, matchGroups.groups);
+
+      data.push(matchData);
+      
+      /* row.push(
         SME,
         matchGroups.groups.source_group,
         matchGroups.groups.host_date,
@@ -54,15 +58,10 @@ const parse_win_7 = async (filePath) => {
         day: matchGroups.groups.day,
         year: matchGroups.groups.year,
         text_group: matchGroups.groups.text_group,
-      });
+      }); */
     }
-    await bulkInsert(
-      data,
-      modality,
-      filePath,
-      version,
-      SME
-    );
+    
+    await bulkInsert(data, manufacturer, modality, filePath, version, SME);
   } catch (error) {
     await log("error", "NA", `${SME}`, "parse_win_7", "FN CATCH", {
       error: error,

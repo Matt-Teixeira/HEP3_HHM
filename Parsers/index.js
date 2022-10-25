@@ -32,6 +32,9 @@ const filePaths = {
   ge: {
     gesys: "./test_data/GE/MRI/SME01096/gesys_mroc.log",
   },
+  siemens: {
+    ct: "./test_data/SME00001_CT.txt"
+  }
 };
 
 const runJob = async (filePath, manufacturer) => {
@@ -72,4 +75,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.ge.gesys, manufacturers.ge);
+onBoot(filePaths.siemens.ct, manufacturers.siemens);
