@@ -13,6 +13,7 @@ const { philips_ct_eal_schema } = require("../../utils/pg-schemas");
 async function phil_ct_eal_info(filePath) {
   const manufacturer = "philips";
   const version = "eal_info";
+  const dateTimeVersion = "phil_ct_eal_info"
   const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
@@ -36,7 +37,7 @@ async function phil_ct_eal_info(filePath) {
     for await (const line of rl) {
       let matches = line.match(ct_eal_re);
 
-      convertDates(matches.groups, version);
+      convertDates(matches.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(SME, matches.groups);
       data.push(matchData);
     }

@@ -90,8 +90,8 @@ module.exports = queries = {
         `,
     },
   },
-  siemens:{
-    CT:{
+  siemens: {
+    CT: {
       windows: `
       INSERT INTO siemens_ct (
           equipment_id,
@@ -111,9 +111,9 @@ module.exports = queries = {
       SELECT * FROM UNNEST (
         $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::date[]
       )
-      `
+      `,
     },
-    MRI:{
+    MRI: {
       windows: `
       INSERT INTO siemens_mri (
           equipment_id,
@@ -133,12 +133,12 @@ module.exports = queries = {
       SELECT * FROM UNNEST (
         $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::date[]
       )
-      `
-    }
+      `,
+    },
   },
-  philips:{
-    CT:{
-      eal_info:`
+  philips: {
+    CT: {
+      eal_info: `
       INSERT INTO philips_ct_eal (
         equipment_id,
         line,
@@ -160,7 +160,25 @@ module.exports = queries = {
       SELECT * FROM UNNEST (
         $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::numeric[], $15::text[], $16::date[]
       )
-      `
-    }
-  }
+      `,
+      events: `
+      INSERT INTO phil_ct_events (
+      equipment_id,
+      eventtime,
+      blob,
+      type,
+      tstampnum,
+      eal,
+      level,
+      ermodulernum,
+      dtime,
+      msg,
+      host_dateTime
+    )
+    SELECT * FROM UNNEST (
+      $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::date[]
+    )
+      `,
+    },
+  },
 };

@@ -77,4 +77,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.siemens.mri_10, manufacturers.siemens);
+onBoot(filePaths.philips.ct_events, manufacturers.philips);

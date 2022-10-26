@@ -5,22 +5,28 @@ const readline = require("readline");
 const { log } = require("../../logger");
 const { get_sme_modality } = require("../../utils/regExHelpers");
 const bulkInsert = require("../../utils/queryBuilder");
+const convertDates = require("../../utils/dates");
+const groupsToArrayObj = require("../../utils/prep-groups-for-array");
+const mapDataToSchema = require("../../utils/map-data-to-schema");
+const { phil_ct_events_schema } = require("../../utils/pg-schemas");
 
 async function phil_ct_events(filePath) {
-  const version = "eal_info";
+  const manufacturer = "philips";
+  const version = "events";
+  const dateTimeVersion = "phil_ct_events";
   const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
   const modality = sme_modality.groups.modality;
 
-  await log("info", "NA", `${SME}`, "phil_ct_eal_info", "FN CALL", {
+  await log("info", "NA", `${SME}`, "phil_ct_events", "FN CALL", {
     sme: SME,
     modality,
     file: filePath,
   });
 
   const ct_events_re =
-    /(?<EventTime>.*?)[|](?<Blob>.*?)[|](?<Type>.*?)[|](?<TStampNum>.*?)[|](?<EAL>.*?)[|](?<Level>.*?)[|](?<ErModulerNum>.*?)[|](?<DateTime>.*?)[|](?<Msg>.*)?/;
+    /(?<eventtime>.*?)[|](?<blob>.*?)[|](?<type>.*?)[|](?<tstampnum>.*?)[|](?<eal>.*?)[|](?<level>.*?)[|](?<ermodulernum>.*?)[|](?<dtime>.*?)[|](?<msg>.*)?/;
 
   try {
     const rl = readline.createInterface({
@@ -28,35 +34,31 @@ async function phil_ct_events(filePath) {
       crlfDelay: Infinity,
     });
 
-    let count = 0;
     for await (const line of rl) {
-      const row = [];
-      if (count <= 15) {
-        if (line.match(ct_events_re) === null) {
-          continue;
-        }
-        let matches = line.match(ct_events_re).groups;
-        row.push(
-          SME,
-          matches.EventTime,
-          matches.Blob,
-          matches.Type,
-          matches.TStampNum,
-          matches.EAL,
-          matches.Level,
-          matches.ErModulerNum,
-          matches.DateTime,
-          matches.Msg
-        );
-        console.log(row);
-        data.push(row);
-        count++;
+      if (line.match(ct_events_re) === null) {
+        continue;
       }
+      let matches = line.match(ct_events_re);
+      convertDates(matches.groups, dateTimeVersion);
+      const matchData = groupsToArrayObj(SME, matches.groups);
+      data.push(matchData);
     }
+
     data.shift();
-    await bulkInsert(data, modality, filePath, version, SME);
+
+    const mappedData = mapDataToSchema(data, phil_ct_events_schema);
+
+    const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
+    await bulkInsert(
+      dataToArray,
+      manufacturer,
+      modality,
+      filePath,
+      version,
+      SME
+    );
   } catch (error) {
-    await log("error", "NA", `${SME}`, "phil_ct_eal_info", "FN CALL", {
+    await log("error", "NA", `${SME}`, "phil_ct_events", "FN CALL", {
       sme: SME,
       modality,
       file: filePath,

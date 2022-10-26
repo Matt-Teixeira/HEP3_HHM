@@ -30,7 +30,7 @@ const monthMap = {
 
 async function convertDates(matchGroup, version) {
   try {
-    if (version === "eal_info") {
+    if (version === "phil_ct_eal_info" || version === "phil_ct_events") {
       const date_time_split = matchGroup.dtime.split(" ");
 
       const year = date_time_split[0].split("/")[0];

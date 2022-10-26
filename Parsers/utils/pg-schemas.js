@@ -40,22 +40,36 @@ const siemens_ct_mri = {
 };
 
 const philips_ct_eal_schema = {
-    equipment_id: null,
-    line: null,
-    err_type: null,
-    tmstamp: null,
-    file: null,
-    datatype: null,
-    param1: null,
-    errnum: null,
-    info: null,
-    dtime: null,
-    ealtime: null,
-    lognumber: null,
-    param2: null,
-    vxwerrno: null,
-    controller: null,
-    host_dateTime: null
-}
+  equipment_id: null,
+  line: null,
+  err_type: null,
+  tmstamp: null,
+  file: null,
+  datatype: null,
+  param1: null,
+  errnum: null,
+  info: null,
+  dtime: null,
+  ealtime: null,
+  lognumber: null,
+  param2: null,
+  vxwerrno: null,
+  controller: null,
+  host_dateTime: null,
+};
 
-module.exports = { ge_mri_gesys_schema, siemens_ct_mri, philips_ct_eal_schema };
+const phil_ct_events_schema = {
+  equipment_id: null,
+  eventtime: null,
+  blob: null,
+  type: null,
+  tstampnum: null,
+  eal: null,
+  level: null,
+  ermodulernum: null,
+  dtime: null,
+  msg: null,
+  host_dateTime: null,
+};
+
+module.exports = { ge_mri_gesys_schema, siemens_ct_mri, philips_ct_eal_schema, phil_ct_events_schema };
