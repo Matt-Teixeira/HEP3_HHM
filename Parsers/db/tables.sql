@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS siemens_mri;
 DROP TABLE IF EXISTS siemens_ct;
 DROP TABLE IF EXISTS ge_mri_gesys_mroc;
+DROP TABLE IF EXISTS philips_ct_eal;
 
 CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -62,3 +63,22 @@ CREATE TABLE ge_mri_gesys_mroc(
     host_dateTime DATE
 );
 
+CREATE TABLE philips_ct_eal(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    line TEXT,
+    err_type TEXT,
+    tmstamp TEXT,
+    file TEXT,
+    datatype TEXT,
+    param1 TEXT,
+    errnum TEXT,
+    info TEXT,
+    dtime TEXT,
+    ealtime TEXT,
+    lognumber TEXT,
+    param2 TEXT,
+    vxwerrno INT,
+    controller TEXT,
+    host_dateTime DATE
+);

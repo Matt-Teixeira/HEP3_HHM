@@ -77,4 +77,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.siemens.ct_7, manufacturers.siemens);
+onBoot(filePaths.philips.ct_eal, manufacturers.philips);

@@ -5,8 +5,13 @@ const readline = require("readline");
 const { log } = require("../../logger");
 const { get_sme_modality } = require("../../utils/regExHelpers");
 const bulkInsert = require("../../utils/queryBuilder");
+const convertDates = require("../../utils/dates");
+const groupsToArrayObj = require("../../utils/prep-groups-for-array");
+const mapDataToSchema = require("../../utils/map-data-to-schema");
+const { philips_ct_eal_schema } = require("../../utils/pg-schemas");
 
 async function phil_ct_eal_info(filePath) {
+  const manufacturer = "philips";
   const version = "eal_info";
   const data = [];
   const sme_modality = get_sme_modality(filePath);
@@ -20,7 +25,7 @@ async function phil_ct_eal_info(filePath) {
   });
 
   const ct_eal_re =
-    /(?<Line>.*?)[|](?<ERR_TYPE>.*?)[|](?<TmStamp>.*?)[|](?<File>.*?)[|](?<DataType>.*?)[|](?<Param1>.*?)[|](?<ErrNum>.*?)[|](?<Info>.*?)(\s+)?[|](?<DTime>.*?)[|](?<EalTime>.*?)[|](?<LogNumber>.*?)[|](?<Param2>.*?)[|](?<vxwErrNo>.*?)[|](?<Controller>.*?)?/;
+    /(?<line>.*?)[|](?<err_type>.*?)[|](?<tmstamp>.*?)[|](?<file>.*?)[|](?<datatype>.*?)[|](?<param1>.*?)[|](?<errnum>.*?)[|](?<info>.*?)(\s+)?[|](?<dtime>.*?)[|](?<ealtime>.*?)[|](?<lognumber>.*?)[|](?<param2>.*?)[|](?<vxwerrno>.*?)[|](?<controller>.*?)?/;
 
   try {
     const rl = readline.createInterface({
@@ -28,22 +33,29 @@ async function phil_ct_eal_info(filePath) {
       crlfDelay: Infinity,
     });
 
-    let count = 0;
     for await (const line of rl) {
-      const row = [];
-      if (count <= 4) {
-        if (line.match(ct_eal_re) === null) {
-          continue;
-        }
-        let matches = line.match(ct_eal_re).groups;
-        row.push(SME, matches.Line, matches.ERR_TYPE, matches.TmStamp, matches.File, matches.DataType, matches.Param1, matches.ErrNum, matches.Info, matches.DTime, matches.EalTime, matches.LogNumber, matches.Param2, matches.vxwErrNo, matches.Controller);
-        
-        data.push(row);
-        count++;
-      } 
+      let matches = line.match(ct_eal_re);
+
+      convertDates(matches.groups, version);
+      const matchData = groupsToArrayObj(SME, matches.groups);
+      data.push(matchData);
     }
+    
     data.shift();
-    await bulkInsert(data, modality, filePath, version, SME);
+
+    // homogenize data to prep for insert to db (may remove this step )
+    const mappedData = mapDataToSchema(data, philips_ct_eal_schema);
+    const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
+    
+    await bulkInsert(
+      dataToArray,
+      manufacturer,
+      modality,
+      filePath,
+      version,
+      SME
+    );
+    
   } catch (error) {
     await log("error", "NA", `${SME}`, "phil_ct_eal_info", "FN CALL", {
       sme: SME,

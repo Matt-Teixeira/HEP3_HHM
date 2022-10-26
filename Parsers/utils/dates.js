@@ -1,3 +1,4 @@
+const { log } = require("../logger");
 const { DateTime } = require("luxon");
 
 const monthMap = {
@@ -27,12 +28,31 @@ const monthMap = {
   Dec: "12",
 };
 
-async function convertDates(matchGroup) {
+async function convertDates(matchGroup, version) {
   try {
-    const timeRe = /(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/;
-    const timeMatches = matchGroup.host_time.match(timeRe);
+    if (version === "eal_info") {
+      const date_time_split = matchGroup.dtime.split(" ");
 
-    if (matchGroup.host_date) {
+      const year = date_time_split[0].split("/")[0];
+      const month = date_time_split[0].split("/")[1];
+      const day = date_time_split[0].split("/")[2];
+
+      const timeRe = /(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/;
+      const timeMatches = date_time_split[1].match(timeRe);
+
+      const dt = DateTime.fromObject({
+        day,
+        month,
+        year,
+        hour: timeMatches.groups.hour,
+        minute: timeMatches.groups.minute,
+        second: timeMatches.groups.second,
+      });
+      matchGroup.host_dateTime = new Date(dt.ts);
+      
+    } else if (matchGroup.host_date) {
+      const timeRe = /(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/;
+      const timeMatches = matchGroup.host_time.match(timeRe);
       const year = matchGroup.host_date.split("-")[0];
       const month = matchGroup.host_date.split("-")[1];
       const day = matchGroup.host_date.split("-")[2];
@@ -48,6 +68,8 @@ async function convertDates(matchGroup) {
       matchGroup.host_dateTime = new Date(dt.ts);
       return;
     } else {
+      const timeRe = /(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/;
+      const timeMatches = matchGroup.host_time.match(timeRe);
       const month = monthMap[matchGroup.month];
       const dt = DateTime.fromObject({
         day: matchGroup.day,
@@ -60,7 +82,7 @@ async function convertDates(matchGroup) {
       matchGroup.host_dateTime = new Date(dt.ts);
     }
   } catch (error) {
-    await log("error", "NA", `${SME}`, "convertDates", "FN CATCH", {
+    await log("error", "NA", "NA", "convertDates", "FN CATCH", {
       error: error,
     });
   }

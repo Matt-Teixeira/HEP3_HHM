@@ -17,7 +17,7 @@ async function bulkInsert(data, manufacturer, modality, file, version, sme) {
     console.log(query);
 
     const payload = await convertRowsToColumns("1", sme, data, file);
-   
+    console.log(payload);
     //await log("info", "NA", `${sme}`, "bulkInsert", "FN CALL", { data });
 
     await pgPool.query(query, payload);
@@ -29,33 +29,5 @@ async function bulkInsert(data, manufacturer, modality, file, version, sme) {
     });
   }
 }
-
-/* async function bulkInsert(data, modality, columns, file) {
-  try {
-    let groupArray = [];
-
-    for await (let group of data) {
-      for (let string in group) {
-        group[string] = group[string].replace(/['"]+/g, "");
-        group[string] = "'" + group[string] + "'";
-      }
-      let string = `(${[...group]})`;
-      groupArray.push(string);
-    }
-
-    const query = `
-  INSERT INTO ${modality}(${[...columns]})
-  VALUES
-  ${[...groupArray]}
-  `;
-
-    await pgPool.query(query);
-  } catch (error) {
-    await log("error", "NA", "NA", "bulkInsert", `FN CALL`, {
-      error,
-      file: file,
-    });
-  }
-} */
 
 module.exports = bulkInsert;

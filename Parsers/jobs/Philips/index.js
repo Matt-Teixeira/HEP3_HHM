@@ -10,7 +10,7 @@ const runJob = async (filePath) => {
   });
 
   try {
-    const parsed_data = await phil_ct_events(filePath);
+    const parsed_data = await eal_info_parser(filePath);
     //const parsed_data = await eal_info_parser(filePath);
   } catch (error) {
     await log("error", "NA", "NA", "runJob", "FN CATCH", {
