@@ -13,6 +13,7 @@ const { siemens_ct_mri } = require("../../utils/pg-schemas");
 
 const parse_win_10 = async (filePath) => {
   // Data will be populated with the row array to set up bulk insert
+  const manufacturer = "siemens";
   const version = "windows";
   const data = [];
   const sme_modality = get_sme_modality(filePath);
@@ -32,37 +33,20 @@ const parse_win_10 = async (filePath) => {
     });
 
     for await (const line of rl) {
-      // Row will contain capture groups from line and push to data array.
-      let row = [];
-
       let matches = line.match(win_10_re.re_v1);
-
       // Test for tabs
       await testTabs(matches, SME);
-
-      row.push(
-        SME,
-        matches.groups.host_state,
-        matches.groups.host_date,
-        matches.groups.host_time,
-        matches.groups.source_group,
-        matches.groups.type_group,
-        matches.groups.text_group
-      );
-
-      data.push(row);
-
-      await log("info", "NA", `${SME}`, "parse_win_10", "readline", {
-        host_state: matches.groups.host_state,
-        host_date: matches.groups.host_date,
-        host_time: matches.groups.host_time,
-        source_group: matches.groups.source_group,
-        type_group: matches.groups.type_group,
-        text_group: matches.groups.text_group,
-      });
+      convertDates(matches.groups)
+      const matchData = groupsToArrayObj(SME, matches.groups);
+      data.push(matchData);
     }
+
+    const mappedData = mapDataToSchema(data, siemens_ct_mri);
+    const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
+
     await bulkInsert(
-      data,
+      dataToArray,
+      manufacturer,
       modality,
       filePath,
       version,

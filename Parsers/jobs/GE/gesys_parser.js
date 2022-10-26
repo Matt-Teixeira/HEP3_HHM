@@ -5,8 +5,9 @@ const { log } = require("../../logger");
 const filterToArrays = require("../../utils/GE/geys_mroc_helpers");
 const { get_sme_modality } = require("../../utils/regExHelpers");
 const bulkInsert = require("../../utils/queryBuilder");
-const { ge_re } = require("../../utils/parsers")
-const mapDataToSchema = require("../../utils/map-data-to-schema")
+const { ge_re } = require("../../utils/parsers");
+const mapDataToSchema = require("../../utils/map-data-to-schema");
+const { ge_mri_gesys_schema } = require("../../utils/pg-schemas");
 
 async function ge_mri_gesys(filePath) {
   const manufacturer = "ge";
@@ -32,46 +33,30 @@ async function ge_mri_gesys(filePath) {
     let matchesArray = [...matches];
 
     for await (let match of matchesArray) {
-      filterToArrays(SME, match, containsBoxData, noBoxData, exceptionClassData, taskIdData);
+      filterToArrays(
+        SME,
+        match,
+        containsBoxData,
+        noBoxData,
+        exceptionClassData,
+        taskIdData
+      );
     }
 
+    const concatData = [...containsBoxData, ...noBoxData, ...exceptionClassData, ...taskIdData];
+
+    const mappedData = mapDataToSchema(concatData, ge_mri_gesys_schema);
+    console.log(mappedData[0])
+    const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
+
     await bulkInsert(
-      containsBoxData,
+      dataToArray,
       manufacturer,
       modality,
       filePath,
       version,
       SME
     );
-
-    await bulkInsert(
-      noBoxData,
-      manufacturer,
-      modality,
-      filePath,
-      version,
-      SME
-    );
-
-    await bulkInsert(
-      exceptionClassData,
-      manufacturer,
-      modality,
-      filePath,
-      version,
-      SME
-    );
-
-    await bulkInsert(
-      taskIdData,
-      manufacturer,
-      modality,
-      filePath,
-      version,
-      SME
-    );
-
-
   } catch (error) {
     console.log(error);
     await log("error", "NA", `${SME}`, "ge_mri_gesys", "FN CALL", {

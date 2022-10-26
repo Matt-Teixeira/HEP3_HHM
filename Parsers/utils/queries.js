@@ -67,7 +67,7 @@ module.exports = queries = {
           num_2,
           month,
           day,
-          time,
+          host_time,
           year,
           num_3,
           num_4,
@@ -85,7 +85,7 @@ module.exports = queries = {
           host_dateTime
         )
         SELECT * FROM UNNEST (
-          $1::text[], $2::numeric[], $3::text[], $4::text[], $5::text[], $6::text[], $7::time[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::text[], $17::text[], $18::text[], $19::text[], $20::text[], $21::text[], $22::text[]
+          $1::text[], $2::numeric[], $3::text[], $4::text[], $5::text[], $6::text[], $7::time[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::text[], $17::text[], $18::text[], $19::text[], $20::text[], $21::text[], $22::date[]
         )
         `,
     },
@@ -106,11 +106,10 @@ module.exports = queries = {
           month,
           day,
           year,
-          time,
           host_dateTime
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::time[], $14::date[]
+        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::date[]
       )
       `
     },
@@ -129,11 +128,10 @@ module.exports = queries = {
           month,
           day,
           year,
-          time,
           host_dateTime
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::time[], $14::date[]
+        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::date[]
       )
       `
     }

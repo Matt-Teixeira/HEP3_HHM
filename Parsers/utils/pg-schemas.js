@@ -1,11 +1,11 @@
-const ge_mri_gesys = {
+const ge_mri_gesys_schema = {
   equipment_id: null,
   time_stamp: null,
   num_1: null,
   num_2: null,
   month: null,
   day: null,
-  time: null,
+  host_time: null,
   year: null,
   num_3: null,
   num_4: null,
@@ -36,8 +36,7 @@ const siemens_ct_mri = {
   month: null,
   day: null,
   year: null,
-  time: null,
   host_dateTime: null,
 };
 
-module.exports = { ge_mri_gesys, siemens_ct_mri };
+module.exports = { ge_mri_gesys_schema, siemens_ct_mri };

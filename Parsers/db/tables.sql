@@ -16,7 +16,6 @@ CREATE TABLE siemens_mri(
     month TEXT,
     day INT,
     year INT,
-    time TIME,
     host_dateTime DATE
 );
 
@@ -34,7 +33,6 @@ CREATE TABLE siemens_ct(
     month TEXT,
     day INT,
     year INT,
-    time TIME,
     host_dateTime DATE
 );
 
@@ -46,7 +44,7 @@ CREATE TABLE ge_mri_gesys_mroc(
     num_2 text,
     month text,
     day text,
-    time time,
+    host_time time,
     year text,
     num_3 text,
     num_4 text,

@@ -33,7 +33,9 @@ const filePaths = {
     gesys: "./test_data/GE/MRI/SME01096/gesys_mroc.log",
   },
   siemens: {
-    ct: "./test_data/SME00001_CT.txt"
+    ct_7: "./test_data/SME00001_CT.txt",
+    ct_10: "/opt/mirror/C0137/SHIP009/SME00811/CT/EvtApplication_Today.txt",
+    mri_10: "/opt/mirror/C0137/SHIP009/SME01112/MRI/EvtApplication_Today.txt"
   }
 };
 
@@ -75,4 +77,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.siemens.ct, manufacturers.siemens);
+onBoot(filePaths.siemens.ct_7, manufacturers.siemens);

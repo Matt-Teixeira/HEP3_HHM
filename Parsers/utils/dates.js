@@ -13,22 +13,57 @@ const monthMap = {
   October: "10",
   November: "11",
   December: "12",
+  Jan: "01",
+  Feb: "02",
+  Mar: "03",
+  Apr: "04",
+  May: "05",
+  Jun: "06",
+  Jul: "07",
+  Aug: "08",
+  Sep: "09",
+  Oct: "10",
+  Nov: "11",
+  Dec: "12",
 };
 
-function convertDates(matchGroup) {
-  const month = monthMap[matchGroup.month];
-  const timeRe = /(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/
-  const timeMatches = matchGroup.time.match(timeRe);
+async function convertDates(matchGroup) {
+  try {
+    const timeRe = /(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/;
+    const timeMatches = matchGroup.host_time.match(timeRe);
 
-  const dt = DateTime.fromObject({
-    day: matchGroup.day,
-    month: month,
-    year: matchGroup.year,
-    hour: timeMatches.groups.hour,
-    minute: timeMatches.groups.minute,
-    second: timeMatches.groups.second
-  })
-  matchGroup.host_dateTime = new Date(dt.ts);
+    if (matchGroup.host_date) {
+      const year = matchGroup.host_date.split("-")[0];
+      const month = matchGroup.host_date.split("-")[1];
+      const day = matchGroup.host_date.split("-")[2];
+
+      const dt = DateTime.fromObject({
+        day,
+        month,
+        year,
+        hour: timeMatches.groups.hour,
+        minute: timeMatches.groups.minute,
+        second: timeMatches.groups.second,
+      });
+      matchGroup.host_dateTime = new Date(dt.ts);
+      return;
+    } else {
+      const month = monthMap[matchGroup.month];
+      const dt = DateTime.fromObject({
+        day: matchGroup.day,
+        month: month,
+        year: matchGroup.year,
+        hour: timeMatches.groups.hour,
+        minute: timeMatches.groups.minute,
+        second: timeMatches.groups.second,
+      });
+      matchGroup.host_dateTime = new Date(dt.ts);
+    }
+  } catch (error) {
+    await log("error", "NA", `${SME}`, "convertDates", "FN CATCH", {
+      error: error,
+    });
+  }
 }
 
 module.exports = convertDates;
