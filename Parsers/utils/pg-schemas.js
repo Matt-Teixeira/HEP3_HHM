@@ -23,7 +23,7 @@ const ge_mri_gesys = {
   host_dateTime: null,
 };
 
-const siemens_ct_win_7 = {
+const siemens_ct_mri = {
   equipment_id: null,
   host_state: null,
   host_date: null,
@@ -33,6 +33,11 @@ const siemens_ct_win_7 = {
   text_group: null,
   domain_group: null,
   id_group: null,
+  month: null,
+  day: null,
+  year: null,
+  time: null,
+  host_dateTime: null,
 };
 
-module.exports = { ge_mri_gesys, siemens_ct_win_7 };
+module.exports = { ge_mri_gesys, siemens_ct_mri };

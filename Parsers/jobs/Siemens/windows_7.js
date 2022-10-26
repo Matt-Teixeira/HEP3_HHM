@@ -7,10 +7,12 @@ const { win_7_re } = require("../../utils/parsers");
 const bulkInsert = require("../../utils/queryBuilder");
 const convertDates = require("../../utils/dates");
 const groupsToArrayObj = require("../../utils/prep-groups-for-array");
+const mapDataToSchema = require("../../utils/map-data-to-schema");
+const { siemens_ct_mri } = require("../../utils/pg-schemas");
 
 const parse_win_7 = async (filePath) => {
   const manufacturer = "siemens";
-  const version = "win_7";
+  const version = "windows";
   const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
@@ -30,38 +32,23 @@ const parse_win_7 = async (filePath) => {
 
     for await (let match of matchesArray) {
       let matchGroups = match.groups.big_group.match(win_7_re.small_group);
-
       convertDates(matchGroups.groups);
-
       const matchData = groupsToArrayObj(SME, matchGroups.groups);
-
       data.push(matchData);
-      
-      /* row.push(
-        SME,
-        matchGroups.groups.source_group,
-        matchGroups.groups.host_date,
-        matchGroups.groups.time,
-        matchGroups.groups.domain_group,
-        matchGroups.groups.type_group,
-        matchGroups.groups.id_group,
-        matchGroups.groups.text_group
-      );
-      data.push(row);
-
-      await log("info", "NA", `${SME}`, "readFile", "FN CALL", {
-        source_group: matchGroups.groups.source_group,
-        domain_group: matchGroups.groups.domain_group,
-        type_group: matchGroups.groups.type_group,
-        id_group: matchGroups.groups.id_group,
-        month: matchGroups.groups.month,
-        day: matchGroups.groups.day,
-        year: matchGroups.groups.year,
-        text_group: matchGroups.groups.text_group,
-      }); */
     }
-    
-    await bulkInsert(data, manufacturer, modality, filePath, version, SME);
+
+    const mappedData = mapDataToSchema(data, siemens_ct_mri);
+    const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
+
+    await bulkInsert(
+      dataToArray,
+      manufacturer,
+      modality,
+      filePath,
+      version,
+      SME
+    );
+
   } catch (error) {
     await log("error", "NA", `${SME}`, "parse_win_7", "FN CATCH", {
       error: error,

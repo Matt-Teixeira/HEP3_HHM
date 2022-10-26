@@ -92,8 +92,8 @@ module.exports = queries = {
   },
   siemens:{
     CT:{
-      win_7: `
-      INSERT INTO mri (
+      windows: `
+      INSERT INTO siemens_ct (
           equipment_id,
           host_state,
           host_date,
@@ -106,9 +106,34 @@ module.exports = queries = {
           month,
           day,
           year,
+          time,
+          host_dateTime
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[]
+        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::time[], $14::date[]
+      )
+      `
+    },
+    MRI:{
+      windows: `
+      INSERT INTO siemens_mri (
+          equipment_id,
+          host_state,
+          host_date,
+          host_time,
+          source_group,
+          type_group,
+          text_group,
+          domain_group,
+          id_group,
+          month,
+          day,
+          year,
+          time,
+          host_dateTime
+      )
+      SELECT * FROM UNNEST (
+        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::time[], $14::date[]
       )
       `
     }

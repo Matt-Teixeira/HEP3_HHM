@@ -1,31 +1,41 @@
-DROP TABLE IF EXISTS mri;
-DROP TABLE IF EXISTS ct;
+DROP TABLE IF EXISTS siemens_mri;
+DROP TABLE IF EXISTS siemens_ct;
 DROP TABLE IF EXISTS ge_mri_gesys_mroc;
 
-CREATE TABLE mri(
+CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
     equipment_id VARCHAR(10),
-    host_state VARCHAR(4),
+    host_state TEXT,
     host_date DATE,
     host_time TIME,
     source_group TEXT,
     type_group INT,
     text_group TEXT,
     domain_group TEXT,
-    id_group INT
+    id_group INT,
+    month TEXT,
+    day INT,
+    year INT,
+    time TIME,
+    host_dateTime DATE
 );
 
-CREATE TABLE ct(
+CREATE TABLE siemens_ct(
     id BIGSERIAL PRIMARY KEY,
     equipment_id VARCHAR(10),
-    host_state VARCHAR(4),
+    host_state TEXT,
     host_date DATE,
     host_time TIME,
     source_group TEXT,
     type_group INT,
     text_group TEXT,
     domain_group TEXT,
-    id_group INT
+    id_group INT,
+    month TEXT,
+    day INT,
+    year INT,
+    time TIME,
+    host_dateTime DATE
 );
 
 CREATE TABLE ge_mri_gesys_mroc(
@@ -51,6 +61,6 @@ CREATE TABLE ge_mri_gesys_mroc(
     object text,
     sr_group text,
     en text,
-    host_dateTime text
+    host_dateTime DATE
 );
 

@@ -6,6 +6,7 @@ const filterToArrays = require("../../utils/GE/geys_mroc_helpers");
 const { get_sme_modality } = require("../../utils/regExHelpers");
 const bulkInsert = require("../../utils/queryBuilder");
 const { ge_re } = require("../../utils/parsers")
+const mapDataToSchema = require("../../utils/map-data-to-schema")
 
 async function ge_mri_gesys(filePath) {
   const manufacturer = "ge";

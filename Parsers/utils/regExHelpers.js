@@ -32,6 +32,8 @@ function get_sme(filePath) {
   return filePath.match(smeRe)[0];
 }
 
+// SR\s(\d+).*?EN\s\1
+
 module.exports = {
   testTabs,
   get_sme_modality,
