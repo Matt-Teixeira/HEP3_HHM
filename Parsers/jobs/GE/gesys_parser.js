@@ -33,8 +33,10 @@ async function ge_mri_gesys(filePath) {
     let matchesArray = [...matches];
 
     for await (let match of matchesArray) {
+      // Step to filter regEx permutations into arrays and combine later
       filterToArrays(
         SME,
+        version,
         match,
         containsBoxData,
         noBoxData,
@@ -42,7 +44,6 @@ async function ge_mri_gesys(filePath) {
         taskIdData
       );
     }
-
     const concatData = [...containsBoxData, ...noBoxData, ...exceptionClassData, ...taskIdData];
 
     const mappedData = mapDataToSchema(concatData, ge_mri_gesys_schema);

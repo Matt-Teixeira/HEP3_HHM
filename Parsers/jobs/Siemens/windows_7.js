@@ -13,6 +13,7 @@ const { siemens_ct_mri } = require("../../utils/pg-schemas");
 const parse_win_7 = async (filePath) => {
   const manufacturer = "siemens";
   const version = "windows";
+  const dateTimeVersion = "siemens_7"
   const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
@@ -32,7 +33,7 @@ const parse_win_7 = async (filePath) => {
 
     for await (let match of matchesArray) {
       let matchGroups = match.groups.big_group.match(win_7_re.small_group);
-      convertDates(matchGroups.groups);
+      convertDates(matchGroups.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(SME, matchGroups.groups);
       data.push(matchData);
     }

@@ -49,8 +49,41 @@ async function convertDates(matchGroup, version) {
         second: timeMatches.groups.second,
       });
       matchGroup.host_dateTime = new Date(dt.ts);
-      
-    } else if (matchGroup.host_date) {
+    }
+    if (version === "gesys_mroc" || version === "siemens_7") {
+      const timeRe = /(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/;
+      const timeMatches = matchGroup.host_time.match(timeRe);
+      const month = monthMap[matchGroup.month];
+      const dt = DateTime.fromObject({
+        day: matchGroup.day,
+        month: month,
+        year: matchGroup.year,
+        hour: timeMatches.groups.hour,
+        minute: timeMatches.groups.minute,
+        second: timeMatches.groups.second,
+      });
+      matchGroup.host_dateTime = new Date(dt.ts);
+    }
+    if (version === "siemens_10") {
+      const timeRe = /(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/;
+      const timeMatches = matchGroup.host_time.match(timeRe);
+      const year = matchGroup.host_date.split("-")[0];
+      const month = matchGroup.host_date.split("-")[1];
+      const day = matchGroup.host_date.split("-")[2];
+
+      const dt = DateTime.fromObject({
+        day,
+        month,
+        year,
+        hour: timeMatches.groups.hour,
+        minute: timeMatches.groups.minute,
+        second: timeMatches.groups.second,
+      });
+      matchGroup.host_dateTime = new Date(dt.ts);
+    }
+
+    return;
+    if (matchGroup.host_date) {
       const timeRe = /(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/;
       const timeMatches = matchGroup.host_time.match(timeRe);
       const year = matchGroup.host_date.split("-")[0];

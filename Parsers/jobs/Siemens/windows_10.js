@@ -15,6 +15,7 @@ const parse_win_10 = async (filePath) => {
   // Data will be populated with the row array to set up bulk insert
   const manufacturer = "siemens";
   const version = "windows";
+  const dateTimeVersion = "siemens_10";
   const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
@@ -36,7 +37,7 @@ const parse_win_10 = async (filePath) => {
       let matches = line.match(win_10_re.re_v1);
       // Test for tabs
       await testTabs(matches, SME);
-      convertDates(matches.groups)
+      convertDates(matches.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(SME, matches.groups);
       data.push(matchData);
     }

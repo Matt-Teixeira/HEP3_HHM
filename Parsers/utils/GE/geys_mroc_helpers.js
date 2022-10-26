@@ -4,6 +4,7 @@ const groupsToArrayObj = require("../prep-groups-for-array");
 
 function filterToArrays(
   SME,
+  version,
   match,
   matchArray1,
   matchArray2,
@@ -21,12 +22,12 @@ function filterToArrays(
     );
     if (isExceptionClass) {
       matchGroup = match.groups.block.match(ge_re.gesys_mroc.exception_class);
-      convertDates(matchGroup.groups);
+      convertDates(matchGroup.groups, version);
       const matchData = groupsToArrayObj(SME, matchGroup.groups);
       matchArray3.push(matchData);
     } else {
       matchGroup = match.groups.block.match(ge_re.gesys_mroc.box);
-      convertDates(matchGroup.groups);
+      convertDates(matchGroup.groups, version);
       const matchData = groupsToArrayObj(SME, matchGroup.groups);
       matchArray1.push(matchData);
     }
@@ -40,18 +41,18 @@ function filterToArrays(
       let isTaskId = ge_re.gesys_mroc.test.for_task_id.test(match.groups.block);
       if (isTaskId) {
         matchGroup = match.groups.block.match(ge_re.gesys_mroc.task_id);
-        convertDates(matchGroup.groups);
+        convertDates(matchGroup.groups, version);
         const matchData = groupsToArrayObj(SME, matchGroup.groups);
         matchArray4.push(matchData);
       } else {
         matchGroup = match.groups.block.match(ge_re.gesys_mroc.exception_class);
-        convertDates(matchGroup.groups);
+        convertDates(matchGroup.groups, version);
         const matchData = groupsToArrayObj(SME, matchGroup.groups);
         matchArray3.push(matchData);
       }
     } else {
       matchGroup = match.groups.block.match(ge_re.gesys_mroc.no_box);
-      convertDates(matchGroup.groups);
+      convertDates(matchGroup.groups, version);
       const matchData = groupsToArrayObj(SME, matchGroup.groups);
       matchArray2.push(matchData);
     }
