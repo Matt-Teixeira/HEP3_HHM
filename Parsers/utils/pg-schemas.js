@@ -20,7 +20,7 @@ const ge_mri_gesys_schema = {
   object: null,
   sr_group: null,
   en: null,
-  host_dateTime: null,
+  date_time: null,
 };
 
 const siemens_ct_mri = {
@@ -36,7 +36,7 @@ const siemens_ct_mri = {
   month: null,
   day: null,
   year: null,
-  host_dateTime: null,
+  date_time: null,
 };
 
 const philips_ct_eal_schema = {
@@ -55,10 +55,10 @@ const philips_ct_eal_schema = {
   param2: null,
   vxwerrno: null,
   controller: null,
-  host_dateTime: null,
+  date_time: null,
 };
 
-const phil_ct_events_schema = {
+const philips_ct_events_schema = {
   equipment_id: null,
   eventtime: null,
   blob: null,
@@ -69,7 +69,7 @@ const phil_ct_events_schema = {
   ermodulernum: null,
   dtime: null,
   msg: null,
-  host_dateTime: null,
+  date_time: null,
 };
 
-module.exports = { ge_mri_gesys_schema, siemens_ct_mri, philips_ct_eal_schema, phil_ct_events_schema };
+module.exports = { ge_mri_gesys_schema, siemens_ct_mri, philips_ct_eal_schema, philips_ct_events_schema };

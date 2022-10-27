@@ -30,10 +30,13 @@ const ge_re = {
   },
 };
 
-const philips = {};
+const philips_re = {
+  ct_eal: /(?<line>.*?)[|](?<err_type>.*?)[|](?<tmstamp>.*?)[|](?<file>.*?)[|](?<datatype>.*?)[|](?<param1>.*?)[|](?<errnum>.*?)[|](?<info>.*?)(\s+)?[|](?<dtime>.*?)[|](?<ealtime>.*?)[|](?<lognumber>.*?)[|](?<param2>.*?)[|](?<vxwerrno>.*?)[|](?<controller>.*?)?/
+};
 
 module.exports = {
   win_7_re,
   win_10_re,
   ge_re,
+  philips_re
 };

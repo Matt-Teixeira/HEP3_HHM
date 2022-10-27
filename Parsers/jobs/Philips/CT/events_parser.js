@@ -2,18 +2,18 @@
 require("dotenv").config({ path: "../../.env" });
 const fs = require("node:fs");
 const readline = require("readline");
-const { log } = require("../../logger");
-const { get_sme_modality } = require("../../utils/regExHelpers");
-const bulkInsert = require("../../utils/queryBuilder");
-const convertDates = require("../../utils/dates");
-const groupsToArrayObj = require("../../utils/prep-groups-for-array");
-const mapDataToSchema = require("../../utils/map-data-to-schema");
-const { phil_ct_events_schema } = require("../../utils/pg-schemas");
+const { log } = require("../../../logger");
+const { get_sme_modality } = require("../../../utils/regExHelpers");
+const bulkInsert = require("../../../utils/queryBuilder");
+const convertDates = require("../../../utils/dates");
+const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
+const mapDataToSchema = require("../../../utils/map-data-to-schema");
+const { philips_ct_events_schema } = require("../../../utils/pg-schemas");
 
 async function phil_ct_events(filePath) {
   const manufacturer = "philips";
   const version = "events";
-  const dateTimeVersion = "phil_ct_events";
+  const dateTimeVersion = "type_1";
   const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
@@ -46,7 +46,7 @@ async function phil_ct_events(filePath) {
 
     data.shift();
 
-    const mappedData = mapDataToSchema(data, phil_ct_events_schema);
+    const mappedData = mapDataToSchema(data, philips_ct_events_schema);
 
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
     await bulkInsert(

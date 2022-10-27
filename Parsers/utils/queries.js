@@ -1,62 +1,4 @@
 module.exports = queries = {
-  CT_7: `
-    INSERT INTO ct (
-      equipment_id,
-        source_group,
-        host_date,
-        host_time,
-        domain_group,
-        type_group,
-        id_group,
-        text_group
-    )
-    SELECT * FROM UNNEST (
-      $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::numeric[], $8::text[]
-    )
-    `,
-  CT_10: `
-    INSERT INTO ct (
-      equipment_id,
-        host_state,
-        host_date,
-        host_time,
-        source_group,
-        type_group,
-        text_group
-    )
-    SELECT * FROM UNNEST (
-      $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[]
-    )
-    `,
-  MRI_7: `
-    INSERT INTO mri (
-      equipment_id,
-        source_group,
-        host_date,
-        host_time,
-        domain_group,
-        type_group,
-        id_group,
-        text_group
-    )
-    SELECT * FROM UNNEST (
-      $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::numeric[], $8::text[]
-    )
-    `,
-  MRI_10: `
-    INSERT INTO mri (
-      equipment_id,
-        host_state,
-        host_date,
-        host_time,
-        source_group,
-        type_group,
-        text_group
-    )
-    SELECT * FROM UNNEST (
-      $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[]
-    )
-    `,
   ge: {
     MRI: {
       gesys_mroc: `
@@ -82,7 +24,7 @@ module.exports = queries = {
           object,
           sr_group,
           en,
-          host_dateTime
+          date_time
         )
         SELECT * FROM UNNEST (
           $1::text[], $2::numeric[], $3::text[], $4::text[], $5::text[], $6::text[], $7::time[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::text[], $17::text[], $18::text[], $19::text[], $20::text[], $21::text[], $22::date[]
@@ -106,7 +48,7 @@ module.exports = queries = {
           month,
           day,
           year,
-          host_dateTime
+          date_time
       )
       SELECT * FROM UNNEST (
         $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::date[]
@@ -128,7 +70,7 @@ module.exports = queries = {
           month,
           day,
           year,
-          host_dateTime
+          date_time
       )
       SELECT * FROM UNNEST (
         $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::date[]
@@ -155,14 +97,14 @@ module.exports = queries = {
         param2,
         vxwerrno,
         controller,
-        host_dateTime
+        date_time
       )
       SELECT * FROM UNNEST (
         $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::numeric[], $15::text[], $16::date[]
       )
       `,
       events: `
-      INSERT INTO phil_ct_events (
+      INSERT INTO philips_ct_events (
       equipment_id,
       eventtime,
       blob,
@@ -173,7 +115,7 @@ module.exports = queries = {
       ermodulernum,
       dtime,
       msg,
-      host_dateTime
+      date_time
     )
     SELECT * FROM UNNEST (
       $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::date[]

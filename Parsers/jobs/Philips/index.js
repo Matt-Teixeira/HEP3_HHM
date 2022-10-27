@@ -1,33 +1,35 @@
-("use strict");
-require("dotenv").config();
 const { log } = require("../../logger");
-const eal_info_parser = require("./eal_info_parser");
-const phil_ct_events = require("./events_parser");
+const philips_ct_parsers = require("./CT");
+const philips_mri_parsers = require("./MRI")
 
-const runJob = async (filePath) => {
-  await log("info", "NA", "NA", "runJob", "FN CALL", {
+const philipsModalities = async (filePath, manufacturer) => {
+  await log("info", "NA", "NA", "philipsModalities", "FN CALL", {
     file: filePath,
   });
 
   try {
-    //const parsed_data = await eal_info_parser(filePath);
-    const parsed_data = await phil_ct_events(filePath);
+    console.log(manufacturer, filePath);
+    const modality_file_re = /\/(?<modality>\w+)\/SME\d{5}\/(?<file_type>\w+)/;
+    const modality_file = filePath.match(modality_file_re);
+    console.log(modality_file.groups);
+    switch (modality_file.groups.modality) {
+      case "MR":
+        await philips_mri_parsers(filePath, modality_file.groups.file_type);
+        break;
+      case "CT":
+        await philips_ct_parsers(filePath, modality_file.groups.file_type);
+        break;
+      case "CV":
+        await philips_cv_parsers(filePath);
+        break;
+      default:
+        break;
+    }
   } catch (error) {
-    await log("error", "NA", "NA", "runJob", "FN CATCH", {
+    await log("error", "NA", "NA", "philipsModalities", "FN CATCH", {
       error: error,
     });
   }
 };
 
-const onBoot = async (filePath) => {
-  try {
-    await log("info", "NA", "NA", "onBoot", `FN CALL`);
-    await runJob(filePath);
-  } catch (error) {
-    await log("error", "NA", "NA", "runJob", "FN CATCH", {
-      error: error,
-    });
-  }
-};
-
-module.exports = onBoot;
+module.exports = philipsModalities;
