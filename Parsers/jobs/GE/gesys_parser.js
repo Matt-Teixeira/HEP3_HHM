@@ -12,6 +12,7 @@ const { ge_mri_gesys_schema } = require("../../utils/pg-schemas");
 async function ge_mri_gesys(filePath) {
   const manufacturer = "ge";
   const version = "gesys_mroc";
+  const dateTimeVersion = "type_2"
   const containsBoxData = [];
   const noBoxData = [];
   const exceptionClassData = [];
@@ -36,7 +37,7 @@ async function ge_mri_gesys(filePath) {
       // Step to filter regEx permutations into arrays and combine later
       filterToArrays(
         SME,
-        version,
+        dateTimeVersion,
         match,
         containsBoxData,
         noBoxData,

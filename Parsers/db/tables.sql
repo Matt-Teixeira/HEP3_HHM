@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS siemens_mri;
 DROP TABLE IF EXISTS siemens_ct;
 DROP TABLE IF EXISTS ge_mri_gesys_mroc;
 DROP TABLE IF EXISTS philips_ct_eal;
-DROP TABLE IF EXISTS phil_ct_events;
+DROP TABLE IF EXISTS philips_ct_events;
 
 CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -18,7 +18,7 @@ CREATE TABLE siemens_mri(
     month TEXT,
     day INT,
     year INT,
-    host_dateTime DATE
+    date_time DATE
 );
 
 CREATE TABLE siemens_ct(
@@ -35,7 +35,7 @@ CREATE TABLE siemens_ct(
     month TEXT,
     day INT,
     year INT,
-    host_dateTime DATE
+    date_time DATE
 );
 
 CREATE TABLE ge_mri_gesys_mroc(
@@ -61,7 +61,7 @@ CREATE TABLE ge_mri_gesys_mroc(
     object text,
     sr_group text,
     en text,
-    host_dateTime DATE
+    date_time DATE
 );
 
 CREATE TABLE philips_ct_eal(
@@ -81,10 +81,10 @@ CREATE TABLE philips_ct_eal(
     param2 TEXT,
     vxwerrno INT,
     controller TEXT,
-    host_dateTime DATE
+    date_time DATE
 );
 
-CREATE TABLE phil_ct_events(
+CREATE TABLE philips_ct_events(
     id BIGSERIAL PRIMARY KEY,
     equipment_id TEXT,
     eventtime TEXT,
@@ -96,5 +96,5 @@ CREATE TABLE phil_ct_events(
     ermodulernum TEXT,
     dtime TEXT,
     msg TEXT,
-    host_dateTime DATE
+    date_time DATE
 );

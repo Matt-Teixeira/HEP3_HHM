@@ -4,19 +4,14 @@ const { log } = require("./logger");
 const siemens_parser = require("./jobs/Siemens");
 const philips_parser = require("./jobs/Philips");
 const ge_parser = require("./jobs/GE")
-const pgPool = require("./db/pg-pool");
-const { get_sme } = require("./utils/regExHelpers");
 
 // CT: SME00811 SME00812(syntax error at or near "(") SME00816
 // MRI: SME01107 SME01109 SME01112
 // /opt/hhm-files/C0137/SHIP009/SME00812/EvtApplication_Today.txt
-//const path = "/opt/hhm-files/C0137/SHIP009/SME01107/EvtApplication_Today.txt";
-
-const newPath =
-  "/opt/mirror/C0137/SHIP009/SME01112/MRI/EvtApplication_Today.txt";
-//const newPath = "/opt/mirror/C0137/SHIP009/SME00811/CT/EvtApplication_Today.txt"
-
-const oldPath = "./test_data/SME00001_CT.txt";
+// /opt/hhm-files/C0137/SHIP009/SME01107/EvtApplication_Today.txt
+// /opt/mirror/C0137/SHIP009/SME01112/MRI/EvtApplication_Today.txt
+// /opt/mirror/C0137/SHIP009/SME00811/CT/EvtApplication_Today.txt
+// ./test_data/SME00001_CT.txt
 
 const manufacturers = {
   siemens: "siemens",
@@ -28,6 +23,8 @@ const filePaths = {
   philips: {
     ct_eal: "./test_data/Philips/CT/SME00246/ealinfo.csv",
     ct_events: "./test_data/Philips/CT/SME00246/events.csv",
+    mri_logcurrent: "./test_data/Philips/MR/SME01399/logcurrent.log"
+
   },
   ge: {
     gesys: "./test_data/GE/MRI/SME01096/gesys_mroc.log",
@@ -39,19 +36,18 @@ const filePaths = {
   }
 };
 
-const runJob = async (filePath, manufacturer) => {
-  await log("info", "NA", "NA", "runJob", "FN CALL", {
+const determinManufacturer = async (filePath, manufacturer) => {
+  await log("info", "NA", "NA", "determinManufacturer", "FN CALL", {
     file: filePath,
   });
 
   try {
-    console.log(manufacturer, filePath);
     switch (manufacturer) {
       case "siemens":
         await siemens_parser(filePath);
         break;
       case "philips":
-        await philips_parser(filePath);
+        await philips_parser(filePath, manufacturer);
         break;
         case "ge":
         await ge_parser(filePath);
@@ -60,7 +56,7 @@ const runJob = async (filePath, manufacturer) => {
         break;
     }
   } catch (error) {
-    await log("error", "NA", "NA", "runJob", "FN CATCH", {
+    await log("error", "NA", "NA", "determinManufacturer", "FN CATCH", {
       error: error,
     });
   }
@@ -69,12 +65,12 @@ const runJob = async (filePath, manufacturer) => {
 const onBoot = async (filePath, manufacturer) => {
   try {
     await log("info", "NA", "NA", "onBoot", `FN CALL`);
-    await runJob(filePath, manufacturer);
+    await determinManufacturer(filePath, manufacturer);
   } catch (error) {
-    await log("error", "NA", "NA", "runJob", "FN CATCH", {
+    await log("error", "NA", "NA", "onBoot", "FN CATCH", {
       error: error,
     });
   }
 };
 
-onBoot(filePaths.philips.ct_events, manufacturers.philips);
+onBoot(filePaths.philips.mri_logcurrent, manufacturers.philips);

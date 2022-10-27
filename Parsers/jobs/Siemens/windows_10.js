@@ -15,7 +15,7 @@ const parse_win_10 = async (filePath) => {
   // Data will be populated with the row array to set up bulk insert
   const manufacturer = "siemens";
   const version = "windows";
-  const dateTimeVersion = "siemens_10";
+  const dateTimeVersion = "type_3";
   const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
