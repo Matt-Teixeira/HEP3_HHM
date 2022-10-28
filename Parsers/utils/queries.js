@@ -122,5 +122,30 @@ module.exports = queries = {
     )
       `,
     },
+    MR: {
+      logcurrent:`
+      INSERT INTO philips_mri_logcurrent (
+        equipment_id,
+        host_date,
+        host_time,
+        data_1,
+        data_2,
+        data_3,
+        data_4,
+        data_5,
+        data_6,
+        data_7,
+        packets_created,
+        data_created_gb,
+        size_copy_gb,
+        data_8,
+        reconstructor,
+        date_time
+    )
+    SELECT * FROM UNNEST (
+      $1::text[], $2::date[], $3::time[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::date[]
+    )
+      `
+    }
   },
 };

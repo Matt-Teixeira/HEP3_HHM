@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS siemens_ct;
 DROP TABLE IF EXISTS ge_mri_gesys_mroc;
 DROP TABLE IF EXISTS philips_ct_eal;
 DROP TABLE IF EXISTS philips_ct_events;
+DROP TABLE IF EXISTS philips_mri_logcurrent;
 
 CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -96,5 +97,25 @@ CREATE TABLE philips_ct_events(
     ermodulernum TEXT,
     dtime TEXT,
     msg TEXT,
+    date_time DATE
+);
+
+CREATE TABLE philips_mri_logcurrent(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    host_date DATE,
+    host_time TIME,
+    data_1 TEXT,
+    data_2 TEXT,
+    data_3 TEXT,
+    data_4 TEXT,
+    data_5 TEXT,
+    data_6 TEXT,
+    data_7 TEXT,
+    packets_created TEXT,
+    data_created_gb TEXT,
+    size_copy_gb TEXT,
+    data_8 TEXT,
+    reconstructor TEXT,
     date_time DATE
 );
