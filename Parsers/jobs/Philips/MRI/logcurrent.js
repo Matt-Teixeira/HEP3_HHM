@@ -11,6 +11,8 @@ const bulkInsert = require("../../../utils/queryBuilder");
 const convertDates = require("../../../utils/dates");
 const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
 const mapDataToSchema = require("../../../utils/map-data-to-schema");
+const { phil_mri_logcurrent_schema } = require("../../../utils/pg-schemas");
+const { philips_re } = require("../../../utils/parsers");
 
 async function phil_mri_logcurrent(filePath) {
   const manufacturer = "philips";
@@ -28,18 +30,13 @@ async function phil_mri_logcurrent(filePath) {
       file: filePath,
     });
 
-    const mri_logcurrent_re =
-      /((?<host_date>\d{4}-\d{2}-\d{2})\s(?<host_time>\d{2}:\d{2}:\d{2}\.\d+)\s(?<data_1>\w+)\s(?<data_2>\w+)\s(?<data_3>.*?)\s+(?<data_4>\w+)\s(?<data_5>\w+)(\s(?<data_6>\w+))?\s+(?<data_7>.*))|(Number\sof\sPackets\sCreated\s:\s(?<packets_created>\d*\.?\d*)|Total\sSize\sof\sData\sCreated\s:\s(?<data_created_gb>\d*\.?\d*)\s[A-Z]+|Size\sof\sCopy\sDone\s:\s(?<size_copy_gb>\d*\.?\d*)\s[A-Z]+|(?<data_8>>.*)|(?<reconstructor>[A-Za-z].*))/;
-
-    //const blankLineTest = /^[ \t\n]*$/;
-
     const rl = readline.createInterface({
       input: fs.createReadStream(filePath),
       crlfDelay: Infinity,
     });
 
     for await (const line of rl) {
-      let matches = line.match(mri_logcurrent_re);
+      let matches = line.match(philips_re.mri_logcurrent);
 
       if (matches === null) {
         const isNewLine = blankLineTest(line);
@@ -53,16 +50,16 @@ async function phil_mri_logcurrent(filePath) {
         }
       } else {
         convertDates(matches.groups, dateTimeVersion);
-        data.push(matches.groups);
+        const matchData = groupsToArrayObj(SME, matches.groups);
+        data.push(matchData);
       }
     }
-    console.log(data);
-    return;
 
-    data.shift();
+    console.log(data[2]);
 
     // homogenize data to prep for insert to db (may remove this step )
-    const mappedData = mapDataToSchema(data, philips_ct_eal_schema);
+    const mappedData = mapDataToSchema(data, phil_mri_logcurrent_schema);
+
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
     await bulkInsert(
