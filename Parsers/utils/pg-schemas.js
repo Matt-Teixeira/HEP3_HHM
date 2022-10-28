@@ -72,4 +72,29 @@ const philips_ct_events_schema = {
   date_time: null,
 };
 
-module.exports = { ge_mri_gesys_schema, siemens_ct_mri, philips_ct_eal_schema, philips_ct_events_schema };
+const phil_mri_logcurrent_schema = {
+  equipment_id: null,
+  host_date: null,
+  host_time: null,
+  data_1: null,
+  data_2: null,
+  data_3: null,
+  data_4: null,
+  data_5: null,
+  data_6: null,
+  data_7: null,
+  packets_created: null,
+  data_created_gb: null,
+  size_copy_gb: null,
+  data_8: null,
+  reconstructor: null,
+  date_time: null,
+};
+
+module.exports = {
+  ge_mri_gesys_schema,
+  siemens_ct_mri,
+  philips_ct_eal_schema,
+  philips_ct_events_schema,
+  phil_mri_logcurrent_schema,
+};
