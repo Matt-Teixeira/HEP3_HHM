@@ -32,10 +32,16 @@ function get_sme(filePath) {
   return filePath.match(smeRe)[0];
 }
 
+function blankLineTest(line) {
+  const blankLineTest = /^[ \t\n]*$/;
+  return isNewLine = blankLineTest.test(line);
+}
+
 // SR\s(\d+).*?EN\s\1
 
 module.exports = {
   testTabs,
   get_sme_modality,
-  get_sme
+  get_sme,
+  blankLineTest
 };
