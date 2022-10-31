@@ -23,7 +23,8 @@ const filePaths = {
   philips: {
     ct_eal: "./test_data/Philips/CT/SME00246/ealinfo.csv",
     ct_events: "./test_data/Philips/CT/SME00246/events.csv",
-    mri_logcurrent: "./test_data/Philips/MR/SME01399/logcurrent.log"
+    mri_logcurrent: "./test_data/Philips/MR/SME01401/logcurrent.log",
+    mri_rmmu_short: "./test_data/Philips/MR/SME01399/rmmu_short_cryogenic20210430030544.log"
 
   },
   ge: {

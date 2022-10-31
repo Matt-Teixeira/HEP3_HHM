@@ -123,7 +123,7 @@ module.exports = queries = {
       `,
     },
     MR: {
-      logcurrent:`
+      logcurrent: `
       INSERT INTO philips_mri_logcurrent (
         equipment_id,
         host_date,
@@ -145,7 +145,40 @@ module.exports = queries = {
     SELECT * FROM UNNEST (
       $1::text[], $2::date[], $3::time[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::date[]
     )
-      `
-    }
+      `,
+      rmmu_short: `
+    INSERT INTO philips_mri_rmmu_short(
+      equipment_id,
+      lineno,
+      year,
+      mo,
+      dy,
+      hr,
+      mn,
+      ss,
+      hs,
+      AvgPwr,
+      MinPwr,
+      MaxPwr,
+      AvgAbs,
+      AvgPrMbars,
+      MinPrMbars,
+      MaxPrMbars,
+      LHePct,
+      LHe2,
+      DiffPressureSwitch,
+      TempAlarm,
+      PressureAlarm,
+      Cerr,
+      CompressorReset,
+      Chd,
+      Cpr,
+      date_time
+  )
+  SELECT * FROM UNNEST (
+    $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::numeric[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::text[], $20::text[], $21::text[], $22::text[], $23::text[], $24::numeric[], $25::numeric[], $26::date[]
+  )
+    `,
+    },
   },
 };

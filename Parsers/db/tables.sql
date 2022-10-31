@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS ge_mri_gesys_mroc;
 DROP TABLE IF EXISTS philips_ct_eal;
 DROP TABLE IF EXISTS philips_ct_events;
 DROP TABLE IF EXISTS philips_mri_logcurrent;
+DROP TABLE IF EXISTS philips_mri_rmmu_short;
 
 CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -117,5 +118,35 @@ CREATE TABLE philips_mri_logcurrent(
     size_copy_gb TEXT,
     data_8 TEXT,
     reconstructor TEXT,
+    date_time DATE
+);
+
+CREATE TABLE philips_mri_rmmu_short(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    lineno INT,
+    year INT,
+    mo INT,
+    dy INT,
+    hr INT,
+    mn INT,
+    ss INT,
+    hs INT,
+    AvgPwr INT,
+    MinPwr INT,
+    MaxPwr INT,
+    AvgAbs INT,
+    AvgPrMbars INT,
+    MinPrMbars INT,
+    MaxPrMbars INT,
+    LHePct INT,
+    LHe2 INT,
+    DiffPressureSwitch varchar(2),
+    TempAlarm varchar(2),
+    PressureAlarm varchar(2),
+    Cerr varchar(2),
+    CompressorReset varchar(2),
+    Chd INT,
+    Cpr INT,
     date_time DATE
 );
