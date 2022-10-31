@@ -74,4 +74,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.philips.mri_rmmu_long, manufacturers.philips);
+onBoot(filePaths.philips.mri_logcurrent, manufacturers.philips);
