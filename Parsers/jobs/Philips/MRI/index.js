@@ -2,7 +2,8 @@
 require("dotenv").config();
 const { log } = require("../../../logger");
 const phil_mri_logcurrent = require("./logcurrent");
-const phil_mri_rmmu_short = require("./rmmu_short_cryogenic")
+const phil_mri_rmmu_short = require("./rmmu_short_cryogenic");
+const phil_mri_rmmu_long = require("./rmmu_long_cryogenic");
 
 
 const philips_mri_parsers = async (filePath, file_type) => {
@@ -17,6 +18,9 @@ const philips_mri_parsers = async (filePath, file_type) => {
         break;
       case "rmmu_short_cryogenic20210430030544":
         await phil_mri_rmmu_short(filePath);
+        break;
+        case "rmmu_long_cryogenic20201017030621":
+        await phil_mri_rmmu_long(filePath);
         break;
       default:
         break;

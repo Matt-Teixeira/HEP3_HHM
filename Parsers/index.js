@@ -24,8 +24,8 @@ const filePaths = {
     ct_eal: "./test_data/Philips/CT/SME00246/ealinfo.csv",
     ct_events: "./test_data/Philips/CT/SME00246/events.csv",
     mri_logcurrent: "./test_data/Philips/MR/SME01401/logcurrent.log",
-    mri_rmmu_short: "./test_data/Philips/MR/SME01399/rmmu_short_cryogenic20210430030544.log"
-
+    mri_rmmu_short: "./test_data/Philips/MR/SME01399/rmmu_short_cryogenic20210430030544.log",
+    mri_rmmu_long: "./test_data/Philips/MR/SME01399/rmmu_long_cryogenic20201017030621.log"
   },
   ge: {
     gesys: "./test_data/GE/MRI/SME01096/gesys_mroc.log",
@@ -74,4 +74,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.philips.mri_logcurrent, manufacturers.philips);
+onBoot(filePaths.philips.mri_rmmu_long, manufacturers.philips);

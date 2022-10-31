@@ -93,6 +93,10 @@ const phil_mri_logcurrent_schema = {
 
 const phil_mri_rmmu_short_schema = {
   equipment_id: null,
+  system_reference_number: null,
+  hospital_name: null,
+  serial_number_magnet: null,
+  serial_number_meu: null,
   LineNo: null,
   year: null,
   mo: null,
@@ -120,6 +124,40 @@ const phil_mri_rmmu_short_schema = {
   date_time: null,
 };
 
+const phil_mri_rmmu_long_schema = {
+  equipment_id: null,
+  system_reference_number: null,
+  hospital_name: null,
+  serial_number_magnet: null,
+  serial_number_meu: null,
+  LineNo: null,
+  year: null,
+  mo: null,
+  dy: null,
+  hr: null,
+  mn: null,
+  ss: null,
+  hs: null,
+  dow: null,
+  AvgPwr: null,
+  MinPwr: null,
+  MaxPwr: null,
+  AvgAbs: null,
+  AvgPrMbars: null,
+  MinPrMbars: null,
+  MaxPrMbars: null,
+  LHePct: null,
+  LHe2: null,
+  DiffPressureSwitch: null,
+  TempAlarm: null,
+  PressureAlarm: null,
+  Cerr: null,
+  CompressorReset: null,
+  Chd: null,
+  Cpr: null,
+  date_time: null,
+};
+
 module.exports = {
   ge_mri_gesys_schema,
   siemens_ct_mri,
@@ -127,4 +165,5 @@ module.exports = {
   philips_ct_events_schema,
   phil_mri_logcurrent_schema,
   phil_mri_rmmu_short_schema,
+  phil_mri_rmmu_long_schema,
 };

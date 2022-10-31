@@ -149,6 +149,10 @@ module.exports = queries = {
       rmmu_short: `
     INSERT INTO philips_mri_rmmu_short(
       equipment_id,
+      system_reference_number,
+      hospital_name,
+      serial_number_magnet,
+      serial_number_meu,
       lineno,
       year,
       mo,
@@ -176,9 +180,47 @@ module.exports = queries = {
       date_time
   )
   SELECT * FROM UNNEST (
-    $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::numeric[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::text[], $20::text[], $21::text[], $22::text[], $23::text[], $24::numeric[], $25::numeric[], $26::date[]
+    $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::text[], $24::text[], $25::text[], $26::text[], $27::text[], $28::numeric[], $29::numeric[], $30::date[]
   )
     `,
+    rmmu_long: `
+    INSERT INTO philips_mri_rmmu_long(
+      equipment_id,
+      system_reference_number,
+      hospital_name,
+      serial_number_magnet,
+      serial_number_meu,
+      lineno,
+      year,
+      mo,
+      dy,
+      hr,
+      mn,
+      ss,
+      hs,
+      dow,
+      AvgPwr,
+      MinPwr,
+      MaxPwr,
+      AvgAbs,
+      AvgPrMbars,
+      MinPrMbars,
+      MaxPrMbars,
+      LHePct,
+      LHe2,
+      DiffPressureSwitch,
+      TempAlarm,
+      PressureAlarm,
+      Cerr,
+      CompressorReset,
+      Chd,
+      Cpr,
+      date_time
+  )
+  SELECT * FROM UNNEST (
+    $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::numeric[], $24::text[], $25::text[], $26::text[], $27::text[], $28::text[], $29::numeric[], $30::numeric[], $31::date[]
+  )
+    `
     },
   },
 };
