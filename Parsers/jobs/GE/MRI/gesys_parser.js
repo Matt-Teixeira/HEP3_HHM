@@ -1,13 +1,13 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
 const fs = require("node:fs").promises;
-const { log } = require("../../logger");
-const filterToArrays = require("../../utils/GE/geys_mroc_helpers");
-const { get_sme_modality } = require("../../utils/regExHelpers");
-const bulkInsert = require("../../utils/queryBuilder");
-const { ge_re } = require("../../utils/parsers");
-const mapDataToSchema = require("../../utils/map-data-to-schema");
-const { ge_mri_gesys_schema } = require("../../utils/pg-schemas");
+const { log } = require("../../../logger");
+const filterToArrays = require("../../../utils/GE/geys_mroc_helpers");
+const { get_sme_modality } = require("../../../utils/regExHelpers");
+const bulkInsert = require("../../../utils/queryBuilder");
+const { ge_re } = require("../../../utils/parsers");
+const mapDataToSchema = require("../../../utils/map-data-to-schema");
+const { ge_mri_gesys_schema } = require("../../../utils/pg-schemas");
 
 async function ge_mri_gesys(filePath) {
   const manufacturer = "ge";
