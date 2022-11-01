@@ -3,7 +3,7 @@ require("dotenv").config();
 const { log } = require("./logger");
 const siemens_parser = require("./jobs/Siemens");
 const philips_parser = require("./jobs/Philips");
-const ge_parser = require("./jobs/GE")
+const ge_parser = require("./jobs/GE");
 
 // CT: SME00811 SME00812(syntax error at or near "(") SME00816
 // MRI: SME01107 SME01109 SME01112
@@ -24,24 +24,32 @@ const filePaths = {
     ct_eal: "./test_data/Philips/CT/SME00246/ealinfo.csv",
     ct_events: "./test_data/Philips/CT/SME00246/events.csv",
     mri_logcurrent: "./test_data/Philips/MR/SME01401/logcurrent.log",
-    mri_rmmu_short: "./test_data/Philips/MR/SME01399/rmmu_short_cryogenic20210430030544.log",
-    mri_rmmu_long: "./test_data/Philips/MR/SME01399/rmmu_long_cryogenic20201017030621.log",
-    cv_eventlog: "./test_data/Philips/CV/SME00001/EventLog.txe"
+    mri_rmmu_short:
+      "./test_data/Philips/MR/SME01399/rmmu_short_cryogenic20210430030544.log",
+    mri_rmmu_long:
+      "./test_data/Philips/MR/SME01399/rmmu_long_cryogenic20201017030621.log",
+    cv_eventlog: "./test_data/Philips/CV/SME00001/EventLog.txe",
   },
   ge: {
-    gesys: "./test_data/GE/MRI/SME01096/gesys_mroc.log",
+    ct_gesys_1: "./test_data/GE/CT/SME00821/gesys_PFRT16.log",
+    ct_gesys_2: "./test_data/GE/CT/SME00847/gesys_ct99.log",
+    ct_gesys_3: "./test_data/GE/CT/SME00847/gesys_mcvct.log",
+    ct_gesys_4: "./test_data/GE/CT/SME00867/gesys_HRTCT.log",
+    mri_gesys: "./test_data/GE/MRI/SME01140/gesys_RDMCOPMR.log",
   },
   siemens: {
     ct_7: "./test_data/SME00001_CT.txt",
     ct_10: "/opt/mirror/C0137/SHIP009/SME00811/CT/EvtApplication_Today.txt",
-    mri_10: "/opt/mirror/C0137/SHIP009/SME01112/MRI/EvtApplication_Today.txt"
-  }
+    mri_10: "/opt/mirror/C0137/SHIP009/SME01112/MRI/EvtApplication_Today.txt",
+  },
 };
 
 const determinManufacturer = async (filePath, manufacturer) => {
   await log("info", "NA", "NA", "determinManufacturer", "FN CALL", {
     file: filePath,
   });
+
+  console.log(filePath, manufacturer);
 
   try {
     switch (manufacturer) {
@@ -51,8 +59,8 @@ const determinManufacturer = async (filePath, manufacturer) => {
       case "philips":
         await philips_parser(filePath, manufacturer);
         break;
-        case "ge":
-        await ge_parser(filePath);
+      case "ge":
+        await ge_parser(filePath, manufacturer);
         break;
       default:
         break;
@@ -75,4 +83,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.philips.cv_eventlog, manufacturers.philips);
+onBoot(filePaths.ge.ct_gesys_2, manufacturers.ge);

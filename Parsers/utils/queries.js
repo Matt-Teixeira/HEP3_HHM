@@ -13,7 +13,7 @@ module.exports = queries = {
           year,
           num_3,
           num_4,
-          mroc,
+          type,
           data_1,
           num_5,
           data_2,

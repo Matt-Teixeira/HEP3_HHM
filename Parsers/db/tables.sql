@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS philips_ct_eal;
 DROP TABLE IF EXISTS philips_ct_events;
 DROP TABLE IF EXISTS philips_mri_logcurrent;
 DROP TABLE IF EXISTS philips_mri_rmmu_short;
+DROP TABLE IF EXISTS philips_mri_rmmu_long;
 
 CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -52,7 +53,7 @@ CREATE TABLE ge_mri_gesys_mroc(
     year text,
     num_3 text,
     num_4 text,
-    mroc text,
+    type text,
     data_1 text,
     num_5 text,
     data_2 text,

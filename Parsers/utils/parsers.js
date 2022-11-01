@@ -15,16 +15,16 @@ const ge_re = {
     block:
       /(?<block>SR(.+)((\r?\n.+)*)[\r\n]+(.+)((\r?\n.+)*)[\n\r]+EN\s\d+)/g, // SR\s(\d+).*?EN\s\1
     no_box:
-      /SR\s(?<sr_group>\d+)[\n\r](?<time_stamp>\d+)\s+(?<num_1>\d+)\s+(?<num_2>\d+)\s+\w+\s(?<month>\w+)\s+(?<day>\d+)\s(?<host_time>\d{1,2}:\d{1,2}:\d{1,2})\s(?<year>\d+)\s+(?<num_3>(-)?\d+)\s(?<num_4>(-)?\d+)\s+mroc\s(?<mroc>.*)[\n\r](?<data_1>.*?)\s+(?<num_5>\d+)[\n\r]\s(?<data_2>(.+)((\r?\n.+)*))[\n\r]\s?EN\s(?<en>\d+)/,
+      /SR\s(?<sr_group>\d+)[\n\r](?<time_stamp>\d+)\s+(?<num_1>\d+)\s+(?<num_2>\d+)\s+\w+\s(?<month>\w+)\s+(?<day>\d+)\s(?<host_time>\d{1,2}:\d{1,2}:\d{1,2})\s(?<year>\d+)\s+(?<num_3>(-)?\d+)\s(?<num_4>(-)?\d+)\s+(\w+)\s(?<type>.*)[\n\r](?<data_1>.*?)\s+(?<num_5>\d+)[\n\r]\s(?<data_2>(.+)((\r?\n.+)*))[\n\r]+\s?EN\s(?<en>\d+)/,
     box:
-      /SR\s(?<sr_group>\d+).*\s+(?<time_stamp>\d+)\s+(?<num_1>\d+)\s+(?<num_2>\d+)\s+\w+\s(?<month>\w+)\s+(?<day>\d+)\s(?<host_time>\d{1,2}:\d{1,2}:\d{1,2})\s(?<year>\d+)\s+(?<num_3>\d+)\s(?<num_4>\d+)\s+mroc\s(?<mroc>.*)\s+(?<data_1>.*?)\s+(?<num_5>\d+)\s+Server\sName:\s(?<server_name>\w+)\s+\s+(?<data_2>.*)\s+EN\s(?<en>.*)/,
+      /SR\s(?<sr_group>\d+).*\s+(?<time_stamp>\d+)\s+(?<num_1>\d+)\s+(?<num_2>\d+)\s+\w+\s(?<month>\w+)\s+(?<day>\d+)\s(?<host_time>\d{1,2}:\d{1,2}:\d{1,2})\s(?<year>\d+)\s+(?<num_3>\d+)\s(?<num_4>\d+)\s+(.+)\s(?<type>.*)\s+(?<data_1>.*?)\s+(?<num_5>\d+)\s+(?:Server\sName:\s(?<server_name>\w+)\s+(|))?\s+(?<data_2>.*(\s+).*)\s+EN\s(?<en>.*)/,
     exception_class:
-      /SR\s(?<sr_group>\d+)[\n\r](?<time_stamp>\d+)\s+(?<num_1>\d+)\s+(?<num_2>\d+)\s+\w+\s(?<month>\w+)\s+(?<day>\d+)\s(?<host_time>\d{1,2}:\d{1,2}:\d{1,2})\s(?<year>\d+)\s+(?<num_3>\d+)\s(?<num_4>\d+)\s+mroc\s(?<mroc>.*)[\n\r](?<data_1>.*?)\s+(?<num_5>\d+)[\n\r]\sException\sClass:\s(?<exception_class>(.+)((\r?\n.+)*))[\n\r]\sEN\s(?<en>\d+)/,
+      /SR\s(?<sr_group>\d+)[\n\r](?<time_stamp>\d+)\s+(?<num_1>\d+)\s+(?<num_2>\d+)\s+\w+\s(?<month>\w+)\s+(?<day>\d+)\s(?<host_time>\d{1,2}:\d{1,2}:\d{1,2})\s(?<year>\d+)\s+(?<num_3>\d+)\s(?<num_4>\d+)\s+(.+)\s(?<type>.*)[\n\r](?<data_1>.*?)\s+(?<num_5>\d+)[\n\r]\sException\sClass:\s(?<exception_class>(.+)((\r?\n.+)*))[\n\r]\sEN\s(?<en>\d+)/,
     task_id:
-      /SR\s(?<sr_group>\d+)[\n\r](?<time_stamp>\d+)\s+(?<num_1>\d+)\s+(?<num_2>\d+)\s+\w+\s(?<month>\w+)\s+(?<day>\d+)\s(?<host_time>\d{1,2}:\d{1,2}:\d{1,2})\s(?<year>\d+)\s+(?<num_3>\d+)\s(?<num_4>\d+)\s+mroc\s(?<mroc>.*)[\n\r](?<data_1>.*?)\s+(?<num_5>\d+)[\n\r]\sTask\sID:\s(?<task_id>.*?)\s+Time:\s(?<time_2>\d+)\s+Object:\s(?<object>.*)[\n\r]Exception\sClass:\s(?<exception_class>(.+)((\r?\n.+)*))[\n\r]\sEN\s(?<en>\d+)/,
+      /SR\s(?<sr_group>\d+)[\n\r](?<time_stamp>\d+)\s+(?<num_1>\d+)\s+(?<num_2>\d+)\s+\w+\s(?<month>\w+)\s+(?<day>\d+)\s(?<host_time>\d{1,2}:\d{1,2}:\d{1,2})\s(?<year>\d+)\s+(?<num_3>\d+)\s(?<num_4>\d+)\s+(.+)\s(?<type>.*)[\n\r](?<data_1>.*?)\s+(?<num_5>\d+)[\n\r]\sTask\sID:\s(?<task_id>.*?)\s+Time:\s(?<time_2>\d+)\s+Object:\s(?<object>.*)[\n\r]Exception\sClass:\s(?<exception_class>(.+)((\r?\n.+)*))[\n\r]\sEN\s(?<en>\d+)/,
     test: {
       for_box: //,
-      for_exception_class: /Exception\sClass:/,
+      for_exception_class: /Exception\sClass\s?:/,
       for_task_id: /Task\sID:/,
     },
   },
