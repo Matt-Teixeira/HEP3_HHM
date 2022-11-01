@@ -41,6 +41,7 @@ async function phil_ct_eal_info(filePath) {
       data.push(matchData);
     }
 
+    // Remove headers
     data.shift();
 
     // homogenize data to prep for insert to db (may remove this step )

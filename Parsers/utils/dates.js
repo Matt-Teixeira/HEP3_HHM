@@ -39,6 +39,9 @@ async function convertDates(matchGroup, version) {
     case "type_3":
       type_3(matchGroup);
       break;
+      case "type_4":
+      type_4(matchGroup);
+      break;
     default:
       break;
   }
@@ -47,7 +50,7 @@ async function convertDates(matchGroup, version) {
 async function type_1(matchGroup) {
   try {
     const date_time_split = matchGroup.dtime.split(" ");
-    
+
     const year = date_time_split[0].split("/")[0];
     const month = date_time_split[0].split("/")[1];
     const day = date_time_split[0].split("/")[2];
@@ -73,7 +76,7 @@ async function type_1(matchGroup) {
 
 async function type_2(matchGroup) {
   try {
-    const timeMatches = getTime(matchGroup)
+    const timeMatches = getTime(matchGroup);
     const month = monthMap[matchGroup.month];
     const dt = DateTime.fromObject({
       day: matchGroup.day,
@@ -93,8 +96,8 @@ async function type_2(matchGroup) {
 
 async function type_3(matchGroup) {
   try {
-    if (matchGroup.host_date === undefined) return
-    const timeMatches = getTime(matchGroup)
+    if (matchGroup.host_date === undefined) return;
+    const timeMatches = getTime(matchGroup);
     const year = matchGroup.host_date.split("-")[0];
     const month = matchGroup.host_date.split("-")[1];
     const day = matchGroup.host_date.split("-")[2];
@@ -106,6 +109,24 @@ async function type_3(matchGroup) {
       hour: timeMatches.groups.hour,
       minute: timeMatches.groups.minute,
       second: timeMatches.groups.second,
+    });
+    matchGroup.date_time = dt.toJSDate();
+  } catch (error) {
+    await log("error", "NA", "NA", "type_3", "FN CATCH", {
+      error: error,
+    });
+  }
+}
+
+async function type_4(matchGroup) {
+  try {
+    const dt = DateTime.fromObject({
+      day: matchGroup.dy,
+      month: matchGroup.mo,
+      year: matchGroup.year,
+      hour: matchGroup.hr,
+      minute: matchGroup.mn,
+      second: matchGroup.ss,
     });
     matchGroup.date_time = dt.toJSDate();
   } catch (error) {

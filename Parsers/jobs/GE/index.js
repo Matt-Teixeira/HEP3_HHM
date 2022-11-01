@@ -1,33 +1,37 @@
-("use strict");
-require("dotenv").config();
 const { log } = require("../../logger");
-const ge_mri_gesys = require("./gesys_parser")
+const ge_mri_parsers = require("./MRI");
+const ge_ct_parsers = require("./CT")
 
-
-const runJob = async (filePath) => {
-  await log("info", "NA", "NA", "runJob", "FN CALL", {
+const geModalities = async (filePath, manufacturer) => {
+  await log("info", "NA", "NA", "geModalities", "FN CALL", {
     file: filePath,
   });
 
   try {
-    const parsed_data = await ge_mri_gesys(filePath);
-    //const parsed_data = await eal_info_parser(filePath);
+    console.log(manufacturer, filePath);
+    const modality_file_re = /\/(?<modality>\w+)\/SME\d{5}\/(?<file_type>\w+)_/;
+    const modality_file = filePath.match(modality_file_re);
+
+    console.log(modality_file.groups)
+    
+    switch (modality_file.groups.modality) {
+      case "MRI":
+        await ge_mri_parsers(filePath, modality_file.groups.file_type);
+        break;
+      case "CT":
+        await ge_ct_parsers(filePath, modality_file.groups.file_type);
+        break;
+      case "CV":
+        await ge_mri_parsers(filePath, modality_file.groups.file_type);
+        break;
+      default:
+        break;
+    }
   } catch (error) {
-    await log("error", "NA", "NA", "runJob", "FN CATCH", {
+    await log("error", "NA", "NA", "geModalities", "FN CATCH", {
       error: error,
     });
   }
 };
 
-const onBoot = async (filePath) => {
-  try {
-    await log("info", "NA", "NA", "onBoot", `FN CALL`);
-    await runJob(filePath);
-  } catch (error) {
-    await log("error", "NA", "NA", "runJob", "FN CATCH", {
-      error: error,
-    });
-  }
-};
-
-module.exports = onBoot;
+module.exports = geModalities;
