@@ -45,6 +45,7 @@ const ge_ct_gesys_schema = {
   file: null,
   line_number: null,
   message: null,
+  sr: null,
   en: null,
   date_time: null,
 };

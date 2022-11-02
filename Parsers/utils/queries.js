@@ -31,6 +31,39 @@ module.exports = queries = {
         )
         `,
     },
+    CT: {
+      gesys: `
+      INSERT INTO ge_ct_gesys (
+        equipment_id,
+        epoch,
+        record_number_concurrent,
+        misc_param_1,
+        month,
+        day,
+        host_time,
+        year,
+        message_number,
+        misc_param_2,
+        type,
+        data_1,
+        num_1,
+        date_2,
+        host,
+        ermes_number,
+        exception_class,
+        severity,
+        file,
+        line_number,
+        message,
+        sr,
+        en,
+        date_time
+      )
+      SELECT * FROM UNNEST (
+        $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::time[], $8::numeric[], $9::numeric[], $10::numeric[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::numeric[], $17::text[], $18::text[], $19::text[], $20::numeric[], $21::text[], $22::numeric[], $23::numeric[], $24::date[]
+      )
+      `,
+    },
   },
   siemens: {
     CT: {
@@ -183,7 +216,7 @@ module.exports = queries = {
     $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::text[], $24::text[], $25::text[], $26::text[], $27::text[], $28::numeric[], $29::numeric[], $30::date[]
   )
     `,
-    rmmu_long: `
+      rmmu_long: `
     INSERT INTO philips_mri_rmmu_long(
       equipment_id,
       system_reference_number,
@@ -220,7 +253,7 @@ module.exports = queries = {
   SELECT * FROM UNNEST (
     $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::numeric[], $24::text[], $25::text[], $26::text[], $27::text[], $28::text[], $29::numeric[], $30::numeric[], $31::date[]
   )
-    `
+    `,
     },
   },
 };

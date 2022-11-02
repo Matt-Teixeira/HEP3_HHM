@@ -13,7 +13,7 @@ const { ge_ct_gesys_schema } = require("../../../utils/pg-schemas");
 
 async function ge_ct_gesys(filePath) {
   const manufacturer = "ge";
-  const version = "ct_gesys";
+  const version = "gesys";
   const dateTimeVersion = "type_2";
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
@@ -51,9 +51,8 @@ async function ge_ct_gesys(filePath) {
     }
     const mappedData = mapDataToSchema(data, ge_ct_gesys_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
-    console.log(dataToArray);
-
-    return
+    console.log(mappedData[0])
+    
     await bulkInsert(
       dataToArray,
       manufacturer,
@@ -62,6 +61,7 @@ async function ge_ct_gesys(filePath) {
       version,
       SME
     );
+
   } catch (error) {
     console.log(error);
     await log("error", "NA", `${SME}`, "ge_ct_gesys", "FN CALL", {
