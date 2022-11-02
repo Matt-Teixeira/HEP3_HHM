@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS siemens_mri;
 DROP TABLE IF EXISTS siemens_ct;
-DROP TABLE IF EXISTS ge_mri_gesys_mroc;
+DROP TABLE IF EXISTS ge_mri_gesys;
 DROP TABLE IF EXISTS ge_ct_gesys;
 DROP TABLE IF EXISTS philips_ct_eal;
 DROP TABLE IF EXISTS philips_ct_events;
@@ -42,7 +42,7 @@ CREATE TABLE siemens_ct(
     date_time DATE
 );
 
-CREATE TABLE ge_mri_gesys_mroc(
+CREATE TABLE ge_mri_gesys(
     id BIGSERIAL PRIMARY KEY,
     equipment_id text,
     time_stamp int,
