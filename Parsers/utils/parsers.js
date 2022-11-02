@@ -24,11 +24,15 @@ const ge_re = {
       task_id:
         /SR\s(?<sr_group>\d+)[\n\r](?<time_stamp>\d+)\s+(?<num_1>\d+)\s+(?<num_2>\d+)\s+\w+\s(?<month>\w+)\s+(?<day>\d+)\s(?<host_time>\d{1,2}:\d{1,2}:\d{1,2})\s(?<year>\d+)\s+(?<num_3>\d+)\s(?<num_4>\d+)\s+(.+)\s(?<type>.*)[\n\r](?<data_1>.*?)\s+(?<num_5>\d+)[\n\r]\sTask\sID:\s(?<task_id>.*?)\s+Time:\s(?<time_2>\d+)\s+Object:\s(?<object>.*)[\n\r]Exception\sClass:\s(?<exception_class>(.+)((\r?\n.+)*))[\n\r]\sEN\s(?<en>\d+)/,
       test: {
-        for_box: //,
+        for_box: /|/,
         for_exception_class: /Exception\sClass\s?:/,
         for_task_id: /Task\sID:/,
       },
     },
+  },
+  ct:{},
+  cv:{
+
   }
 };
 
