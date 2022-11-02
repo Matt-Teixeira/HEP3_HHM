@@ -13,13 +13,13 @@ async function filterToArrays(
   matchArray4
 ) {
   let matchGroup;
-  let containsBox = ge_re.mri.gesys.test.for_box.test(match[0]);
+  let containsBox = ge_re.test.for_box.test(match[0]);
 
   try {
     // Some blocks have  "box" in them. Test for this permutation.
     if (containsBox) {
       // Some "Exception Class:" blocks have  "box" in them. Run exception_class re if both box test and test.for_exception_class pass
-      let isExceptionClass = ge_re.mri.gesys.test.for_exception_class.test(
+      let isExceptionClass = ge_re.test.for_exception_class.test(
         match.groups.block
       );
       if (isExceptionClass) {
@@ -35,12 +35,12 @@ async function filterToArrays(
       }
     } else {
       // If  is not in block, test for "Exception Class:" permutation.
-      let isExceptionClass = ge_re.mri.gesys.test.for_exception_class.test(
+      let isExceptionClass = ge_re.test.for_exception_class.test(
         match.groups.block
       );
       if (isExceptionClass) {
         // Test to see if exception block contains "Task Id:" permutation.
-        let isTaskId = ge_re.mri.gesys.test.for_task_id.test(
+        let isTaskId = ge_re.test.for_task_id.test(
           match.groups.block
         );
         if (isTaskId) {

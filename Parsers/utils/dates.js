@@ -96,7 +96,7 @@ async function type_2(matchGroup) {
 
 async function type_3(matchGroup) {
   try {
-    if (matchGroup.host_date === undefined) return;
+    if (matchGroup.host_date === undefined ) return;
     const timeMatches = getTime(matchGroup);
     const year = matchGroup.host_date.split("-")[0];
     const month = matchGroup.host_date.split("-")[1];

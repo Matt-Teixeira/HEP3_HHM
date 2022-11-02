@@ -14,9 +14,6 @@ const ge_mri_parsers = async (filePath, file_type) => {
       case "gesys":
         await ge_mri_gesys(filePath);
         break;
-      case "events":
-        await ge_mri_gesys(filePath);
-        break;
       default:
         break;
     }
