@@ -11,7 +11,7 @@ const { ge_mri_gesys_schema } = require("../../../utils/pg-schemas");
 
 async function ge_mri_gesys(filePath) {
   const manufacturer = "ge";
-  const version = "gesys_mroc";
+  const version = "gesys";
   const dateTimeVersion = "type_2"
   const containsBoxData = [];
   const noBoxData = [];
@@ -30,7 +30,7 @@ async function ge_mri_gesys(filePath) {
   try {
     const fileData = (await fs.readFile(filePath)).toString();
 
-    let matches = fileData.matchAll(ge_re.gesys_mroc.block);
+    let matches = fileData.matchAll(ge_re.mri.gesys.block);
     let matchesArray = [...matches];
 
     for await (let match of matchesArray) {

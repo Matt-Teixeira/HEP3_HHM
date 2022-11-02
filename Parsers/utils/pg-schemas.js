@@ -45,7 +45,31 @@ const ge_ct_gesys_schema = {
   file: null,
   line_number: null,
   message: null,
+  sr: null,
   en: null,
+  date_time: null,
+};
+
+const ge_cv_syserror_schema = {
+  equipment_id: null,
+  sequencenumber: null,
+  host_date: null,
+  host_time: null,
+  subsystem: null,
+  errorcode: null,
+  errortext: null,
+  exam: null,
+  exceptioncategory: null,
+  application: null,
+  majorfunction: null,
+  minorfunction: null,
+  fru: null,
+  viewinglevel: null,
+  rootcause: null,
+  repeatcount: null,
+  debugtext: null,
+  sourcefile: null,
+  sourceline: null,
   date_time: null,
 };
 
@@ -193,4 +217,5 @@ module.exports = {
   phil_mri_rmmu_short_schema,
   phil_mri_rmmu_long_schema,
   ge_ct_gesys_schema,
+  ge_cv_syserror_schema
 };

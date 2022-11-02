@@ -1,6 +1,8 @@
 DROP TABLE IF EXISTS siemens_mri;
 DROP TABLE IF EXISTS siemens_ct;
-DROP TABLE IF EXISTS ge_mri_gesys_mroc;
+DROP TABLE IF EXISTS ge_mri_gesys;
+DROP TABLE IF EXISTS ge_ct_gesys;
+DROP TABLE IF EXISTS ge_cv_syserror;
 DROP TABLE IF EXISTS philips_ct_eal;
 DROP TABLE IF EXISTS philips_ct_events;
 DROP TABLE IF EXISTS philips_mri_logcurrent;
@@ -41,7 +43,7 @@ CREATE TABLE siemens_ct(
     date_time DATE
 );
 
-CREATE TABLE ge_mri_gesys_mroc(
+CREATE TABLE ge_mri_gesys(
     id BIGSERIAL PRIMARY KEY,
     equipment_id text,
     time_stamp int,
@@ -66,6 +68,59 @@ CREATE TABLE ge_mri_gesys_mroc(
     en text,
     date_time DATE
 );
+
+CREATE TABLE ge_ct_gesys(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    epoch INT,
+    record_number_concurrent INT,
+    misc_param_1 INT,
+    month TEXT,
+    day INT,
+    host_time TIME,
+    year INT,
+    message_number INT,
+    misc_param_2 INT,
+    type TEXT,
+    data_1 TEXT,
+    num_1 TEXT,
+    date_2 TEXT,
+    host TEXT,
+    ermes_number INT,
+    exception_class TEXT,
+    severity TEXT,
+    file TEXT,
+    line_number INT,
+    message TEXT,
+    sr INT,
+    en INT,
+    date_time DATE
+);
+
+CREATE TABLE ge_cv_syserror(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    sequencenumber INT,
+    host_date DATE,
+    host_time TIME,
+    subsystem VARCHAR(8),
+    errorcode INT,
+    errortext TEXT,
+    exam INT,
+    exceptioncategory VARCHAR(10),
+    application TEXT,
+    majorfunction TEXT,
+    minorfunction TEXT,
+    fru TEXT,
+    viewinglevel INT,
+    rootcause INT,
+    repeatcount INT,
+    debugtext TEXT,
+    sourcefile TEXT,
+    sourceline INT,
+    date_time DATE
+);
+
 
 CREATE TABLE philips_ct_eal(
     id BIGSERIAL PRIMARY KEY,
