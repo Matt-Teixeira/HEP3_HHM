@@ -25,7 +25,7 @@ async function phil_cv_eventlog(filePath) {
   const data = [];
   try {
 
-    const eventlog = /(?<category>.+?)\S(?<host_date>\d{4}-\d{2}-\d{2})\S(?<host_time>\d{1,2}:\d{1,2}:\d{1,2})\S(?<error_type>\w+)\S(?<num>\d+)�?(?=Technical)((Technical Event ID:\s+|TechnicalEventID:)(?<technical_event_id>.+?)�)?(?:Description: (?<Description>.+?)�)?(?:Channel Identification: (?<ChannelID>.+?)�)?(?:Module: (?<Module>.+?)�)?((Source File: |Source file: )(?<Source>.+?)�)?(?:Line Number: (?<Line>.+?)�)?(?:(Memo: |Memo:)(?<Memo>.*?)?(?=�)(�)|())?(?:SubsystemNumber: (?<SubsystemNumber>.+?)�?)?(?:ThreadName: (?<ThreadName>.*)�?)?|(?<Message>.*?)/
+    const eventlog = /(?<Category>[\w\. \-\$&\.]+)�(?<Date>[\d-]+)�(?<Time>[\d:]+)�(?<ErrorType>\w*)�(?<Num>\d+)�(?:Technical ?Event ?ID: {1,3}(?<TechnicalEventID>\d+) ?�Description: (?<Description>[^�\r\n]+)�Channel Identification: (?<ChannelID>[^�]+)�Module: (?<Module>[^�]+)�Source [Ff]ile: (?<Source>[^�]+)�Line Number: (?<Line>\d+) ?�Memo: ?(?<Memo>[^\r\n�]*)(?:�SubsystemNumber: (?<SubsystemNumber>\d+)�ThreadName: ?(?<ThreadName>[\w \-]*))?|(?<Message>[^\r\n]*))/
 
     await log("info", "NA", `${SME}`, "phil_cv_eventlog", "FN CALL", {
       sme: SME,
@@ -43,8 +43,7 @@ async function phil_cv_eventlog(filePath) {
     for await (const line of rl) {
       let matches = line.match(eventlog);
 
-      console.log(matches.groups);
-      continue
+      //console.log(matches.groups);
       if (matches === null) {
         const isNewLine = blankLineTest(line);
         if (isNewLine) {
@@ -62,7 +61,8 @@ async function phil_cv_eventlog(filePath) {
       }
     }
 
-    console.log(data[2]);
+    //console.log(data);
+    return
 
     // homogenize data to prep for insert to db (may remove this step )
     const mappedData = mapDataToSchema(data, phil_cv_eventlog_schema);

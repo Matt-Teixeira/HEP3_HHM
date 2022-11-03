@@ -36,7 +36,9 @@ const filePaths = {
     ct_gesys_3: "./test_data/GE/CT/SME00847/gesys_mcvct.log",
     ct_gesys_4: "./test_data/GE/CT/SME00867/gesys_HRTCT.log",
     mri_gesys: "./test_data/GE/MRI/SME01140/gesys_RDMCOPMR.log",
-    cv_sysError_1: "./test_data/GE/CV/SME00843/sysError.log"
+    cv_sysError_1: "./test_data/GE/CV/SME00843/sysError.log",
+    cv_sysError_2: "./test_data/GE/CV/SME01442/sysError.log",
+    cv_sysError_3: "./test_data/GE/CV/SME02481/sysError.log",
   },
   siemens: {
     ct_7: "./test_data/SME00001_CT.txt",
@@ -84,4 +86,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.ge.cv_sysError_1, manufacturers.ge);
+onBoot(filePaths.philips.cv_eventlog, manufacturers.philips);

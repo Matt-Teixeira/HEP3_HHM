@@ -64,6 +64,35 @@ module.exports = queries = {
       )
       `,
     },
+    CV: {
+      sysError: `
+      INSERT INTO ge_cv_syserror (
+        equipment_id,
+        sequencenumber,
+        host_date,
+        host_time,
+        subsystem,
+        errorcode,
+        errortext,
+        exam,
+        exceptioncategory,
+        application,
+        majorfunction,
+        minorfunction,
+        fru,
+        viewinglevel,
+        rootcause,
+        repeatcount,
+        debugtext,
+        sourcefile,
+        sourceline,
+        date_time
+      )
+      SELECT * FROM UNNEST (
+        $1::text[], $2::numeric[], $3::date[], $4::text[], $5::text[], $6::numeric[], $7::text[], $8::numeric[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::numeric[], $15::numeric[], $16::numeric[], $17::text[], $18::text[], $19::numeric[], $20::date[]
+      )
+      `,
+    },
   },
   siemens: {
     CT: {

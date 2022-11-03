@@ -55,8 +55,6 @@ async function phil_mri_logcurrent(filePath) {
       }
     }
 
-    console.log(data[2]);
-
     // homogenize data to prep for insert to db (may remove this step )
     const mappedData = mapDataToSchema(data, phil_mri_logcurrent_schema);
 

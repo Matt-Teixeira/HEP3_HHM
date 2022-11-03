@@ -16,9 +16,10 @@ async function bulkInsert(data, manufacturer, modality, file, version, sme) {
     );
     const payload = await convertRowsToColumns("1", sme, data, file);
 
-    console.log(query);
-    
-    //await log("info", "NA", `${sme}`, "bulkInsert", "FN CALL", { data });
+    await log("info", "NA", `${sme}`, "bulkInsert", "FN CALL", {
+      query: JSON.stringify(query),
+    });
+
     await pgPool.query(query, payload);
   } catch (error) {
     console.log(error);

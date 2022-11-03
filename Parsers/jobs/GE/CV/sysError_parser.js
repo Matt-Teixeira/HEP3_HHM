@@ -13,7 +13,7 @@ const { ge_cv_syserror_schema } = require("../../../utils/pg-schemas");
 
 async function ge_cv_sys_error(filePath) {
   const manufacturer = "ge";
-  const version = "gesys";
+  const version = "sysError";
   const dateTimeVersion = "type_3";
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
@@ -41,7 +41,7 @@ async function ge_cv_sys_error(filePath) {
         } else {
           await log("error", "NA", "NA", "Not_New_Line", "FN CALL", {
             message: "This is not a blank new line - Bad Match",
-            line,
+            line: line,
           });
         }
       } else {
@@ -50,12 +50,11 @@ async function ge_cv_sys_error(filePath) {
         data.push(matchData);
       }
     }
+
+    data.shift()
     
     const mappedData = mapDataToSchema(data, ge_cv_syserror_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
-    console.log(dataToArray);
-    // Need to build query
-    return;
 
     await bulkInsert(
       dataToArray,
@@ -68,13 +67,15 @@ async function ge_cv_sys_error(filePath) {
   } catch (error) {
     console.log(error);
     await log("error", "NA", `${SME}`, "ge_cv_sys_error", "FN CALL", {
+      error: error,
       sme: SME,
       manufacturer,
       modality,
       file: filePath,
-      error: error.message,
     });
   }
 }
 
 module.exports = ge_cv_sys_error;
+
+// insert into ge_cv_syserror(equipment_id, sequencenumber, host_date, host_time) VALUES('SME00843', '1', '2021-04-23', '07:49:05:103')

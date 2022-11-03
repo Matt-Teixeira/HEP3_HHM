@@ -26,7 +26,6 @@ async function ge_ct_gesys(filePath) {
   });
 
   try {
-
     const fileData = (await fs.readFile(filePath)).toString();
 
     let matches = fileData.match(ge_re.ct.gesys.block);
@@ -45,8 +44,7 @@ async function ge_ct_gesys(filePath) {
     }
     const mappedData = mapDataToSchema(data, ge_ct_gesys_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
-    console.log(mappedData[0])
-    
+
     await bulkInsert(
       dataToArray,
       manufacturer,
@@ -55,7 +53,6 @@ async function ge_ct_gesys(filePath) {
       version,
       SME
     );
-
   } catch (error) {
     console.log(error);
     await log("error", "NA", `${SME}`, "ge_ct_gesys", "FN CALL", {

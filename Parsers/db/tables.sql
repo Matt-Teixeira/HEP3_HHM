@@ -102,7 +102,7 @@ CREATE TABLE ge_cv_syserror(
     equipment_id TEXT,
     sequencenumber INT,
     host_date DATE,
-    host_time TIME,
+    host_time TEXT,
     subsystem VARCHAR(8),
     errorcode INT,
     errortext TEXT,

@@ -9,7 +9,6 @@ const ge_mri_parsers = async (filePath, file_type) => {
     await log("info", "NA", "NA", "ge_mri_parsers", "FN CALL", {
       file: filePath,
     });
-    console.log(filePath, file_type)
     switch (file_type) {
       case "sysError":
         await ge_cv_sysError(filePath);

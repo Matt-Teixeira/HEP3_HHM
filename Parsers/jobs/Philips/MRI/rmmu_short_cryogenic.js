@@ -35,22 +35,20 @@ async function phil_mri_rmmu_short(filePath) {
 
     let matches = fileData.matchAll(rmmu_short_re);
     let metaData = fileData.match(rmmu_meta_data);
-    
-    console.log(metaData.groups)
 
     for await (let match of matches) {
       convertDates(match.groups, dateTimeVersion);
-      match.groups.system_reference_number = metaData.groups.system_reference_number;
+      match.groups.system_reference_number =
+        metaData.groups.system_reference_number;
       match.groups.hospital_name = metaData.groups.hospital_name;
       match.groups.serial_number_magnet = metaData.groups.serial_number_magnet;
-      match.groups.serial_number_meu = metaData.groups.serial_number_meu
+      match.groups.serial_number_meu = metaData.groups.serial_number_meu;
       const matchData = groupsToArrayObj(SME, match.groups);
       data.push(matchData);
     }
 
     const mappedData = mapDataToSchema(data, phil_mri_rmmu_short_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
-    console.log(mappedData);
 
     await bulkInsert(
       dataToArray,

@@ -68,8 +68,9 @@ async function type_1(matchGroup) {
     });
     matchGroup.date_time = dt.toJSDate();
   } catch (error) {
-    await log("error", "NA", "NA", "type_1", "FN CATCH", {
+    await log("error", "NA", "NA", "convertDates-type_1", "FN CATCH", {
       error: error,
+      failed_match: JSON.stringify(matchGroup)
     });
   }
 }
@@ -88,8 +89,9 @@ async function type_2(matchGroup) {
     });
     matchGroup.date_time = dt.toJSDate();
   } catch (error) {
-    await log("error", "NA", "NA", "type_2", "FN CATCH", {
+    await log("error", "NA", "NA", "convertDates-type_2", "FN CATCH", {
       error: error,
+      failed_match: JSON.stringify(matchGroup)
     });
   }
 }
@@ -112,8 +114,9 @@ async function type_3(matchGroup) {
     });
     matchGroup.date_time = dt.toJSDate();
   } catch (error) {
-    await log("error", "NA", "NA", "type_3", "FN CATCH", {
+    await log("error", "NA", "NA", "convertDates-type_3", "FN CATCH", {
       error: error,
+      failed_match: JSON.stringify(matchGroup)
     });
   }
 }
@@ -130,8 +133,9 @@ async function type_4(matchGroup) {
     });
     matchGroup.date_time = dt.toJSDate();
   } catch (error) {
-    await log("error", "NA", "NA", "type_3", "FN CATCH", {
+    await log("error", "NA", "NA", "convertDates-type_4", "FN CATCH", {
       error: error,
+      failed_match: JSON.stringify(matchGroup)
     });
   }
 }

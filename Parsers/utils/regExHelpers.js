@@ -15,12 +15,13 @@ async function testTabs(matches, SME, count) {
 }
 
 function get_sme_modality(filePath) {
-  const smeRe = /(?<sme>SME\d{5})[\/_](?<modality>[A-Z]+)/;
-  if (filePath.match(smeRe) === null) {
+  const smeRe = /(?<sme>SME\d{5})[\/_](?<modality>(MRI|MR|CT|CV)?)/;
+  let modality_sme = filePath.match(smeRe)
+  if (modality_sme === null || modality_sme.groups.modality === "") {
     const smeRe = /(?<modality>[A-Z]+)[\/_](?<sme>SME\d{5})/
     return filePath.match(smeRe);
   }
-  return filePath.match(smeRe);
+  return modality_sme;
 }
 
 function get_sme(filePath) {
