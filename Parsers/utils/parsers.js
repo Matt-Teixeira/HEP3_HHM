@@ -37,11 +37,21 @@ const ge_re = {
 const philips_re = {
   ct_eal:
     /(?<line>.*?)[|](?<err_type>.*?)[|](?<tmstamp>.*?)[|](?<file>.*?)[|](?<datatype>.*?)[|](?<param1>.*?)[|](?<errnum>.*?)[|](?<info>.*?)(\s+)?[|](?<dtime>.*?)[|](?<ealtime>.*?)[|](?<lognumber>.*?)[|](?<param2>.*?)[|](?<vxwerrno>.*?)[|](?<controller>.*?)?/,
+  ct_events:
+    /(?<eventtime>.*?)[|](?<blob>.*?)[|](?<type>.*?)[|](?<tstampnum>.*?)[|](?<eal>.*?)[|](?<level>.*?)[|](?<ermodulernum>.*?)[|](?<dtime>.*?)[|](?<msg>.*)?/,
   mri_logcurrent:
     /((?<host_date>\d{4}-\d{2}-\d{2})\s(?<host_time>\d{2}:\d{2}:\d{2}\.\d+)\s(?<row_type>\w+)\s(?<event_type>\w+)\s(?<subsystem>.*?)\s+(?<code_1>\w+)\s(?<code_2>\w+)(\s(?<group_1>\w+))?\s+(?<message>.*))|(Number\sof\sPackets\sCreated\s:\s(?<packets_created>\d*\.?\d*)|Total\sSize\sof\sData\sCreated\s:\s(?<data_created_gb>\d*\.?\d*)\s[A-Z]+|Size\sof\sCopy\sDone\s:\s(?<size_copy_gb>\d*\.?\d*)\s[A-Z]+|(?<data_8>>.*)|(?<reconstructor>[A-Za-z].*))/,
   cv: {
     eventlog:
       /(?<category>[\w\. \-\$&\.]+)�(?<host_date>[\d-]+)�(?<host_time>[\d:]+)�(?<error_type>\w*)�(?<num_1>\d+)�(?:Technical ?Event ?ID: {1,3}(?<technical_event_id>\d+) ?�Description: (?<description>[^�\r\n]+)�Channel Identification: (?<channel_id>[^�]+)�Module: (?<module>[^�]+)�Source [Ff]ile: (?<source>[^�]+)�Line Number: (?<line>\d+) ?�Memo: ?(?<memo>[^\r\n�]*)(?:�SubsystemNumber: (?<subsystem_number>\d+)�ThreadName: ?(?<thread_name>[\w \-]*))?|(?<message>[^\r\n]*))/,
+  },
+  mri: {
+    rmmu_meta_data:
+      /System.*:(?<system_reference_number>\d+)\s+Hospital.*:(?<hospital_name>.*)\s+Serial.*:(?<serial_number_magnet>.*)\s+Serial.*:(?<serial_number_meu>.*)/,
+    rmmu_long_re:
+      /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<dow>\d+),(?<AvgPwr>\d+),(?<MinPwr>\d+),(?<MaxPwr>\d+),(?<AvgAbs>\d+),(?<AvgPrMbars>\d+),(?<MinPrMbars>\d+),(?<MaxPrMbars>\d+),(?<LHePct>\d+),(?<LHe2>\d+),(?<DiffPressureSwitch>[YN]+?),(?<TempAlarm>[YN]+?),(?<PressureAlarm>[YN]+?),(?<Cerr>[YN]+?),(?<CompressorReset>[YN]+?),(?<Chd>\d+),(?<Cpr>\d+)/g,
+    rmmu_short_re:
+      /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<AvgPwr>\d+),(?<MinPwr>\d+),(?<MaxPwr>\d+),(?<AvgAbs>\d+),(?<AvgPrMbars>\d+),(?<MinPrMbars>\d+),(?<MaxPrMbars>\d+),(?<LHePct>\d+),(?<LHe2>\d+),(?<DiffPressureSwitch>[YN]+?),(?<TempAlarm>[YN]+?),(?<PressureAlarm>[YN]+?),(?<Cerr>[YN]+?),(?<CompressorReset>[YN]+?),(?<Chd>\d+),(?<Cpr>\d+)/g,
   },
 };
 

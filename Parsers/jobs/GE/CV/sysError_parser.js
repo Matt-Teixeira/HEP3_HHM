@@ -3,7 +3,10 @@ require("dotenv").config({ path: "../../.env" });
 const fs = require("node:fs");
 const readline = require("readline");
 const { log } = require("../../../logger");
-const { get_sme_modality, blankLineTest } = require("../../../utils/regExHelpers");
+const {
+  get_sme_modality,
+  blankLineTest,
+} = require("../../../utils/regExHelpers");
 const convertDates = require("../../../utils/dates");
 const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
 const bulkInsert = require("../../../utils/queryBuilder");
@@ -51,8 +54,8 @@ async function ge_cv_sys_error(filePath) {
       }
     }
 
-    data.shift()
-    
+    data.shift();
+
     const mappedData = mapDataToSchema(data, ge_cv_syserror_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
@@ -65,7 +68,6 @@ async function ge_cv_sys_error(filePath) {
       SME
     );
   } catch (error) {
-    console.log(error);
     await log("error", "NA", `${SME}`, "ge_cv_sys_error", "FN CALL", {
       error: error,
       sme: SME,

@@ -53,11 +53,11 @@ const filePaths = {
 };
 
 const determinManufacturer = async (filePath, manufacturer) => {
-  await log("info", "NA", "NA", "determinManufacturer", "FN CALL", {
-    file: filePath,
-  });
-
   try {
+    await log("info", "NA", "NA", "determinManufacturer", "FN CALL", {
+      file: filePath,
+    });
+
     switch (manufacturer) {
       case "siemens":
         await siemens_parser(filePath);
@@ -89,4 +89,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.philips.cv_eventlog_3, manufacturers.philips);
+onBoot(filePaths.siemens.mri_10, manufacturers.siemens);

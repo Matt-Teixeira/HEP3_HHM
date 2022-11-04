@@ -22,15 +22,4 @@ const runJob = async (filePath) => {
   }
 };
 
-const onBoot = async (filePath) => {
-  try {
-    await log("info", "NA", "NA", "onBoot", `FN CALL`);
-    await runJob(filePath);
-  } catch (error) {
-    await log("error", "NA", "NA", "runJob", "FN CATCH", {
-      error: error,
-    });
-  }
-};
-
-module.exports = onBoot;
+module.exports = runJob;

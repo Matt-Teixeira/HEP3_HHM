@@ -15,15 +15,16 @@ const { philips_cv_eventlog_schema } = require("../../../utils/pg-schemas");
 const { philips_re } = require("../../../utils/parsers");
 
 async function phil_cv_eventlog(filePath) {
-  const manufacturer = "philips";
-  const version = "eventlog";
-  const dateTimeVersion = "type_3";
-  const sme_modality = get_sme_modality(filePath);
-  const SME = sme_modality.groups.sme;
-  const modality = sme_modality.groups.modality;
-
-  const data = [];
   try {
+    const manufacturer = "philips";
+    const version = "eventlog";
+    const dateTimeVersion = "type_3";
+    const sme_modality = get_sme_modality(filePath);
+    const SME = sme_modality.groups.sme;
+    const modality = sme_modality.groups.modality;
+
+    const data = [];
+
     await log("info", "NA", `${SME}`, "phil_cv_eventlog", "FN CALL", {
       sme: SME,
       modality,
@@ -37,8 +38,6 @@ async function phil_cv_eventlog(filePath) {
 
     for await (const line of rl) {
       let matches = line.match(philips_re.cv.eventlog);
-
-      //console.log(matches.groups);
       if (matches === null) {
         const isNewLine = blankLineTest(line);
         if (isNewLine) {
@@ -56,7 +55,7 @@ async function phil_cv_eventlog(filePath) {
       }
     }
 
-    // homogenize data to prep for insert to db (may remove this step )
+    // homogenize data to prep for insert to db
     const mappedData = mapDataToSchema(data, philips_cv_eventlog_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 

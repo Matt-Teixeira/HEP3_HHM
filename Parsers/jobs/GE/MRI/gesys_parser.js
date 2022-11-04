@@ -40,8 +40,6 @@ async function ge_mri_gesys(filePath) {
 
     const mappedData = mapDataToSchema(data, ge_mri_gesys_schema);
 
-    console.log(mappedData);
-
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
     await bulkInsert(
@@ -53,7 +51,6 @@ async function ge_mri_gesys(filePath) {
       SME
     );
   } catch (error) {
-    console.log(error);
     await log("error", "NA", `${SME}`, "ge_mri_gesys", "FN CALL", {
       sme: SME,
       manufacturer,

@@ -3,7 +3,6 @@ require("dotenv").config();
 const { log } = require("../../../logger");
 const ge_cv_sysError = require("./sysError_parser");
 
-
 const ge_mri_parsers = async (filePath, file_type) => {
   try {
     await log("info", "NA", "NA", "ge_mri_parsers", "FN CALL", {
