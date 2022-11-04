@@ -1,4 +1,3 @@
-
 const ge_mri_gesys_schema = {
   equipment_id: null,
   epoch: null,
@@ -50,6 +49,9 @@ const ge_ct_gesys_schema = {
   severity: null,
   file: null,
   line_number: null,
+  scan_type: null,
+  warning: null,
+  end_msg: null,
   message: null,
   sr: null,
   en: null,

@@ -59,13 +59,16 @@ module.exports = queries = {
         severity,
         file,
         line_number,
+        scan_type,
+        warning,
+        end_msg,
         message,
         sr,
         en,
         date_time
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::time[], $8::numeric[], $9::numeric[], $10::numeric[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::numeric[], $17::text[], $18::text[], $19::text[], $20::numeric[], $21::text[], $22::numeric[], $23::numeric[], $24::date[]
+        $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::time[], $8::numeric[], $9::numeric[], $10::numeric[], $11::text[], $12::text[], $13::numeric[], $14::text[], $15::text[], $16::numeric[], $17::text[], $18::text[], $19::text[], $20::numeric[], $21::text[], $22::text[], $23::text[], $24::text[], $25::numeric[], $26::numeric[], $27::date[]
       )
       `,
     },

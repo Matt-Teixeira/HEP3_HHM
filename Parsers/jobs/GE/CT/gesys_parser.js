@@ -35,10 +35,10 @@ async function ge_ct_gesys(filePath) {
       const matchData = groupsToArrayObj(SME, matchGroups.groups);
       data.push(matchData);
     }
-    console.log(data);
-    return;
     const mappedData = mapDataToSchema(data, ge_ct_gesys_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
+
+    console.log(mappedData);
 
     await bulkInsert(
       dataToArray,

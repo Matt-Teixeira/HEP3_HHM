@@ -89,4 +89,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.ge.ct_gesys_2, manufacturers.ge);
+onBoot(filePaths.ge.mri_gesys_1, manufacturers.ge);
