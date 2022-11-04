@@ -2,7 +2,7 @@ module.exports = queries = {
   ge: {
     MRI: {
       gesys: `
-        INSERT INTO ge_mri_gesys_2 (
+        INSERT INTO ge_mri_gesys (
           equipment_id,
           epoch,
           record_number_concurrent,

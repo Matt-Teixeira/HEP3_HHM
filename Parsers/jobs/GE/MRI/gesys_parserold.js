@@ -2,24 +2,26 @@
 require("dotenv").config({ path: "../../.env" });
 const fs = require("node:fs").promises;
 const { log } = require("../../../logger");
-const convertDates = require("../../../utils/dates");
-const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
+const filterToArrays = require("../../../utils/GE/geys_mroc_helpers");
 const { get_sme_modality } = require("../../../utils/regExHelpers");
 const bulkInsert = require("../../../utils/queryBuilder");
 const { ge_re } = require("../../../utils/parsers");
 const mapDataToSchema = require("../../../utils/map-data-to-schema");
-const { ge_mri_gesys_2_schema } = require("../../../utils/pg-schemas");
+const { ge_mri_gesys_schema } = require("../../../utils/pg-schemas");
 
-async function ge_mri_gesys_2(filePath) {
+async function ge_mri_gesys(filePath) {
   const manufacturer = "ge";
   const version = "gesys";
-  const dateTimeVersion = "type_2";
-  const data = [];
+  const dateTimeVersion = "type_2"
+  const containsBoxData = [];
+  const noBoxData = [];
+  const exceptionClassData = [];
+  const taskIdData = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
   const modality = sme_modality.groups.modality;
 
-  await log("info", "NA", `${SME}`, "ge_mri_gesys_2", "FN CALL", {
+  await log("info", "NA", `${SME}`, "ge_mri_gesys", "FN CALL", {
     sme: SME,
     modality,
     file: filePath,
@@ -28,20 +30,25 @@ async function ge_mri_gesys_2(filePath) {
   try {
     const fileData = (await fs.readFile(filePath)).toString();
 
-    let matches = fileData.match(ge_re.mri.gesys.block);
+    let matches = fileData.matchAll(ge_re.mri.gesys.block);
+    let matchesArray = [...matches];
 
-    for await (let match of matches) {
+    for await (let match of matchesArray) {
       // Step to filter regEx permutations into arrays and combine later
-      const matchGroups = match.match(ge_re.mri.gesys.new);
-      convertDates(matchGroups.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(SME, matchGroups.groups);
-      data.push(matchData);
+      filterToArrays(
+        SME,
+        dateTimeVersion,
+        match,
+        containsBoxData,
+        noBoxData,
+        exceptionClassData,
+        taskIdData
+      );
     }
+    const concatData = [...containsBoxData, ...noBoxData, ...exceptionClassData, ...taskIdData];
 
-    const mappedData = mapDataToSchema(data, ge_mri_gesys_2_schema);
-
-    console.log(mappedData);
-
+    const mappedData = mapDataToSchema(concatData, ge_mri_gesys_schema);
+    console.log(mappedData[0])
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
     await bulkInsert(
@@ -54,7 +61,7 @@ async function ge_mri_gesys_2(filePath) {
     );
   } catch (error) {
     console.log(error);
-    await log("error", "NA", `${SME}`, "ge_mri_gesys_2", "FN CALL", {
+    await log("error", "NA", `${SME}`, "ge_mri_gesys", "FN CALL", {
       sme: SME,
       manufacturer,
       modality,
@@ -64,4 +71,4 @@ async function ge_mri_gesys_2(filePath) {
   }
 }
 
-module.exports = ge_mri_gesys_2;
+module.exports = ge_mri_gesys;

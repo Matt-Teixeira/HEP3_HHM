@@ -2,7 +2,8 @@
 require("dotenv").config({ path: "../../.env" });
 const fs = require("node:fs").promises;
 const { log } = require("../../../logger");
-const filterToArrays = require("../../../utils/GE/geys_mroc_helpers");
+const convertDates = require("../../../utils/dates");
+const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
 const { get_sme_modality } = require("../../../utils/regExHelpers");
 const bulkInsert = require("../../../utils/queryBuilder");
 const { ge_re } = require("../../../utils/parsers");
@@ -12,11 +13,8 @@ const { ge_mri_gesys_schema } = require("../../../utils/pg-schemas");
 async function ge_mri_gesys(filePath) {
   const manufacturer = "ge";
   const version = "gesys";
-  const dateTimeVersion = "type_2"
-  const containsBoxData = [];
-  const noBoxData = [];
-  const exceptionClassData = [];
-  const taskIdData = [];
+  const dateTimeVersion = "type_2";
+  const data = [];
   const sme_modality = get_sme_modality(filePath);
   const SME = sme_modality.groups.sme;
   const modality = sme_modality.groups.modality;
@@ -30,25 +28,20 @@ async function ge_mri_gesys(filePath) {
   try {
     const fileData = (await fs.readFile(filePath)).toString();
 
-    let matches = fileData.matchAll(ge_re.mri.gesys.block);
-    let matchesArray = [...matches];
+    let matches = fileData.match(ge_re.mri.gesys.block);
 
-    for await (let match of matchesArray) {
+    for await (let match of matches) {
       // Step to filter regEx permutations into arrays and combine later
-      filterToArrays(
-        SME,
-        dateTimeVersion,
-        match,
-        containsBoxData,
-        noBoxData,
-        exceptionClassData,
-        taskIdData
-      );
+      const matchGroups = match.match(ge_re.mri.gesys.new);
+      convertDates(matchGroups.groups, dateTimeVersion);
+      const matchData = groupsToArrayObj(SME, matchGroups.groups);
+      data.push(matchData);
     }
-    const concatData = [...containsBoxData, ...noBoxData, ...exceptionClassData, ...taskIdData];
 
-    const mappedData = mapDataToSchema(concatData, ge_mri_gesys_schema);
-    console.log(mappedData[0])
+    const mappedData = mapDataToSchema(data, ge_mri_gesys_schema);
+
+    console.log(mappedData);
+
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
     await bulkInsert(

@@ -1,29 +1,5 @@
-const ge_mri_gesys_schema = {
-  equipment_id: null,
-  time_stamp: null,
-  num_1: null,
-  num_2: null,
-  month: null,
-  day: null,
-  host_time: null,
-  year: null,
-  num_3: null,
-  num_4: null,
-  type: null,
-  data_1: null,
-  num_5: null,
-  data_2: null,
-  server_name: null,
-  exception_class: null,
-  task_id: null,
-  time_2: null,
-  object: null,
-  sr_group: null,
-  en: null,
-  date_time: null,
-};
 
-const ge_mri_gesys_2_schema = {
+const ge_mri_gesys_schema = {
   equipment_id: null,
   epoch: null,
   record_number_concurrent: null,
@@ -240,7 +216,6 @@ const phil_mri_rmmu_long_schema = {
 
 module.exports = {
   ge_mri_gesys_schema,
-  ge_mri_gesys_2_schema,
   siemens_ct_mri,
   philips_ct_eal_schema,
   philips_ct_events_schema,
