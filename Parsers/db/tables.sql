@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS siemens_mri;
 DROP TABLE IF EXISTS siemens_ct;
 DROP TABLE IF EXISTS ge_mri_gesys;
+DROP TABLE IF EXISTS ge_mri_gesys_2;
 DROP TABLE IF EXISTS ge_ct_gesys;
 DROP TABLE IF EXISTS ge_cv_syserror;
 DROP TABLE IF EXISTS philips_ct_eal;
@@ -66,6 +67,37 @@ CREATE TABLE ge_mri_gesys(
     object text,
     sr_group text,
     en text,
+    date_time DATE
+);
+
+CREATE TABLE ge_mri_gesys_2(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    epoch INT,
+    record_number_concurrent INT,
+    misc_param_1 INT,
+    month VARCHAR(4),
+    day INT,
+    host_time TIME,
+    year INT,
+    message_number INT,
+    misc_param_2 INT,
+    type TEXT,
+    data_1 TEXT,
+    num_1 INT,
+    server TEXT,
+    task_id TEXT,
+    task_epoc INT,
+    object TEXT,
+    exception_class TEXT,
+    severity TEXT,
+    function TEXT,
+    psd TEXT,
+    coil TEXT,
+    scan TEXT,
+    message TEXT,
+    sr INT,
+    en INT,
     date_time DATE
 );
 

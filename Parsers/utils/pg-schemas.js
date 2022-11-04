@@ -23,6 +23,36 @@ const ge_mri_gesys_schema = {
   date_time: null,
 };
 
+const ge_mri_gesys_2_schema = {
+  equipment_id: null,
+  epoch: null,
+  record_number_concurrent: null,
+  misc_param_1: null,
+  month: null,
+  day: null,
+  host_time: null,
+  year: null,
+  message_number: null,
+  misc_param_2: null,
+  type: null,
+  data_1: null,
+  num_1: null,
+  server: null,
+  task_id: null,
+  task_epoc: null,
+  object: null,
+  exception_class: null,
+  severity: null,
+  function: null,
+  psd: null,
+  coil: null,
+  scan: null,
+  message: null,
+  sr: null,
+  en: null,
+  date_time: null,
+};
+
 const ge_ct_gesys_schema = {
   equipment_id: null,
   epoch: null,
@@ -210,6 +240,7 @@ const phil_mri_rmmu_long_schema = {
 
 module.exports = {
   ge_mri_gesys_schema,
+  ge_mri_gesys_2_schema,
   siemens_ct_mri,
   philips_ct_eal_schema,
   philips_ct_events_schema,
@@ -217,5 +248,5 @@ module.exports = {
   phil_mri_rmmu_short_schema,
   phil_mri_rmmu_long_schema,
   ge_ct_gesys_schema,
-  ge_cv_syserror_schema
+  ge_cv_syserror_schema,
 };

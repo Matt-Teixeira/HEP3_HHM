@@ -2,32 +2,37 @@ module.exports = queries = {
   ge: {
     MRI: {
       gesys: `
-        INSERT INTO ge_mri_gesys (
+        INSERT INTO ge_mri_gesys_2 (
           equipment_id,
-          time_stamp,
-          num_1,
-          num_2,
+          epoch,
+          record_number_concurrent,
+          misc_param_1,
           month,
           day,
           host_time,
           year,
-          num_3,
-          num_4,
+          message_number,
+          misc_param_2,
           type,
           data_1,
-          num_5,
-          data_2,
-          server_name,
-          exception_class,
+          num_1,
+          server,
           task_id,
-          time_2,
+          task_epoc,
           object,
-          sr_group,
+          exception_class,
+          severity,
+          function,
+          psd,
+          coil,
+          scan,
+          message,
+          sr,
           en,
           date_time
         )
         SELECT * FROM UNNEST (
-          $1::text[], $2::numeric[], $3::text[], $4::text[], $5::text[], $6::text[], $7::time[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::text[], $17::text[], $18::text[], $19::text[], $20::text[], $21::text[], $22::date[]
+          $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::time[], $8::numeric[], $9::numeric[], $10::numeric[], $11::text[], $12::text[], $13::numeric[], $14::text[], $15::text[], $16::numeric[], $17::text[], $18::text[], $19::text[], $20::text[], $21::text[], $22::text[], $23::text[], $24::text[], $25::numeric[], $26::numeric[], $27::date[]
         )
         `,
     },

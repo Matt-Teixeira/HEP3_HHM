@@ -2,6 +2,7 @@
 require("dotenv").config();
 const { log } = require("../../../logger");
 const ge_mri_gesys = require("./gesys_parser");
+const ge_mri_gesys_2 = require("./gesys_parser_2")
 
 
 const ge_mri_parsers = async (filePath, file_type) => {
@@ -12,7 +13,7 @@ const ge_mri_parsers = async (filePath, file_type) => {
     console.log(filePath, file_type)
     switch (file_type) {
       case "gesys":
-        await ge_mri_gesys(filePath);
+        await ge_mri_gesys_2(filePath);
         break;
       default:
         break;
