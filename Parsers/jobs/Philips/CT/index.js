@@ -22,6 +22,8 @@ const philips_ct_parsers = async (filePath, file_type) => {
   } catch (error) {
     await log("error", "NA", "NA", "philips_ct_parsers", "FN CATCH", {
       error: error,
+      file: filePath,
+      type: file_type
     });
   }
 };

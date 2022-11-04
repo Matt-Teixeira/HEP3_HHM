@@ -12,22 +12,22 @@ const mapDataToSchema = require("../../utils/map-data-to-schema");
 const { siemens_ct_mri } = require("../../utils/pg-schemas");
 
 const parse_win_10 = async (filePath) => {
-  // Data will be populated with the row array to set up bulk insert
-  const manufacturer = "siemens";
-  const version = "windows";
-  const dateTimeVersion = "type_3";
-  const data = [];
-  const sme_modality = get_sme_modality(filePath);
-  const SME = sme_modality.groups.sme;
-  const modality = sme_modality.groups.modality;
-
-  await log("info", "NA", `${SME}`, "parse_win_10", "FN CALL", {
-    sme: SME,
-    modality,
-    file: filePath,
-  });
-
   try {
+    // Data will be populated with the row array to set up bulk insert
+    const manufacturer = "siemens";
+    const version = "windows";
+    const dateTimeVersion = "type_3";
+    const data = [];
+    const sme_modality = get_sme_modality(filePath);
+    const SME = sme_modality.groups.sme;
+    const modality = sme_modality.groups.modality;
+
+    await log("info", "NA", `${SME}`, "parse_win_10", "FN CALL", {
+      sme: SME,
+      modality,
+      file: filePath,
+    });
+
     const rl = readline.createInterface({
       input: fs.createReadStream(filePath),
       crlfDelay: Infinity,

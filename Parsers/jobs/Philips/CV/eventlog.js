@@ -11,21 +11,19 @@ const bulkInsert = require("../../../utils/queryBuilder");
 const convertDates = require("../../../utils/dates");
 const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
 const mapDataToSchema = require("../../../utils/map-data-to-schema");
-const { phil_cv_eventlog_schema } = require("../../../utils/pg-schemas");
+const { philips_cv_eventlog_schema } = require("../../../utils/pg-schemas");
 const { philips_re } = require("../../../utils/parsers");
 
 async function phil_cv_eventlog(filePath) {
-  const manufacturer = "philips";
-  const version = "eventlog";
-  const dateTimeVersion = "type_3";
-  const sme_modality = get_sme_modality(filePath);
-  const SME = sme_modality.groups.sme;
-  const modality = sme_modality.groups.modality;
-
-  const data = [];
   try {
+    const manufacturer = "philips";
+    const version = "eventlog";
+    const dateTimeVersion = "type_3";
+    const sme_modality = get_sme_modality(filePath);
+    const SME = sme_modality.groups.sme;
+    const modality = sme_modality.groups.modality;
 
-    const eventlog = /(?<Category>[\w\. \-\$&\.]+)�(?<Date>[\d-]+)�(?<Time>[\d:]+)�(?<ErrorType>\w*)�(?<Num>\d+)�(?:Technical ?Event ?ID: {1,3}(?<TechnicalEventID>\d+) ?�Description: (?<Description>[^�\r\n]+)�Channel Identification: (?<ChannelID>[^�]+)�Module: (?<Module>[^�]+)�Source [Ff]ile: (?<Source>[^�]+)�Line Number: (?<Line>\d+) ?�Memo: ?(?<Memo>[^\r\n�]*)(?:�SubsystemNumber: (?<SubsystemNumber>\d+)�ThreadName: ?(?<ThreadName>[\w \-]*))?|(?<Message>[^\r\n]*))/
+    const data = [];
 
     await log("info", "NA", `${SME}`, "phil_cv_eventlog", "FN CALL", {
       sme: SME,
@@ -38,12 +36,8 @@ async function phil_cv_eventlog(filePath) {
       crlfDelay: Infinity,
     });
 
-   
-
     for await (const line of rl) {
-      let matches = line.match(eventlog);
-
-      //console.log(matches.groups);
+      let matches = line.match(philips_re.cv.eventlog);
       if (matches === null) {
         const isNewLine = blankLineTest(line);
         if (isNewLine) {
@@ -61,12 +55,8 @@ async function phil_cv_eventlog(filePath) {
       }
     }
 
-    //console.log(data);
-    return
-
-    // homogenize data to prep for insert to db (may remove this step )
-    const mappedData = mapDataToSchema(data, phil_cv_eventlog_schema);
-
+    // homogenize data to prep for insert to db
+    const mappedData = mapDataToSchema(data, philips_cv_eventlog_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
     await bulkInsert(
@@ -88,7 +78,6 @@ async function phil_cv_eventlog(filePath) {
 }
 
 module.exports = phil_cv_eventlog;
-
 
 /* XDDS�2022-03-02�08:40:26�Information�20481�TechnicalEventID: 840000104 �Description: XDDS discovered a new device �Channel Identification: X-Ray Channel Undefined �Module: XDDS �Source file: .\XDDSDeviceFinder.cpp �Line Number: 990 �Memo: DHCP server file: C:\Program files\DHCPServer\dhcpsrv.ini is already up to date for device: ID IP address: 172.22.1.6 MAC address: 00:E0:4B:49:88:D7 providing 1 services: XDDSServiceTypeImageDetectionLateral
 CAHost�2022-03-02�08:40:40�Information�200�TechnicalEventID: 220200 �Description: Client status changed �Channel Identification: X-Ray Channel Undefined �Module: CAHost �Source file: t:\houston_cos_inc2_ec_build_1211834\uos\os\configassist\src\cahost\computer.cpp �Line Number: 402 �Memo: Status of GEOIPC changed to Running

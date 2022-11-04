@@ -15,15 +15,16 @@ const { phil_mri_logcurrent_schema } = require("../../../utils/pg-schemas");
 const { philips_re } = require("../../../utils/parsers");
 
 async function phil_mri_logcurrent(filePath) {
-  const manufacturer = "philips";
-  const version = "logcurrent";
-  const dateTimeVersion = "type_3";
-  const sme_modality = get_sme_modality(filePath);
-  const SME = sme_modality.groups.sme;
-  const modality = sme_modality.groups.modality;
-
-  const data = [];
   try {
+    const manufacturer = "philips";
+    const version = "logcurrent";
+    const dateTimeVersion = "type_3";
+    const sme_modality = get_sme_modality(filePath);
+    const SME = sme_modality.groups.sme;
+    const modality = sme_modality.groups.modality;
+
+    const data = [];
+
     await log("info", "NA", `${SME}`, "phil_mri_logcurrent", "FN CALL", {
       sme: SME,
       modality,
@@ -55,9 +56,8 @@ async function phil_mri_logcurrent(filePath) {
       }
     }
 
-    // homogenize data to prep for insert to db (may remove this step )
+    // homogenize data to prep for insert to db
     const mappedData = mapDataToSchema(data, phil_mri_logcurrent_schema);
-
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
     await bulkInsert(

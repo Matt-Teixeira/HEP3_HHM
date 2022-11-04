@@ -30,17 +30,10 @@ async function ge_ct_gesys(filePath) {
 
     let matches = fileData.match(ge_re.ct.gesys.block);
     for await (let match of matches) {
-      if (ge_re.test.for_exception_class.test(match)) {
-        const matchGroups = match.match(ge_re.ct.gesys.exception_class);
-        convertDates(matchGroups.groups, dateTimeVersion);
-        const matchData = groupsToArrayObj(SME, matchGroups.groups);
-        data.push(matchData);
-      } else {
-        const matchGroups = match.match(ge_re.ct.gesys.no_box);
-        convertDates(matchGroups.groups, dateTimeVersion);
-        const matchData = groupsToArrayObj(SME, matchGroups.groups);
-        data.push(matchData);
-      }
+      const matchGroups = match.match(ge_re.ct.gesys.new);
+      convertDates(matchGroups.groups, dateTimeVersion);
+      const matchData = groupsToArrayObj(SME, matchGroups.groups);
+      data.push(matchData);
     }
     const mappedData = mapDataToSchema(data, ge_ct_gesys_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
@@ -54,7 +47,6 @@ async function ge_ct_gesys(filePath) {
       SME
     );
   } catch (error) {
-    console.log(error);
     await log("error", "NA", `${SME}`, "ge_ct_gesys", "FN CALL", {
       sme: SME,
       manufacturer,

@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS philips_ct_events;
 DROP TABLE IF EXISTS philips_mri_logcurrent;
 DROP TABLE IF EXISTS philips_mri_rmmu_short;
 DROP TABLE IF EXISTS philips_mri_rmmu_long;
+DROP TABLE IF EXISTS philips_cv_eventlog;
 
 CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -45,27 +46,32 @@ CREATE TABLE siemens_ct(
 
 CREATE TABLE ge_mri_gesys(
     id BIGSERIAL PRIMARY KEY,
-    equipment_id text,
-    time_stamp int,
-    num_1 text,
-    num_2 text,
-    month text,
-    day text,
-    host_time time,
-    year text,
-    num_3 text,
-    num_4 text,
-    type text,
-    data_1 text,
-    num_5 text,
-    data_2 text,
-    server_name text,
-    exception_class text,
-    task_id text,
-    time_2 text,
-    object text,
-    sr_group text,
-    en text,
+    equipment_id TEXT,
+    epoch INT,
+    record_number_concurrent INT,
+    misc_param_1 INT,
+    month VARCHAR(4),
+    day INT,
+    host_time TIME,
+    year INT,
+    message_number INT,
+    misc_param_2 INT,
+    type TEXT,
+    data_1 TEXT,
+    num_1 INT,
+    server TEXT,
+    task_id TEXT,
+    task_epoc INT,
+    object TEXT,
+    exception_class TEXT,
+    severity TEXT,
+    function TEXT,
+    psd TEXT,
+    coil TEXT,
+    scan TEXT,
+    message TEXT,
+    sr INT,
+    en INT,
     date_time DATE
 );
 
@@ -75,7 +81,7 @@ CREATE TABLE ge_ct_gesys(
     epoch INT,
     record_number_concurrent INT,
     misc_param_1 INT,
-    month TEXT,
+    month VARCHAR(4),
     day INT,
     host_time TIME,
     year INT,
@@ -83,7 +89,7 @@ CREATE TABLE ge_ct_gesys(
     misc_param_2 INT,
     type TEXT,
     data_1 TEXT,
-    num_1 TEXT,
+    num_1 INT,
     date_2 TEXT,
     host TEXT,
     ermes_number INT,
@@ -91,6 +97,9 @@ CREATE TABLE ge_ct_gesys(
     severity TEXT,
     file TEXT,
     line_number INT,
+    scan_type TEXT,
+    warning TEXT,
+    end_msg TEXT,
     message TEXT,
     sr INT,
     en INT,
@@ -243,5 +252,26 @@ CREATE TABLE philips_mri_rmmu_long(
     CompressorReset varchar(2),
     Chd INT,
     Cpr INT,
+    date_time DATE
+);
+
+CREATE TABLE philips_cv_eventlog(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    category TEXT,
+    host_date DATE,
+    host_time TIME,
+    error_type TEXT,
+    num_1 INT,
+    technical_event_id INT,
+    description  TEXT,
+    channel_id  TEXT,
+    module TEXT,
+    source TEXT,
+    line INT,
+    memo TEXT,
+    subsystem_number INT,
+    thread_name TEXT,
+    message TEXT,
     date_time DATE
 );

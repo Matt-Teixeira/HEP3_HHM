@@ -11,15 +11,15 @@ const mapDataToSchema = require("../../utils/map-data-to-schema");
 const { siemens_ct_mri } = require("../../utils/pg-schemas");
 
 const parse_win_7 = async (filePath) => {
-  const manufacturer = "siemens";
-  const version = "windows";
-  const dateTimeVersion = "type_2"
-  const data = [];
-  const sme_modality = get_sme_modality(filePath);
-  const SME = sme_modality.groups.sme;
-  const modality = sme_modality.groups.modality;
-
   try {
+    const manufacturer = "siemens";
+    const version = "windows";
+    const dateTimeVersion = "type_2";
+    const data = [];
+    const sme_modality = get_sme_modality(filePath);
+    const SME = sme_modality.groups.sme;
+    const modality = sme_modality.groups.modality;
+
     await log("info", "NA", "NA", "parse_win_7", "FN CALL", {
       sme: SME,
       modality,
@@ -49,7 +49,6 @@ const parse_win_7 = async (filePath) => {
       version,
       SME
     );
-
   } catch (error) {
     await log("error", "NA", `${SME}`, "parse_win_7", "FN CATCH", {
       error: error,

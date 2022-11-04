@@ -39,7 +39,7 @@ async function convertDates(matchGroup, version) {
     case "type_3":
       type_3(matchGroup);
       break;
-      case "type_4":
+    case "type_4":
       type_4(matchGroup);
       break;
     default:
@@ -70,7 +70,7 @@ async function type_1(matchGroup) {
   } catch (error) {
     await log("error", "NA", "NA", "convertDates-type_1", "FN CATCH", {
       error: error,
-      failed_match: JSON.stringify(matchGroup)
+      failed_match: JSON.stringify(matchGroup),
     });
   }
 }
@@ -91,15 +91,16 @@ async function type_2(matchGroup) {
   } catch (error) {
     await log("error", "NA", "NA", "convertDates-type_2", "FN CATCH", {
       error: error,
-      failed_match: JSON.stringify(matchGroup)
+      failed_match: JSON.stringify(matchGroup),
     });
   }
 }
 
 async function type_3(matchGroup) {
   try {
-    if (matchGroup.host_date === undefined ) return;
+    if (matchGroup.host_date === undefined) return;
     const timeMatches = getTime(matchGroup);
+
     const year = matchGroup.host_date.split("-")[0];
     const month = matchGroup.host_date.split("-")[1];
     const day = matchGroup.host_date.split("-")[2];
@@ -116,7 +117,7 @@ async function type_3(matchGroup) {
   } catch (error) {
     await log("error", "NA", "NA", "convertDates-type_3", "FN CATCH", {
       error: error,
-      failed_match: JSON.stringify(matchGroup)
+      failed_match: JSON.stringify(matchGroup),
     });
   }
 }
@@ -135,7 +136,7 @@ async function type_4(matchGroup) {
   } catch (error) {
     await log("error", "NA", "NA", "convertDates-type_4", "FN CATCH", {
       error: error,
-      failed_match: JSON.stringify(matchGroup)
+      failed_match: JSON.stringify(matchGroup),
     });
   }
 }

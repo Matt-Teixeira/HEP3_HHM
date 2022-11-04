@@ -29,6 +29,8 @@ const geModalities = async (filePath) => {
   } catch (error) {
     await log("error", "NA", "NA", "geModalities", "FN CATCH", {
       error: error,
+      file: filePath,
+      type: file_type,
     });
   }
 };

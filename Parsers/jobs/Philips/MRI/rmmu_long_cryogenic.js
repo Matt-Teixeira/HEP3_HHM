@@ -11,19 +11,15 @@ const { phil_mri_rmmu_long_schema } = require("../../../utils/pg-schemas");
 const { philips_re } = require("../../../utils/parsers");
 
 async function phil_mri_rmmu_long(filePath) {
-  const manufacturer = "philips";
-  const version = "rmmu_long";
-  const dateTimeVersion = "type_4";
-  const sme_modality = get_sme_modality(filePath);
-  const SME = sme_modality.groups.sme;
-  const modality = sme_modality.groups.modality;
-
-  const data = [];
   try {
-    const rmmu_meta_data =
-      /System.*:(?<system_reference_number>\d+)\s+Hospital.*:(?<hospital_name>.*)\s+Serial.*:(?<serial_number_magnet>.*)\s+Serial.*:(?<serial_number_meu>.*)/;
-    const rmmu_short_re =
-      /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<dow>\d+),(?<AvgPwr>\d+),(?<MinPwr>\d+),(?<MaxPwr>\d+),(?<AvgAbs>\d+),(?<AvgPrMbars>\d+),(?<MinPrMbars>\d+),(?<MaxPrMbars>\d+),(?<LHePct>\d+),(?<LHe2>\d+),(?<DiffPressureSwitch>[YN]+?),(?<TempAlarm>[YN]+?),(?<PressureAlarm>[YN]+?),(?<Cerr>[YN]+?),(?<CompressorReset>[YN]+?),(?<Chd>\d+),(?<Cpr>\d+)/g;
+    const manufacturer = "philips";
+    const version = "rmmu_long";
+    const dateTimeVersion = "type_4";
+    const sme_modality = get_sme_modality(filePath);
+    const SME = sme_modality.groups.sme;
+    const modality = sme_modality.groups.modality;
+
+    const data = [];
 
     await log("info", "NA", `${SME}`, "phil_mri_rmmu_long", "FN CALL", {
       sme: SME,
@@ -33,8 +29,8 @@ async function phil_mri_rmmu_long(filePath) {
 
     const fileData = (await fs.readFile(filePath)).toString();
 
-    let matches = fileData.matchAll(rmmu_short_re);
-    let metaData = fileData.match(rmmu_meta_data);
+    let matches = fileData.matchAll(philips_re.mri.rmmu_long_re);
+    let metaData = fileData.match(philips_re.mri.rmmu_meta_data);
 
     for await (let match of matches) {
       convertDates(match.groups, dateTimeVersion);

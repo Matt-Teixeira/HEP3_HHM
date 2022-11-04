@@ -4,30 +4,35 @@ module.exports = queries = {
       gesys: `
         INSERT INTO ge_mri_gesys (
           equipment_id,
-          time_stamp,
-          num_1,
-          num_2,
+          epoch,
+          record_number_concurrent,
+          misc_param_1,
           month,
           day,
           host_time,
           year,
-          num_3,
-          num_4,
+          message_number,
+          misc_param_2,
           type,
           data_1,
-          num_5,
-          data_2,
-          server_name,
-          exception_class,
+          num_1,
+          server,
           task_id,
-          time_2,
+          task_epoc,
           object,
-          sr_group,
+          exception_class,
+          severity,
+          function,
+          psd,
+          coil,
+          scan,
+          message,
+          sr,
           en,
           date_time
         )
         SELECT * FROM UNNEST (
-          $1::text[], $2::numeric[], $3::text[], $4::text[], $5::text[], $6::text[], $7::time[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::text[], $17::text[], $18::text[], $19::text[], $20::text[], $21::text[], $22::date[]
+          $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::time[], $8::numeric[], $9::numeric[], $10::numeric[], $11::text[], $12::text[], $13::numeric[], $14::text[], $15::text[], $16::numeric[], $17::text[], $18::text[], $19::text[], $20::text[], $21::text[], $22::text[], $23::text[], $24::text[], $25::numeric[], $26::numeric[], $27::date[]
         )
         `,
     },
@@ -54,13 +59,16 @@ module.exports = queries = {
         severity,
         file,
         line_number,
+        scan_type,
+        warning,
+        end_msg,
         message,
         sr,
         en,
         date_time
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::time[], $8::numeric[], $9::numeric[], $10::numeric[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::numeric[], $17::text[], $18::text[], $19::text[], $20::numeric[], $21::text[], $22::numeric[], $23::numeric[], $24::date[]
+        $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::time[], $8::numeric[], $9::numeric[], $10::numeric[], $11::text[], $12::text[], $13::numeric[], $14::text[], $15::text[], $16::numeric[], $17::text[], $18::text[], $19::text[], $20::numeric[], $21::text[], $22::text[], $23::text[], $24::text[], $25::numeric[], $26::numeric[], $27::date[]
       )
       `,
     },
@@ -283,6 +291,32 @@ module.exports = queries = {
     $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::numeric[], $24::text[], $25::text[], $26::text[], $27::text[], $28::text[], $29::numeric[], $30::numeric[], $31::date[]
   )
     `,
+    },
+    CV: {
+      eventlog: `
+      INSERT INTO philips_cv_eventlog(
+        equipment_id,
+        category,
+        host_date,
+        host_time,
+        error_type,
+        num_1,
+        technical_event_id,
+        description,
+        channel_id,
+        module,
+        source,
+        line,
+        memo,
+        subsystem_number,
+        thread_name,
+        message,
+        date_time
+      )
+    SELECT * FROM UNNEST (
+      $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::numeric[], $8::text[], $9::text[], $10::text[], $11::text[], $12::numeric[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::date[]
+    )
+      `,
     },
   },
 };
