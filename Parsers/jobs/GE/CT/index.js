@@ -1,7 +1,7 @@
 ("use strict");
 require("dotenv").config();
 const { log } = require("../../../logger");
-const ge_ct_gesys = require("./gesys_parser");
+const ge_ct_gesys = require("./gesys_parser_old");
 
 
 const ge_ct_parsers = async (filePath, file_type) => {
