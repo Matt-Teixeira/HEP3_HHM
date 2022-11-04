@@ -292,5 +292,31 @@ module.exports = queries = {
   )
     `,
     },
+    CV: {
+      eventlog: `
+      INSERT INTO philips_cv_eventlog(
+        equipment_id,
+        category,
+        host_date,
+        host_time,
+        error_type,
+        num_1,
+        technical_event_id,
+        description,
+        channel_id,
+        module,
+        source,
+        line,
+        memo,
+        subsystem_number,
+        thread_name,
+        message,
+        date_time
+      )
+    SELECT * FROM UNNEST (
+      $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::numeric[], $8::text[], $9::text[], $10::text[], $11::text[], $12::numeric[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::date[]
+    )
+      `,
+    },
   },
 };

@@ -38,8 +38,6 @@ async function ge_ct_gesys(filePath) {
     const mappedData = mapDataToSchema(data, ge_ct_gesys_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    console.log(mappedData);
-
     await bulkInsert(
       dataToArray,
       manufacturer,
@@ -49,7 +47,6 @@ async function ge_ct_gesys(filePath) {
       SME
     );
   } catch (error) {
-    console.log(error);
     await log("error", "NA", `${SME}`, "ge_ct_gesys", "FN CALL", {
       sme: SME,
       manufacturer,

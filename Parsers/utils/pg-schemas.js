@@ -216,6 +216,26 @@ const phil_mri_rmmu_long_schema = {
   date_time: null,
 };
 
+const philips_cv_eventlog_schema = {
+  equipment_id: null,
+  category: null,
+  host_date: null,
+  host_time: null,
+  error_type: null,
+  num_1: null,
+  technical_event_id: null,
+  description: null,
+  channel_id: null,
+  module: null,
+  source: null,
+  line: null,
+  memo: null,
+  subsystem_number: null,
+  thread_name: null,
+  message: null,
+  date_time: null,
+};
+
 module.exports = {
   ge_mri_gesys_schema,
   siemens_ct_mri,
@@ -226,4 +246,5 @@ module.exports = {
   phil_mri_rmmu_long_schema,
   ge_ct_gesys_schema,
   ge_cv_syserror_schema,
+  philips_cv_eventlog_schema,
 };

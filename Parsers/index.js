@@ -28,7 +28,9 @@ const filePaths = {
       "./test_data/Philips/MR/SME01399/rmmu_short_cryogenic20210430030544.log",
     mri_rmmu_long:
       "./test_data/Philips/MR/SME01399/rmmu_long_cryogenic20201017030621.log",
-    cv_eventlog: "./test_data/Philips/CV/SME00001/EventLog.txe",
+    cv_eventlog_1: "./test_data/Philips/CV/SME00001/EventLog.txe",
+    cv_eventlog_2: "./test_data/Philips/CV/SME00003/EventLog.txe",
+    cv_eventlog_3: "./test_data/Philips/CV/SME00004/EventLog.txe",
   },
   ge: {
     ct_gesys_1: "./test_data/GE/CT/SME00821/gesys_PFRT16.log",
@@ -54,8 +56,6 @@ const determinManufacturer = async (filePath, manufacturer) => {
   await log("info", "NA", "NA", "determinManufacturer", "FN CALL", {
     file: filePath,
   });
-
-  console.log(filePath, manufacturer);
 
   try {
     switch (manufacturer) {
@@ -89,4 +89,4 @@ const onBoot = async (filePath, manufacturer) => {
   }
 };
 
-onBoot(filePaths.ge.mri_gesys_1, manufacturers.ge);
+onBoot(filePaths.philips.cv_eventlog_3, manufacturers.philips);

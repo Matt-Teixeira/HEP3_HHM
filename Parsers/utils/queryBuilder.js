@@ -1,3 +1,4 @@
+const { query } = require("winston");
 const pgPool = require("../db/pg-pool");
 const { log } = require("../logger");
 const convertRowsToColumns = require("./convert-rows-to-columns");
@@ -14,6 +15,7 @@ async function bulkInsert(data, manufacturer, modality, file, version, sme) {
       "Modality: " + modality,
       "File Path: " + file
     );
+    console.log(query);
     const payload = await convertRowsToColumns("1", sme, data, file);
 
     await log("info", "NA", `${sme}`, "bulkInsert", "FN CALL", {

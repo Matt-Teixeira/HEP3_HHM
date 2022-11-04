@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS philips_ct_events;
 DROP TABLE IF EXISTS philips_mri_logcurrent;
 DROP TABLE IF EXISTS philips_mri_rmmu_short;
 DROP TABLE IF EXISTS philips_mri_rmmu_long;
+DROP TABLE IF EXISTS philips_cv_eventlog;
 
 CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -251,5 +252,26 @@ CREATE TABLE philips_mri_rmmu_long(
     CompressorReset varchar(2),
     Chd INT,
     Cpr INT,
+    date_time DATE
+);
+
+CREATE TABLE philips_cv_eventlog(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    category TEXT,
+    host_date DATE,
+    host_time TIME,
+    error_type TEXT,
+    num_1 INT,
+    technical_event_id INT,
+    description  TEXT,
+    channel_id  TEXT,
+    module TEXT,
+    source TEXT,
+    line INT,
+    memo TEXT,
+    subsystem_number INT,
+    thread_name TEXT,
+    message TEXT,
     date_time DATE
 );
