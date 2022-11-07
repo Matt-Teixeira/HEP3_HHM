@@ -4,28 +4,26 @@ const fs = require("node:fs").promises;
 const { log } = require("../../../logger");
 const convertDates = require("../../../utils/dates");
 const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
-const { get_sme_modality } = require("../../../utils/regExHelpers");
 const bulkInsert = require("../../../utils/queryBuilder");
 const { ge_re } = require("../../../utils/parsers");
 const mapDataToSchema = require("../../../utils/map-data-to-schema");
 const { ge_mri_gesys_schema } = require("../../../utils/pg-schemas");
 
-async function ge_mri_gesys(filePath) {
-  const manufacturer = "ge";
+async function ge_mri_gesys(jobId, filePath, sysConfigData) {
   const version = "gesys";
   const dateTimeVersion = "type_2";
+  const sme = sysConfigData[0].id;
+  const manufacturer = sysConfigData[0].manufacturer;
+  const modality = sysConfigData[0].modality;
+
   const data = [];
-  const sme_modality = get_sme_modality(filePath);
-  const SME = sme_modality.groups.sme;
-  const modality = sme_modality.groups.modality;
-
-  await log("info", "NA", `${SME}`, "ge_mri_gesys", "FN CALL", {
-    sme: SME,
-    modality,
-    file: filePath,
-  });
-
   try {
+    await log("info", "NA", sme, "ge_mri_gesys", "FN CALL", {
+      sme: sme,
+      modality,
+      file: filePath,
+    });
+
     const fileData = (await fs.readFile(filePath)).toString();
 
     let matches = fileData.match(ge_re.mri.gesys.block);
@@ -34,7 +32,7 @@ async function ge_mri_gesys(filePath) {
       // Step to filter regEx permutations into arrays and combine later
       const matchGroups = match.match(ge_re.mri.gesys.new);
       convertDates(matchGroups.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(SME, matchGroups.groups);
+      const matchData = groupsToArrayObj(sme, matchGroups.groups);
       data.push(matchData);
     }
 
@@ -46,13 +44,14 @@ async function ge_mri_gesys(filePath) {
       dataToArray,
       manufacturer,
       modality,
-      filePath,
       version,
-      SME
+      sme,
+      filePath,
+      jobId
     );
   } catch (error) {
-    await log("error", "NA", `${SME}`, "ge_mri_gesys", "FN CALL", {
-      sme: SME,
+    await log("error", "NA", sme, "ge_mri_gesys", "FN CALL", {
+      sme: sme,
       manufacturer,
       modality,
       file: filePath,

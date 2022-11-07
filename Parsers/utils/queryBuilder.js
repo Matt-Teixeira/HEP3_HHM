@@ -1,31 +1,36 @@
-const { query } = require("winston");
 const pgPool = require("../db/pg-pool");
 const { log } = require("../logger");
 const convertRowsToColumns = require("./convert-rows-to-columns");
 const queries = require("./queries");
 
-async function bulkInsert(data, manufacturer, modality, file, version, sme) {
+async function bulkInsert(
+  data,
+  manufacturer,
+  modality,
+  version,
+  sme,
+  file,
+  jobId
+) {
   try {
-    const query = queries[`${manufacturer}`][`${modality}`][`${version}`];
-
+    console.log("SME: " + sme);
+    console.log("Manufacturer: " + manufacturer);
+    console.log("Modality: " + modality);
     console.log("Version: " + version);
-    console.log(
-      "SME: " + sme,
-      "Manufacturer: " + manufacturer,
-      "Modality: " + modality,
-      "File Path: " + file
-    );
+    const query = queries[`${manufacturer}`][`${modality}`][`${version}`];
     console.log(query);
-    const payload = await convertRowsToColumns("1", sme, data, file);
 
-    await log("info", "NA", `${sme}`, "bulkInsert", "FN CALL", {
+    const payload = await convertRowsToColumns(jobId, sme, data, file);
+    const insertData = await pgPool.query(query, payload);
+
+    await log("info", jobId, sme, "bulkInsert", "FN CALL", {
+      file: file,
       query: JSON.stringify(query),
+      rowsInserted: insertData.rowCount,
     });
-
-    await pgPool.query(query, payload);
   } catch (error) {
     console.log(error);
-    await log("error", "NA", "NA", "bulkInsert", `FN CALL`, {
+    await log("error", jobId, "NA", "bulkInsert", `FN CALL`, {
       error,
       file: file,
     });

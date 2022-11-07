@@ -3,10 +3,7 @@ require("dotenv").config({ path: "../../.env" });
 const fs = require("node:fs");
 const readline = require("readline");
 const { log } = require("../../../logger");
-const {
-  get_sme_modality,
-  blankLineTest,
-} = require("../../../utils/regExHelpers");
+const { blankLineTest } = require("../../../utils/regExHelpers");
 const bulkInsert = require("../../../utils/queryBuilder");
 const convertDates = require("../../../utils/dates");
 const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
@@ -14,19 +11,18 @@ const mapDataToSchema = require("../../../utils/map-data-to-schema");
 const { philips_cv_eventlog_schema } = require("../../../utils/pg-schemas");
 const { philips_re } = require("../../../utils/parsers");
 
-async function phil_cv_eventlog(filePath) {
+async function phil_cv_eventlog(jobId, filePath, sysConfigData) {
   try {
-    const manufacturer = "philips";
     const version = "eventlog";
     const dateTimeVersion = "type_3";
-    const sme_modality = get_sme_modality(filePath);
-    const SME = sme_modality.groups.sme;
-    const modality = sme_modality.groups.modality;
+    const sme = sysConfigData[0].id;
+    const manufacturer = sysConfigData[0].manufacturer;
+    const modality = sysConfigData[0].modality;
 
     const data = [];
 
-    await log("info", "NA", `${SME}`, "phil_cv_eventlog", "FN CALL", {
-      sme: SME,
+    await log("info", "NA", sme, "phil_cv_eventlog", "FN CALL", {
+      sme: sme,
       modality,
       file: filePath,
     });
@@ -50,7 +46,7 @@ async function phil_cv_eventlog(filePath) {
         }
       } else {
         convertDates(matches.groups, dateTimeVersion);
-        const matchData = groupsToArrayObj(SME, matches.groups);
+        const matchData = groupsToArrayObj(sme, matches.groups);
         data.push(matchData);
       }
     }
@@ -62,14 +58,15 @@ async function phil_cv_eventlog(filePath) {
     await bulkInsert(
       dataToArray,
       manufacturer,
-      modality,
-      filePath,
+      "CV",
       version,
-      SME
+      sme,
+      filePath,
+      jobId
     );
   } catch (error) {
-    await log("error", "NA", `${SME}`, "phil_cv_eventlog", "FN CALL", {
-      sme: SME,
+    await log("error", "NA", sme, "phil_cv_eventlog", "FN CALL", {
+      sme: sme,
       modality,
       file: filePath,
       error: error.message,

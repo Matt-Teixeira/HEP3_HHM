@@ -10,19 +10,18 @@ const mapDataToSchema = require("../../../utils/map-data-to-schema");
 const { phil_mri_rmmu_short_schema } = require("../../../utils/pg-schemas");
 const { philips_re } = require("../../../utils/parsers");
 
-async function phil_mri_rmmu_short(filePath) {
+async function phil_mri_rmmu_short(jobId, filePath, sysConfigData) {
   try {
-    const manufacturer = "philips";
     const version = "rmmu_short";
     const dateTimeVersion = "type_4";
-    const sme_modality = get_sme_modality(filePath);
-    const SME = sme_modality.groups.sme;
-    const modality = sme_modality.groups.modality;
+    const sme = sysConfigData[0].id;
+    const manufacturer = sysConfigData[0].manufacturer;
+    const modality = sysConfigData[0].modality;
 
     const data = [];
 
-    await log("info", "NA", `${SME}`, "phil_mri_rmmu_short", "FN CALL", {
-      sme: SME,
+    await log("info", "NA", sme, "phil_mri_rmmu_short", "FN CALL", {
+      sme: sme,
       modality,
       file: filePath,
     });
@@ -39,7 +38,7 @@ async function phil_mri_rmmu_short(filePath) {
       match.groups.hospital_name = metaData.groups.hospital_name;
       match.groups.serial_number_magnet = metaData.groups.serial_number_magnet;
       match.groups.serial_number_meu = metaData.groups.serial_number_meu;
-      const matchData = groupsToArrayObj(SME, match.groups);
+      const matchData = groupsToArrayObj(sme, match.groups);
       data.push(matchData);
     }
 
@@ -50,13 +49,14 @@ async function phil_mri_rmmu_short(filePath) {
       dataToArray,
       manufacturer,
       modality,
-      filePath,
       version,
-      SME
+      sme,
+      filePath,
+      jobId
     );
   } catch (error) {
-    await log("error", "NA", `${SME}`, "phil_mri_rmmu_short", "FN CALL", {
-      sme: SME,
+    await log("error", "NA", sme, "phil_mri_rmmu_short", "FN CALL", {
+      sme: sme,
       modality,
       file: filePath,
       error: error.message,

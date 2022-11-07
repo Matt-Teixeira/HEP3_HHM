@@ -24,7 +24,7 @@ CREATE TABLE siemens_mri(
     month TEXT,
     day INT,
     year INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE siemens_ct(
@@ -41,7 +41,7 @@ CREATE TABLE siemens_ct(
     month TEXT,
     day INT,
     year INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE ge_mri_gesys(
@@ -72,7 +72,7 @@ CREATE TABLE ge_mri_gesys(
     message TEXT,
     sr INT,
     en INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE ge_ct_gesys(
@@ -103,7 +103,7 @@ CREATE TABLE ge_ct_gesys(
     message TEXT,
     sr INT,
     en INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE ge_cv_syserror(
@@ -127,7 +127,7 @@ CREATE TABLE ge_cv_syserror(
     debugtext TEXT,
     sourcefile TEXT,
     sourceline INT,
-    date_time DATE
+    date_time TEXT
 );
 
 
@@ -148,7 +148,7 @@ CREATE TABLE philips_ct_eal(
     param2 TEXT,
     vxwerrno INT,
     controller TEXT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE philips_ct_events(
@@ -163,7 +163,7 @@ CREATE TABLE philips_ct_events(
     ermodulernum TEXT,
     dtime TEXT,
     msg TEXT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE philips_mri_logcurrent(
@@ -183,7 +183,7 @@ CREATE TABLE philips_mri_logcurrent(
     size_copy_gb TEXT,
     data_8 TEXT,
     reconstructor TEXT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE philips_mri_rmmu_short(
@@ -217,7 +217,7 @@ CREATE TABLE philips_mri_rmmu_short(
     CompressorReset varchar(2),
     Chd INT,
     Cpr INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE philips_mri_rmmu_long(
@@ -252,7 +252,7 @@ CREATE TABLE philips_mri_rmmu_long(
     CompressorReset varchar(2),
     Chd INT,
     Cpr INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE philips_cv_eventlog(
@@ -273,5 +273,5 @@ CREATE TABLE philips_cv_eventlog(
     subsystem_number INT,
     thread_name TEXT,
     message TEXT,
-    date_time DATE
+    date_time TEXT
 );

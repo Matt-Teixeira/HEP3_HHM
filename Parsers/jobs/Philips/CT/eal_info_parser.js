@@ -3,7 +3,6 @@ require("dotenv").config({ path: "../../.env" });
 const fs = require("node:fs");
 const readline = require("readline");
 const { log } = require("../../../logger");
-const { get_sme_modality } = require("../../../utils/regExHelpers");
 const bulkInsert = require("../../../utils/queryBuilder");
 const convertDates = require("../../../utils/dates");
 const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
@@ -11,20 +10,19 @@ const mapDataToSchema = require("../../../utils/map-data-to-schema");
 const { philips_re } = require("../../../utils/parsers");
 const { philips_ct_eal_schema } = require("../../../utils/pg-schemas");
 
-async function phil_ct_eal_info(filePath) {
+async function phil_ct_eal_info(jobId, filePath, sysConfigData) {
   try {
-    const manufacturer = "philips";
     const version = "eal_info";
     const dateTimeVersion = "type_1";
-    const sme_modality = get_sme_modality(filePath);
-    const SME = sme_modality.groups.sme;
-    const modality = sme_modality.groups.modality;
+    const sme = sysConfigData[0].id;
+    const manufacturer = sysConfigData[0].manufacturer;
+    const modality = sysConfigData[0].modality;
 
     const data = [];
 
-    await log("info", "NA", `${SME}`, "phil_ct_eal_info", "FN CALL", {
-      sme: SME,
-      modality,
+    await log("info", jobId, sme, "ge_ct_gesys", "FN CALL", {
+      sme: sme,
+      modality: sysConfigData[0].modality,
       file: filePath,
     });
 
@@ -37,7 +35,7 @@ async function phil_ct_eal_info(filePath) {
       let matches = line.match(philips_re.ct_eal);
 
       convertDates(matches.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(SME, matches.groups);
+      const matchData = groupsToArrayObj(sme, matches.groups);
       data.push(matchData);
     }
 
@@ -52,13 +50,14 @@ async function phil_ct_eal_info(filePath) {
       dataToArray,
       manufacturer,
       modality,
-      filePath,
       version,
-      SME
+      sme,
+      filePath,
+      jobId
     );
   } catch (error) {
-    await log("error", "NA", `${SME}`, "phil_ct_eal_info", "FN CALL", {
-      sme: SME,
+    await log("error", jobId, sme, "phil_ct_eal_info", "FN CALL", {
+      sme: sme,
       modality,
       file: filePath,
       error: error.message,

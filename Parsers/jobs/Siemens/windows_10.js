@@ -3,7 +3,7 @@ require("dotenv").config({ path: "../../.env" });
 const fs = require("fs");
 const readline = require("readline");
 const { log } = require("../../logger");
-const { testTabs, get_sme_modality } = require("../../utils/regExHelpers");
+const { testTabs } = require("../../utils/regExHelpers");
 const { win_10_re } = require("../../utils/parsers");
 const bulkInsert = require("../../utils/queryBuilder");
 const convertDates = require("../../utils/dates");
@@ -11,19 +11,17 @@ const groupsToArrayObj = require("../../utils/prep-groups-for-array");
 const mapDataToSchema = require("../../utils/map-data-to-schema");
 const { siemens_ct_mri } = require("../../utils/pg-schemas");
 
-const parse_win_10 = async (filePath) => {
-  try {
-    // Data will be populated with the row array to set up bulk insert
-    const manufacturer = "siemens";
-    const version = "windows";
-    const dateTimeVersion = "type_3";
-    const data = [];
-    const sme_modality = get_sme_modality(filePath);
-    const SME = sme_modality.groups.sme;
-    const modality = sme_modality.groups.modality;
+const parse_win_10 = async (jobId, filePath, sysConfigData) => {
+  const version = "windows";
+  const dateTimeVersion = "type_3";
+  const sme = sysConfigData[0].id;
+  const manufacturer = sysConfigData[0].manufacturer;
+  const modality = sysConfigData[0].modality;
 
-    await log("info", "NA", `${SME}`, "parse_win_10", "FN CALL", {
-      sme: SME,
+  const data = [];
+  try {
+    await log("info", jobId, sme, "parse_win_10", "FN CALL", {
+      sme: sme,
       modality,
       file: filePath,
     });
@@ -36,9 +34,9 @@ const parse_win_10 = async (filePath) => {
     for await (const line of rl) {
       let matches = line.match(win_10_re.re_v1);
       // Test for tabs
-      await testTabs(matches, SME);
+      await testTabs(matches, sme);
       convertDates(matches.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(SME, matches.groups);
+      const matchData = groupsToArrayObj(sme, matches.groups);
       data.push(matchData);
     }
 
@@ -49,13 +47,15 @@ const parse_win_10 = async (filePath) => {
       dataToArray,
       manufacturer,
       modality,
-      filePath,
       version,
-      SME
+      sme,
+      filePath,
+      jobId
     );
     return true;
   } catch (error) {
-    await log("error", "NA", `${SME}`, "parse_win_10", "FN CATCH", {
+    console.log(error);
+    await log("error", jobId, sme, "parse_win_10", "FN CATCH", {
       error: error,
     });
   }

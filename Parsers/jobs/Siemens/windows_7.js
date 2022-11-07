@@ -2,7 +2,6 @@
 require("dotenv").config({ path: "../../.env" });
 const fs = require("node:fs").promises;
 const { log } = require("../../logger");
-const { get_sme_modality } = require("../../utils/regExHelpers");
 const { win_7_re } = require("../../utils/parsers");
 const bulkInsert = require("../../utils/queryBuilder");
 const convertDates = require("../../utils/dates");
@@ -10,18 +9,18 @@ const groupsToArrayObj = require("../../utils/prep-groups-for-array");
 const mapDataToSchema = require("../../utils/map-data-to-schema");
 const { siemens_ct_mri } = require("../../utils/pg-schemas");
 
-const parse_win_7 = async (filePath) => {
-  try {
-    const manufacturer = "siemens";
-    const version = "windows";
-    const dateTimeVersion = "type_2";
-    const data = [];
-    const sme_modality = get_sme_modality(filePath);
-    const SME = sme_modality.groups.sme;
-    const modality = sme_modality.groups.modality;
+const parse_win_7 = async (jobId, filePath, sysConfigData) => {
+  const version = "windows";
+  const dateTimeVersion = "type_2";
+  const sme = sysConfigData[0].id;
+  const manufacturer = sysConfigData[0].manufacturer;
+  const modality = sysConfigData[0].modality;
 
-    await log("info", "NA", "NA", "parse_win_7", "FN CALL", {
-      sme: SME,
+  const data = [];
+
+  try {
+    await log("info", jobId, sme, "parse_win_7", "FN CALL", {
+      sme: sme,
       modality,
       file: filePath,
     });
@@ -34,7 +33,7 @@ const parse_win_7 = async (filePath) => {
     for await (let match of matchesArray) {
       let matchGroups = match.groups.big_group.match(win_7_re.small_group);
       convertDates(matchGroups.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(SME, matchGroups.groups);
+      const matchData = groupsToArrayObj(sme, matchGroups.groups);
       data.push(matchData);
     }
 
@@ -45,12 +44,13 @@ const parse_win_7 = async (filePath) => {
       dataToArray,
       manufacturer,
       modality,
-      filePath,
       version,
-      SME
+      sme,
+      filePath,
+      jobId
     );
   } catch (error) {
-    await log("error", "NA", `${SME}`, "parse_win_7", "FN CATCH", {
+    await log("error", jobId, sme, "parse_win_7", "FN CATCH", {
       error: error,
     });
   }
