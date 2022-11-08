@@ -1,15 +1,15 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
+const { log } = require("../../logger");
 const fs = require("fs");
 const readline = require("readline");
-const { log } = require("../../logger");
+const { win_10_re } = require("../../parse/parsers");
+const groupsToArrayObj = require("../../parse/prep-groups-for-array");
+const mapDataToSchema = require("../../persist/map-data-to-schema");
+const { siemens_ct_mri } = require("../../persist/pg-schemas");
+const bulkInsert = require("../../persist/queryBuilder");
 const { testTabs } = require("../../utils/regExHelpers");
-const { win_10_re } = require("../../utils/parsers");
-const bulkInsert = require("../../utils/queryBuilder");
 const convertDates = require("../../utils/dates");
-const groupsToArrayObj = require("../../utils/prep-groups-for-array");
-const mapDataToSchema = require("../../utils/map-data-to-schema");
-const { siemens_ct_mri } = require("../../utils/pg-schemas");
 
 const parse_win_10 = async (jobId, filePath, sysConfigData) => {
   const version = "windows";
@@ -19,6 +19,7 @@ const parse_win_10 = async (jobId, filePath, sysConfigData) => {
   const modality = sysConfigData[0].modality;
 
   const data = [];
+
   try {
     await log("info", jobId, sme, "parse_win_10", "FN CALL", {
       sme: sme,

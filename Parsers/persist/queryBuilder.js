@@ -1,6 +1,6 @@
 const pgPool = require("../db/pg-pool");
 const { log } = require("../logger");
-const convertRowsToColumns = require("./convert-rows-to-columns");
+const convertRowsToColumns = require("../utils/convert-rows-to-columns");
 const queries = require("./queries");
 
 async function bulkInsert(

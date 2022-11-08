@@ -4,6 +4,7 @@ const { log } = require("../../../logger");
 const phil_mri_logcurrent = require("./logcurrent");
 const phil_mri_rmmu_short = require("./rmmu_short_cryogenic");
 const phil_mri_rmmu_long = require("./rmmu_long_cryogenic");
+const phil_mri_monitor = require("./mag_monitor");
 
 const philips_mri_parsers = async (
   jobId,
@@ -24,6 +25,9 @@ const philips_mri_parsers = async (
         break;
       case "rmmu_long_cryogenic20201017030621":
         await phil_mri_rmmu_long(jobId, filePath, sysConfigData);
+        break;
+      case "monitor":
+        await phil_mri_monitor(jobId, filePath, sysConfigData);
         break;
       default:
         break;

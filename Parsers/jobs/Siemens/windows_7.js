@@ -1,13 +1,13 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
-const fs = require("node:fs").promises;
 const { log } = require("../../logger");
-const { win_7_re } = require("../../utils/parsers");
-const bulkInsert = require("../../utils/queryBuilder");
+const fs = require("node:fs").promises;
+const { win_7_re } = require("../../parse/parsers");
+const groupsToArrayObj = require("../../parse/prep-groups-for-array");
+const mapDataToSchema = require("../../persist/map-data-to-schema");
+const { siemens_ct_mri } = require("../../persist/pg-schemas");
+const bulkInsert = require("../../persist/queryBuilder");
 const convertDates = require("../../utils/dates");
-const groupsToArrayObj = require("../../utils/prep-groups-for-array");
-const mapDataToSchema = require("../../utils/map-data-to-schema");
-const { siemens_ct_mri } = require("../../utils/pg-schemas");
 
 const parse_win_7 = async (jobId, filePath, sysConfigData) => {
   const version = "windows";

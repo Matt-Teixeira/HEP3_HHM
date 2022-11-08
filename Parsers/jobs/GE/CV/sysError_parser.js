@@ -1,18 +1,15 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
+const { log } = require("../../../logger");
 const fs = require("node:fs");
 const readline = require("readline");
-const { log } = require("../../../logger");
-const {
-  get_sme_modality,
-  blankLineTest,
-} = require("../../../utils/regExHelpers");
+const { ge_re } = require("../../../parse/parsers");
+const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
+const mapDataToSchema = require("../../../persist/map-data-to-schema");
+const { ge_cv_syserror_schema } = require("../../../persist/pg-schemas");
+const bulkInsert = require("../../../persist/queryBuilder");
+const { blankLineTest } = require("../../../utils/regExHelpers");
 const convertDates = require("../../../utils/dates");
-const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
-const bulkInsert = require("../../../utils/queryBuilder");
-const mapDataToSchema = require("../../../utils/map-data-to-schema");
-const { ge_re } = require("../../../utils/parsers");
-const { ge_cv_syserror_schema } = require("../../../utils/pg-schemas");
 
 async function ge_cv_sys_error(jobId, filePath, sysConfigData) {
   const version = "sysError";
@@ -22,13 +19,13 @@ async function ge_cv_sys_error(jobId, filePath, sysConfigData) {
   const modality = sysConfigData[0].modality;
   const data = [];
 
-  await log("info", jobId, sme, "ge_cv_sys_error", "FN CALL", {
-    sme: sme,
-    modality,
-    file: filePath,
-  });
-
   try {
+    await log("info", jobId, sme, "ge_cv_sys_error", "FN CALL", {
+      sme: sme,
+      modality,
+      file: filePath,
+    });
+
     const rl = readline.createInterface({
       input: fs.createReadStream(filePath),
       crlfDelay: Infinity,

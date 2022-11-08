@@ -16,6 +16,7 @@ const filePaths = {
       "./test_data/Philips/MR/SME01399/rmmu_short_cryogenic20210430030544.log",
     mri_rmmu_long:
       "./test_data/Philips/MR/SME01399/rmmu_long_cryogenic20201017030621.log",
+    mri_monitor: "./test_data/Philips/MR/SME01406/monitor",
     cv_eventlog_1: "./test_data/Philips/CV/SME00001/EventLog.txe",
     cv_eventlog_2: "./test_data/Philips/CV/SME00003/EventLog.txe",
     cv_eventlog_3: "./test_data/Philips/CV/SME00004/EventLog.txe",
@@ -86,4 +87,4 @@ const onBoot = async (filePath) => {
   }
 };
 
-onBoot(filePaths.ge.cv_sysError_1);
+onBoot(filePaths.philips.mri_monitor);

@@ -15,7 +15,7 @@ const philipsModalities = async (jobId, filePath, sysConfigData) => {
     const modality_file = filePath.match(modality_file_re);
     let file_type = modality_file.groups.file_type
 
-    console.log(sysConfigData[0].modality)
+    console.log("File Type: " + file_type)
 
     switch (sysConfigData[0].modality) {
       case "MRI":

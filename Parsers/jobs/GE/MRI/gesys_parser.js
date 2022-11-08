@@ -1,13 +1,13 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
-const fs = require("node:fs").promises;
 const { log } = require("../../../logger");
+const fs = require("node:fs").promises;
+const { ge_re } = require("../../../parse/parsers");
+const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
+const mapDataToSchema = require("../../../persist/map-data-to-schema");
+const { ge_mri_gesys_schema } = require("../../../persist/pg-schemas");
+const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
-const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
-const bulkInsert = require("../../../utils/queryBuilder");
-const { ge_re } = require("../../../utils/parsers");
-const mapDataToSchema = require("../../../utils/map-data-to-schema");
-const { ge_mri_gesys_schema } = require("../../../utils/pg-schemas");
 
 async function ge_mri_gesys(jobId, filePath, sysConfigData) {
   const version = "gesys";
@@ -17,6 +17,7 @@ async function ge_mri_gesys(jobId, filePath, sysConfigData) {
   const modality = sysConfigData[0].modality;
 
   const data = [];
+  
   try {
     await log("info", "NA", sme, "ge_mri_gesys", "FN CALL", {
       sme: sme,

@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS philips_mri_logcurrent;
 DROP TABLE IF EXISTS philips_mri_rmmu_short;
 DROP TABLE IF EXISTS philips_mri_rmmu_long;
 DROP TABLE IF EXISTS philips_cv_eventlog;
+DROP TABLE IF EXISTS philips_mri_monitor;
 
 CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -274,4 +275,10 @@ CREATE TABLE philips_cv_eventlog(
     thread_name TEXT,
     message TEXT,
     date_time TEXT
+);
+
+CREATE TABLE philips_mri_monitor(
+    id TEXT NOT NULL PRIMARY KEY,
+    equipment_id TEXT,
+    monitoring_data jsonb
 );

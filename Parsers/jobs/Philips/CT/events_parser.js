@@ -1,25 +1,26 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
+const { log } = require("../../../logger");
 const fs = require("node:fs");
 const readline = require("readline");
-const { log } = require("../../../logger");
+const { philips_re } = require("../../../parse/parsers");
+const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
+const mapDataToSchema = require("../../../persist/map-data-to-schema");
+const { philips_ct_events_schema } = require("../../../persist/pg-schemas");
+const bulkInsert = require("../../../persist/queryBuilder");
 const { blankLineTest } = require("../../../utils/regExHelpers");
-const bulkInsert = require("../../../utils/queryBuilder");
 const convertDates = require("../../../utils/dates");
-const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
-const mapDataToSchema = require("../../../utils/map-data-to-schema");
-const { philips_ct_events_schema } = require("../../../utils/pg-schemas");
-const { philips_re } = require("../../../utils/parsers");
 
 async function phil_ct_events(jobId, filePath, sysConfigData) {
-  try {
-    const version = "events";
-    const dateTimeVersion = "type_1";
-    const data = [];
-    const sme = sysConfigData[0].id;
-    const manufacturer = sysConfigData[0].manufacturer;
-    const modality = sysConfigData[0].modality;
+  const version = "events";
+  const dateTimeVersion = "type_1";
+  const sme = sysConfigData[0].id;
+  const manufacturer = sysConfigData[0].manufacturer;
+  const modality = sysConfigData[0].modality;
 
+  const data = [];
+
+  try {
     await log("info", jobId, sme, "phil_ct_events", "FN CALL", {
       sme: sme,
       modality,

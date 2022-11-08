@@ -1,24 +1,24 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
-const fs = require("node:fs").promises;
 const { log } = require("../../../logger");
-const bulkInsert = require("../../../utils/queryBuilder");
+const fs = require("node:fs").promises;
+const { philips_re } = require("../../../parse/parsers");
+const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
+const mapDataToSchema = require("../../../persist/map-data-to-schema");
+const { phil_mri_rmmu_long_schema } = require("../../../persist/pg-schemas");
+const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
-const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
-const mapDataToSchema = require("../../../utils/map-data-to-schema");
-const { phil_mri_rmmu_long_schema } = require("../../../utils/pg-schemas");
-const { philips_re } = require("../../../utils/parsers");
 
 async function phil_mri_rmmu_long(jobId, filePath, sysConfigData) {
+  const version = "rmmu_long";
+  const dateTimeVersion = "type_4";
+  const sme = sysConfigData[0].id;
+  const manufacturer = sysConfigData[0].manufacturer;
+  const modality = sysConfigData[0].modality;
+
+  const data = [];
+
   try {
-    const version = "rmmu_long";
-    const dateTimeVersion = "type_4";
-    const sme = sysConfigData[0].id;
-    const manufacturer = sysConfigData[0].manufacturer;
-    const modality = sysConfigData[0].modality;
-
-    const data = [];
-
     await log("info", jobId, sme, "phil_mri_rmmu_long", "FN CALL", {
       sme: sme,
       modality,
