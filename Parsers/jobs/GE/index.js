@@ -14,6 +14,7 @@ const geModalities = async (jobId, filePath, sysConfigData) => {
     let file_type = modality_file.groups.file_type;
 
     console.log(sysConfigData[0].modality);
+    console.log(file_type);
     switch (sysConfigData[0].modality) {
       case "MRI":
         await ge_mri_parsers(jobId, filePath, sysConfigData, file_type);

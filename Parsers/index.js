@@ -7,20 +7,6 @@ const philips_parser = require("./jobs/Philips");
 const ge_parser = require("./jobs/GE");
 const { get_sme } = require("./utils/regExHelpers");
 
-// CT: SME00811 SME00812(syntax error at or near "(") SME00816
-// MRI: SME01107 SME01109 SME01112
-// /opt/hhm-files/C0137/SHIP009/SME00812/EvtApplication_Today.txt
-// /opt/hhm-files/C0137/SHIP009/SME01107/EvtApplication_Today.txt
-// /opt/mirror/C0137/SHIP009/SME01112/MRI/EvtApplication_Today.txt
-// /opt/mirror/C0137/SHIP009/SME00811/CT/EvtApplication_Today.txt
-// ./test_data/SME00001_CT.txt
-
-const manufacturers = {
-  siemens: "siemens",
-  ge: "ge",
-  philips: "philips",
-};
-
 const filePaths = {
   philips: {
     ct_eal: "./test_data/Philips/CT/SME00246/ealinfo.csv",
@@ -70,7 +56,6 @@ const determinManufacturer = async (jobId, filePath) => {
 
     switch (sysConfigData.rows[0].manufacturer) {
       case "Siemens":
-        console.log("In Siemens")
         await siemens_parser(jobId, filePath, sysConfigData.rows);
         break;
       case "Philips":
@@ -101,4 +86,4 @@ const onBoot = async (filePath) => {
   }
 };
 
-onBoot(filePaths.siemens.mri_10);
+onBoot(filePaths.ge.cv_sysError_1);

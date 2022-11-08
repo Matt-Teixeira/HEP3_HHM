@@ -10,7 +10,7 @@ const mapDataToSchema = require("../../../utils/map-data-to-schema");
 const { ge_re } = require("../../../utils/parsers");
 const { ge_ct_gesys_schema } = require("../../../utils/pg-schemas");
 
-async function ge_ct_gesys(jobId, filePath, sysConfigData) {
+async function ge_ct_gesys(jobId, filePath, sysConfigData, file_type) {
   const version = "gesys";
   const dateTimeVersion = "type_2";
   const sme = sysConfigData[0].id;
