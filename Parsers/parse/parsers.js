@@ -144,7 +144,7 @@ const philips_re = {
       monitor_magnet_pressure_dps:
         /(?<host_date>\d{4}-\d{2}-\d{2})\s(?<host_time>\d{2}:\d{2}:\d{2})\s(?<mag_dps_status_minutes>(-)?\d+(\.\d+)?)/g,
       monitor_magnet_quench:
-        /(?<host_date>\d{4}-\d{2}-\d{2})\s(?<host_time>\d{2}:\d{2}:\d{2})\s(?<quenched>\d+)\s(?<rmmu_minutes>(-)?\d+(\.\d+)?)/g,
+        /(?<host_date>\d{4}-\d{2}-\d{2})\s(?<host_time>\d{2}:\d{2}:\d{2})\s(?<quenched>\d+)/g,
       monitor_magnet_under_pressure:
         /(?<host_date>\d{4}-\d{2}-\d{2})\s(?<host_time>\d{2}:\d{2}:\d{2})\s(?<mag_dps_status_days>(-)?\d+(\.\d+)?)/g,
     },

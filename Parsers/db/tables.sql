@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS philips_mri_rmmu_short;
 DROP TABLE IF EXISTS philips_mri_rmmu_long;
 DROP TABLE IF EXISTS philips_cv_eventlog;
 DROP TABLE IF EXISTS philips_mri_monitor;
+DROP TABLE IF EXISTS philips_mri_monitoring_data
 
 CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -281,4 +282,63 @@ CREATE TABLE philips_mri_monitor(
     id TEXT NOT NULL PRIMARY KEY,
     equipment_id TEXT,
     monitoring_data jsonb
+);
+
+CREATE TABLE philips_mri_monitoring_data(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    monitor_1HRFAmp1_AvgPower INT,
+    monitor_1HRFAmp1_PredAvgPower INT,
+    monitor_EPI_AvgPhix INT,
+    monitor_EPI_Delay INT,
+    monitor_EPI_MaxDevPHPhi0 INT,
+    monitor_EPI_MaxDevPHPhix INT,
+    monitor_EPI_MaxDevPHSig INT,
+    monitor_EPI_MaxPHPhaseRes INT,
+    monitor_EPI_MinPHPhaseRes INT,
+    monitor_EPI_OutlierPHPhi0 INT,
+    monitor_EPI_OutlierPHPhix INT,
+    monitor_EPI_OutlierPHSig INT,
+    monitor_EPI_StdDevPHPhi0 INT,
+    monitor_EPI_StdDevPHPhix INT,
+    monitor_EPI_StdDevPHSig INT,
+    monitor_PrepShim_LinewidthChange INT,
+    monitor_PrepShim_PowsumChange INT,
+    monitor_Spikes_MaxSpecSpikePower INT,
+    monitor_Spikes_NoisePower INT,
+    monitor_Spikes_NrAboveThreshold1 INT,
+    monitor_Spikes_NrAboveThreshold2 INT,
+    monitor_Spikes_NrAboveThreshold3 INT,
+    monitor_Spikes_NrSuppressed INT,
+    monitor_Spikes_PowerAboveThreshold1 INT,
+    monitor_Spikes_PowerAboveThreshold2 INT,
+    monitor_Spikes_PowerAboveThreshold3 INT,
+    monitor_Spikes_QPI INT,
+    monitor_Spikes_QPIAfterCorrection INT,
+    monitor_Spikes_ScanName TEXT,
+    monitor_Spikes_SpikeNoiseFraction INT,
+    monitor_System_HumExamRoom INT,
+    monitor_System_HumTechRoom INT,
+    monitor_System_TempExamRoom INT,
+    monitor_System_TempTechRoom INT,
+    monitor_cryocompressor_bypass INT,
+    monitor_cryocompressor_cerr INT,
+    monitor_cryocompressor_palm INT,
+    monitor_cryocompressor_talm INT,
+    monitor_cryocompressor_time_status INT,
+    monitor_magnet_b0_heater_on INT,
+    monitor_magnet_helium_level_status INT,
+    monitor_magnet_helium_level_value INT,
+    monitor_magnet_helium_refill_level INT,
+    monitor_magnet_lt_boiloff INT,
+    monitor_magnet_pressure_dps INT,
+    monitor_magnet_quench INT,
+    monitor_magnet_under_pressure INT,
+);
+
+CREATE TABLE philips_mri_monitoring_data(
+    id BIGSERIAL PRIMARY KEY,
+    host_date DATE,
+    host_time TIME,
+    avg_power INT
 );

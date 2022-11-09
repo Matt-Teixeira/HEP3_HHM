@@ -1,11 +1,26 @@
+("use strict");
+require("dotenv").config({ path: "../../.env" });
+const { log } = require("../../../logger");
 const fs = require("node:fs").promises;
 const { philips_re } = require("../../../parse/parsers");
+const insertJsonB = require("../../../persist/phil_mri_monitor_data_insert");
 const pgPool = require("../../../db/pg-pool");
+const { DateTime } = require("luxon");
 
 async function phil_mri_monitor(jobId, filePath, sysConfigData) {
-  const data = [];
-  const jsonData = {};
+  const sme = sysConfigData[0].id;
+  const manufacturer = sysConfigData[0].manufacturer;
+  const modality = sysConfigData[0].modality;
+
   try {
+    await log("info", jobId, sme, "phil_mri_monitor", "FN CALL", {
+      sme: sme,
+      modality,
+      file: filePath,
+    });
+
+    const jsonData = {};
+
     let files = await fs.readdir(filePath);
 
     let monitorFileTest = /monitor/;
@@ -30,16 +45,45 @@ async function phil_mri_monitor(jobId, filePath, sysConfigData) {
       }
     }
 
-    const jData = JSON.stringify(jsonData);
+    //await insertJsonB(jobId, [sme, jsonData]);
 
-    const date = new Date();
-    const string =
-      "INSERT INTO philips_mri_monitor(id, equipment_id, monitoring_data) VALUES($1, $2, $3)";
-    const value = [date, "SME00001", jData];
-    const insertedData = await pgPool.query(string, value);
-    console.log(insertedData);
+    let count = 0;
+    for (const prop in jsonData) {
+
+      let queryString = "SELECT * FROM philips_mri_monitoring_data"
+      let value = [prop];
+      let queryData = await pgPool.query(queryString)
+
+      console.log(queryData.rows[0].host_date);
+      const fileData = jsonData[prop];
+      //console.log(prop, fileData);
+      for await (const data of fileData) {
+        let d2 = DateTime.fromISO(queryData.rows[0].host_date);
+        console.log(d2)
+        const dataPoint = JSON.parse(data);
+        //console.log(prop, dataPoint)
+        
+        let d1 = DateTime.fromISO(dataPoint.host_date);
+        let dateIncremented = d1.toMillis() - d2.toMillis();
+        if (dateIncremented === 86400000) {
+          console.log(dataPoint);
+        }
+        count++;
+        if (count === 500) {
+          return;
+        }
+      }
+      return;
+      let lastDataPoint = JSON.parse(jsonData[prop][jsonData[prop].length - 1]);
+    }
   } catch (error) {
     console.log(error);
+    await log("error", jobId, sme, "phil_mri_monitor", "FN CALL", {
+      sme: sme,
+      modality,
+      file: filePath,
+      error: error,
+    });
   }
 }
 
