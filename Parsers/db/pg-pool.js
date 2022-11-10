@@ -10,7 +10,7 @@ const pgPool = new Pool({
    sslMode: require,
    ssl: {
       cert: fs.readFileSync(`./db/BaltimoreCyberTrustRoot.crt.pem`),
-      rejectUnauthorized: false,
+      rejectUnauthorized: true,
    },
    // idleTimeoutMillis: 60000, // DOESN'T SEEM TO MATTER
 });

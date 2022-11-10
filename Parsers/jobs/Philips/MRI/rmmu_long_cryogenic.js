@@ -1,28 +1,26 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
-const fs = require("node:fs").promises;
 const { log } = require("../../../logger");
-const { get_sme_modality } = require("../../../utils/regExHelpers");
-const bulkInsert = require("../../../utils/queryBuilder");
+const fs = require("node:fs").promises;
+const { philips_re } = require("../../../parse/parsers");
+const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
+const mapDataToSchema = require("../../../persist/map-data-to-schema");
+const { phil_mri_rmmu_long_schema } = require("../../../persist/pg-schemas");
+const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
-const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
-const mapDataToSchema = require("../../../utils/map-data-to-schema");
-const { phil_mri_rmmu_long_schema } = require("../../../utils/pg-schemas");
-const { philips_re } = require("../../../utils/parsers");
 
-async function phil_mri_rmmu_long(filePath) {
+async function phil_mri_rmmu_long(jobId, filePath, sysConfigData) {
+  const version = "rmmu_long";
+  const dateTimeVersion = "type_4";
+  const sme = sysConfigData[0].id;
+  const manufacturer = sysConfigData[0].manufacturer;
+  const modality = sysConfigData[0].modality;
+
+  const data = [];
+
   try {
-    const manufacturer = "philips";
-    const version = "rmmu_long";
-    const dateTimeVersion = "type_4";
-    const sme_modality = get_sme_modality(filePath);
-    const SME = sme_modality.groups.sme;
-    const modality = sme_modality.groups.modality;
-
-    const data = [];
-
-    await log("info", "NA", `${SME}`, "phil_mri_rmmu_long", "FN CALL", {
-      sme: SME,
+    await log("info", jobId, sme, "phil_mri_rmmu_long", "FN CALL", {
+      sme: sme,
       modality,
       file: filePath,
     });
@@ -39,7 +37,7 @@ async function phil_mri_rmmu_long(filePath) {
       match.groups.hospital_name = metaData.groups.hospital_name;
       match.groups.serial_number_magnet = metaData.groups.serial_number_magnet;
       match.groups.serial_number_meu = metaData.groups.serial_number_meu;
-      const matchData = groupsToArrayObj(SME, match.groups);
+      const matchData = groupsToArrayObj(sme, match.groups);
       data.push(matchData);
     }
 
@@ -50,13 +48,14 @@ async function phil_mri_rmmu_long(filePath) {
       dataToArray,
       manufacturer,
       modality,
-      filePath,
       version,
-      SME
+      sme,
+      filePath,
+      jobId
     );
   } catch (error) {
-    await log("error", "NA", `${SME}`, "phil_mri_rmmu_long", "FN CALL", {
-      sme: SME,
+    await log("error", jobId, sme, "phil_mri_rmmu_long", "FN CALL", {
+      sme: sme,
       modality,
       file: filePath,
       error: error.message,

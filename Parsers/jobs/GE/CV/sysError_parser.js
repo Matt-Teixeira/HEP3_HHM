@@ -1,35 +1,31 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
+const { log } = require("../../../logger");
 const fs = require("node:fs");
 const readline = require("readline");
-const { log } = require("../../../logger");
-const {
-  get_sme_modality,
-  blankLineTest,
-} = require("../../../utils/regExHelpers");
+const { ge_re } = require("../../../parse/parsers");
+const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
+const mapDataToSchema = require("../../../persist/map-data-to-schema");
+const { ge_cv_syserror_schema } = require("../../../persist/pg-schemas");
+const bulkInsert = require("../../../persist/queryBuilder");
+const { blankLineTest } = require("../../../utils/regExHelpers");
 const convertDates = require("../../../utils/dates");
-const groupsToArrayObj = require("../../../utils/prep-groups-for-array");
-const bulkInsert = require("../../../utils/queryBuilder");
-const mapDataToSchema = require("../../../utils/map-data-to-schema");
-const { ge_re } = require("../../../utils/parsers");
-const { ge_cv_syserror_schema } = require("../../../utils/pg-schemas");
 
-async function ge_cv_sys_error(filePath) {
-  const manufacturer = "ge";
+async function ge_cv_sys_error(jobId, filePath, sysConfigData) {
   const version = "sysError";
   const dateTimeVersion = "type_3";
-  const sme_modality = get_sme_modality(filePath);
-  const SME = sme_modality.groups.sme;
-  const modality = sme_modality.groups.modality;
+  const sme = sysConfigData[0].id;
+  const manufacturer = sysConfigData[0].manufacturer;
+  const modality = sysConfigData[0].modality;
   const data = [];
 
-  await log("info", "NA", `${SME}`, "ge_cv_sys_error", "FN CALL", {
-    sme: SME,
-    modality,
-    file: filePath,
-  });
-
   try {
+    await log("info", jobId, sme, "ge_cv_sys_error", "FN CALL", {
+      sme: sme,
+      modality,
+      file: filePath,
+    });
+
     const rl = readline.createInterface({
       input: fs.createReadStream(filePath),
       crlfDelay: Infinity,
@@ -42,14 +38,14 @@ async function ge_cv_sys_error(filePath) {
         if (isNewLine) {
           continue;
         } else {
-          await log("error", "NA", "NA", "Not_New_Line", "FN CALL", {
+          await log("error", jobId, sme, "Not_New_Line", "FN CALL", {
             message: "This is not a blank new line - Bad Match",
             line: line,
           });
         }
       } else {
         convertDates(matches.groups, dateTimeVersion);
-        const matchData = groupsToArrayObj(SME, matches.groups);
+        const matchData = groupsToArrayObj(sme, matches.groups);
         data.push(matchData);
       }
     }
@@ -62,15 +58,16 @@ async function ge_cv_sys_error(filePath) {
     await bulkInsert(
       dataToArray,
       manufacturer,
-      modality,
-      filePath,
+      "CV",
       version,
-      SME
+      sme,
+      filePath,
+      jobId
     );
   } catch (error) {
-    await log("error", "NA", `${SME}`, "ge_cv_sys_error", "FN CALL", {
+    await log("error", jobId, sme, "ge_cv_sys_error", "FN CALL", {
       error: error,
-      sme: SME,
+      sme: sme,
       manufacturer,
       modality,
       file: filePath,

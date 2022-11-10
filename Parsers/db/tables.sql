@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS philips_mri_logcurrent;
 DROP TABLE IF EXISTS philips_mri_rmmu_short;
 DROP TABLE IF EXISTS philips_mri_rmmu_long;
 DROP TABLE IF EXISTS philips_cv_eventlog;
+DROP TABLE IF EXISTS philips_mri_monitor;
+DROP TABLE IF EXISTS philips_mri_monitoring_data
 
 CREATE TABLE siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -24,7 +26,7 @@ CREATE TABLE siemens_mri(
     month TEXT,
     day INT,
     year INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE siemens_ct(
@@ -41,7 +43,7 @@ CREATE TABLE siemens_ct(
     month TEXT,
     day INT,
     year INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE ge_mri_gesys(
@@ -72,7 +74,7 @@ CREATE TABLE ge_mri_gesys(
     message TEXT,
     sr INT,
     en INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE ge_ct_gesys(
@@ -103,7 +105,7 @@ CREATE TABLE ge_ct_gesys(
     message TEXT,
     sr INT,
     en INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE ge_cv_syserror(
@@ -127,7 +129,7 @@ CREATE TABLE ge_cv_syserror(
     debugtext TEXT,
     sourcefile TEXT,
     sourceline INT,
-    date_time DATE
+    date_time TEXT
 );
 
 
@@ -148,7 +150,7 @@ CREATE TABLE philips_ct_eal(
     param2 TEXT,
     vxwerrno INT,
     controller TEXT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE philips_ct_events(
@@ -163,7 +165,7 @@ CREATE TABLE philips_ct_events(
     ermodulernum TEXT,
     dtime TEXT,
     msg TEXT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE philips_mri_logcurrent(
@@ -183,7 +185,7 @@ CREATE TABLE philips_mri_logcurrent(
     size_copy_gb TEXT,
     data_8 TEXT,
     reconstructor TEXT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE philips_mri_rmmu_short(
@@ -217,7 +219,7 @@ CREATE TABLE philips_mri_rmmu_short(
     CompressorReset varchar(2),
     Chd INT,
     Cpr INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE philips_mri_rmmu_long(
@@ -252,7 +254,7 @@ CREATE TABLE philips_mri_rmmu_long(
     CompressorReset varchar(2),
     Chd INT,
     Cpr INT,
-    date_time DATE
+    date_time TEXT
 );
 
 CREATE TABLE philips_cv_eventlog(
@@ -273,5 +275,80 @@ CREATE TABLE philips_cv_eventlog(
     subsystem_number INT,
     thread_name TEXT,
     message TEXT,
-    date_time DATE
+    date_time TEXT
+);
+
+CREATE TABLE philips_mri_monitor(
+    id TEXT NOT NULL PRIMARY KEY,
+    equipment_id TEXT,
+    monitoring_data jsonb
+);
+
+CREATE TABLE philips_mri_monitoring_data(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    monitor_1HRFAmp1_AvgPower INT,
+    monitor_1HRFAmp1_PredAvgPower INT,
+    monitor_EPI_AvgPhix INT,
+    monitor_EPI_Delay INT,
+    monitor_EPI_MaxDevPHPhi0 INT,
+    monitor_EPI_MaxDevPHPhix INT,
+    monitor_EPI_MaxDevPHSig INT,
+    monitor_EPI_MaxPHPhaseRes INT,
+    monitor_EPI_MinPHPhaseRes INT,
+    monitor_EPI_OutlierPHPhi0 INT,
+    monitor_EPI_OutlierPHPhix INT,
+    monitor_EPI_OutlierPHSig INT,
+    monitor_EPI_StdDevPHPhi0 INT,
+    monitor_EPI_StdDevPHPhix INT,
+    monitor_EPI_StdDevPHSig INT,
+    monitor_PrepShim_LinewidthChange INT,
+    monitor_PrepShim_PowsumChange INT,
+    monitor_Spikes_MaxSpecSpikePower INT,
+    monitor_Spikes_NoisePower INT,
+    monitor_Spikes_NrAboveThreshold1 INT,
+    monitor_Spikes_NrAboveThreshold2 INT,
+    monitor_Spikes_NrAboveThreshold3 INT,
+    monitor_Spikes_NrSuppressed INT,
+    monitor_Spikes_PowerAboveThreshold1 INT,
+    monitor_Spikes_PowerAboveThreshold2 INT,
+    monitor_Spikes_PowerAboveThreshold3 INT,
+    monitor_Spikes_QPI INT,
+    monitor_Spikes_QPIAfterCorrection INT,
+    monitor_Spikes_ScanName TEXT,
+    monitor_Spikes_SpikeNoiseFraction INT,
+    monitor_System_HumExamRoom INT,
+    monitor_System_HumTechRoom INT,
+    monitor_System_TempExamRoom INT,
+    monitor_System_TempTechRoom INT,
+    monitor_cryocompressor_bypass INT,
+    monitor_cryocompressor_cerr INT,
+    monitor_cryocompressor_palm INT,
+    monitor_cryocompressor_talm INT,
+    monitor_cryocompressor_time_status INT,
+    monitor_magnet_b0_heater_on INT,
+    monitor_magnet_helium_level_status INT,
+    monitor_magnet_helium_level_value INT,
+    monitor_magnet_helium_refill_level INT,
+    monitor_magnet_lt_boiloff INT,
+    monitor_magnet_pressure_dps INT,
+    monitor_magnet_quench INT,
+    monitor_magnet_under_pressure INT,
+);
+
+CREATE TABLE philips_mri_monitoring_data(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    host_date DATE,
+    host_time TIME,
+    tech_room_humidity INT,
+    tech_room_temp INT,
+    cryo_comp_comm_error INT,
+    cryo_comp_press_alarm INT,
+    cryo_comp_temp_alarm INT,
+    cryo_comp_malf_minutes INT,
+    helium_level_value INT,
+    long_term_boil_off INT,
+    mag_dps_status_minutes INT,
+    quenched INT
 );
