@@ -338,7 +338,17 @@ CREATE TABLE philips_mri_monitoring_data(
 
 CREATE TABLE philips_mri_monitoring_data(
     id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
     host_date DATE,
     host_time TIME,
-    avg_power INT
+    tech_room_humidity INT,
+    tech_room_temp INT,
+    cryo_comp_comm_error INT,
+    cryo_comp_press_alarm INT,
+    cryo_comp_temp_alarm INT,
+    cryo_comp_malf_minutes INT,
+    helium_level_value INT,
+    long_term_boil_off INT,
+    mag_dps_status_minutes INT,
+    quenched INT
 );

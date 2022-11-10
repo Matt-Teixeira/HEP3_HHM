@@ -88,4 +88,4 @@ const onBoot = async (filePath) => {
   }
 };
 
-onBoot(filePaths.philips.mri_monitor_2);
+onBoot(filePaths.philips.mri_monitor_1);

@@ -16,9 +16,9 @@ async function testTabs(matches, SME, count) {
 
 function get_sme_modality(filePath) {
   const smeRe = /(?<sme>SME\d{5})[\/_](?<modality>(MRI|MR|CT|CV)?)/;
-  let modality_sme = filePath.match(smeRe)
+  let modality_sme = filePath.match(smeRe);
   if (modality_sme === null || modality_sme.groups.modality === "") {
-    const smeRe = /(?<modality>[A-Z]+)[\/_](?<sme>SME\d{5})/
+    const smeRe = /(?<modality>[A-Z]+)[\/_](?<sme>SME\d{5})/;
     return filePath.match(smeRe);
   }
   return modality_sme;
@@ -27,7 +27,7 @@ function get_sme_modality(filePath) {
 function get_sme(filePath) {
   const smeRe = /(?<sme>SME\d{5})/;
   if (filePath.match(smeRe) === null) {
-    const smeRe = /(?<sme>SME\d{5})/
+    const smeRe = /(?<sme>SME\d{5})/;
     return filePath.match(smeRe)[0];
   }
   return filePath.match(smeRe)[0];
@@ -35,7 +35,16 @@ function get_sme(filePath) {
 
 function blankLineTest(line) {
   const blankLineTest = /^[ \t\n]*$/;
-  return isNewLine = blankLineTest.test(line);
+  return (isNewLine = blankLineTest.test(line));
+}
+
+async function getMonitorFiles(files) {
+  let monitorFileTest = /monitor/;
+
+  const monitorFiles = files.filter(
+    (file) => monitorFileTest.test(file) === true
+  );
+  return monitorFiles;
 }
 
 // SR\s(\d+).*?EN\s\1
@@ -44,5 +53,6 @@ module.exports = {
   testTabs,
   get_sme_modality,
   get_sme,
-  blankLineTest
+  blankLineTest,
+  getMonitorFiles
 };

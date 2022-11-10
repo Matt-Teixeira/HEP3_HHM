@@ -4,7 +4,8 @@ const { log } = require("../../../logger");
 const phil_mri_logcurrent = require("./logcurrent");
 const phil_mri_rmmu_short = require("./rmmu_short_cryogenic");
 const phil_mri_rmmu_long = require("./rmmu_long_cryogenic");
-const phil_mri_monitor = require("./mag_monitor");
+const phil_mri_monitor_jsonb = require("./insert_jsonb_data");
+const phil_mri_monitor_display = require("./insert_display_data");
 
 const philips_mri_parsers = async (
   jobId,
@@ -27,7 +28,12 @@ const philips_mri_parsers = async (
         await phil_mri_rmmu_long(jobId, filePath, sysConfigData);
         break;
       case "monitor":
-        await phil_mri_monitor(jobId, filePath, sysConfigData);
+        const data = await phil_mri_monitor_jsonb(
+          jobId,
+          filePath,
+          sysConfigData
+        );
+        await phil_mri_monitor_display(jobId, filePath, sysConfigData, data);
         break;
       default:
         break;

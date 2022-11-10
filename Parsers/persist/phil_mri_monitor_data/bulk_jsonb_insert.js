@@ -1,7 +1,7 @@
 ("use strict");
 require("dotenv").config({ path: "../.env" });
-const { log } = require("../logger");
-const pgPool = require("../db/pg-pool");
+const { log } = require("../../logger");
+const pgPool = require("../../db/pg-pool");
 
 async function insertJsonB(jobId, value) {
   const sme = value[0];
