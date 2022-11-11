@@ -39,7 +39,7 @@ async function phil_mri_monitor(jobId, filePath, sysConfigData) {
         jsonData[fileName].push(group.groups);
       }
     }
-    //let data = await insertJsonB(jobId, [sme, jsonData]);
+    await insertJsonB(jobId, [sme, jsonData]);
 
     return jsonData;
   } catch (error) {

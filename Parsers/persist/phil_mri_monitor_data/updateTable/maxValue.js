@@ -1,19 +1,24 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
+const pgPool = require("../../../db/pg-pool");
 const { log } = require("../../../logger");
 const {
   getExistingDates,
   updateTable,
   insertData,
-} = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_comm_error
+} = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_malf_minutes
 
-async function booleanValue(jobId, sme, data, column) {
+async function maxValue(jobId, sme, data, column) {
   try {
-    await log("info", jobId, sme, "booleanValue", "FN CALL", {
+    await log("info", jobId, sme, "maxValue", "FN CALL", {
       sme: sme,
     });
+    const startDate = data[data.length - 1].host_date;
+    const endDate = data[0].host_date;
+    
+    const values = [sme, startDate, endDate];
+    const systemDates = await getExistingDates(jobId, sme, values, 2);
     // Get all rows/dates for this sme
-    const systemDates = await getExistingDates(jobId, sme);
 
     let bucket = [];
     let prevData = data[0].host_date; //Set to first date in file data(file capture groups)
@@ -28,13 +33,7 @@ async function booleanValue(jobId, sme, data, column) {
       }
       if (currentDate !== prevData) {
         // Not equal means a change in dates
-        let maxValue = Math.max(...bucket);
-
-        if (maxValue > 0) {
-          maxValue = 1;
-        } else {
-          maxValue = 0;
-        }
+        const maxValue = Math.max(...bucket);
 
         if (systemDates.includes(prevData)) {
           // If date exists for sme: UPDATE row
@@ -55,14 +54,7 @@ async function booleanValue(jobId, sme, data, column) {
     // Deal with last set of dates in array
     if (systemDates.includes(prevData)) {
       // If date exists for sme: UPDATE row
-      let maxValue = Math.max(...bucket);
-
-      if (maxValue > 0) {
-        maxValue = 1;
-      } else {
-        maxValue = 0;
-      }
-
+      const maxValue = Math.max(...bucket);
       await updateTable(jobId, column, [
         maxValue,
         sme,
@@ -70,14 +62,7 @@ async function booleanValue(jobId, sme, data, column) {
       ]);
     } else {
       // If date dose not exist: INSERT new row
-      let maxValue = Math.max(...bucket);
-
-      if (maxValue > 0) {
-        maxValue = 1;
-      } else {
-        maxValue = 0;
-      }
-
+      const maxValue = Math.max(...bucket);
       await insertData(jobId, column, [
         sme,
         data[data.length - 1].host_date,
@@ -86,7 +71,7 @@ async function booleanValue(jobId, sme, data, column) {
     }
   } catch (error) {
     console.log(error);
-    await log("error", jobId, sme, "booleanValue", "FN CALL", {
+    await log("error", jobId, sme, "maxValue", "FN CALL", {
       sme: sme,
       column: column,
       error: error,
@@ -94,4 +79,4 @@ async function booleanValue(jobId, sme, data, column) {
   }
 }
 
-module.exports = booleanValue;
+module.exports = maxValue;

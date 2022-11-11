@@ -5,15 +5,15 @@ const {
   getExistingDates,
   updateTable,
   insertData,
-} = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_malf_minutes
+} = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_comm_error
 
-async function maxValue(jobId, sme, data, column) {
+async function booleanValue(jobId, sme, data, column) {
   try {
-    await log("info", jobId, sme, "maxValue", "FN CALL", {
+    await log("info", jobId, sme, "booleanValue", "FN CALL", {
       sme: sme,
     });
     // Get all rows/dates for this sme
-    const systemDates = await getExistingDates(jobId, sme);
+    const systemDates = await getExistingDates(jobId, sme, sme, 1);
 
     let bucket = [];
     let prevData = data[0].host_date; //Set to first date in file data(file capture groups)
@@ -28,7 +28,13 @@ async function maxValue(jobId, sme, data, column) {
       }
       if (currentDate !== prevData) {
         // Not equal means a change in dates
-        const maxValue = Math.max(...bucket);
+        let maxValue = Math.max(...bucket);
+
+        if (maxValue > 0) {
+          maxValue = 1;
+        } else {
+          maxValue = 0;
+        }
 
         if (systemDates.includes(prevData)) {
           // If date exists for sme: UPDATE row
@@ -49,7 +55,14 @@ async function maxValue(jobId, sme, data, column) {
     // Deal with last set of dates in array
     if (systemDates.includes(prevData)) {
       // If date exists for sme: UPDATE row
-      const maxValue = Math.max(...bucket);
+      let maxValue = Math.max(...bucket);
+
+      if (maxValue > 0) {
+        maxValue = 1;
+      } else {
+        maxValue = 0;
+      }
+
       await updateTable(jobId, column, [
         maxValue,
         sme,
@@ -57,7 +70,14 @@ async function maxValue(jobId, sme, data, column) {
       ]);
     } else {
       // If date dose not exist: INSERT new row
-      const maxValue = Math.max(...bucket);
+      let maxValue = Math.max(...bucket);
+
+      if (maxValue > 0) {
+        maxValue = 1;
+      } else {
+        maxValue = 0;
+      }
+
       await insertData(jobId, column, [
         sme,
         data[data.length - 1].host_date,
@@ -66,7 +86,7 @@ async function maxValue(jobId, sme, data, column) {
     }
   } catch (error) {
     console.log(error);
-    await log("error", jobId, sme, "maxValue", "FN CALL", {
+    await log("error", jobId, sme, "booleanValue", "FN CALL", {
       sme: sme,
       column: column,
       error: error,
@@ -74,4 +94,4 @@ async function maxValue(jobId, sme, data, column) {
   }
 }
 
-module.exports = maxValue;
+module.exports = booleanValue;

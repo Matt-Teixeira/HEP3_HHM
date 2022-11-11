@@ -8,35 +8,32 @@ const maxValue = require("./maxValue");
 const booleanValue = require("./booleanValue");
 const minValue = require("./minValue");
 
-async function initialUpdate(jobId, sme, fileName, data) {
-  console.log(fileName);
+async function philMonitorTableUpdate(jobId, sme, col_name, fileName, data) {
   try {
-    await log("info", jobId, sme, "initialUpdate", "FN CALL", {
+    await log("info", jobId, sme, "philMonitorTableUpdate", "FN CALL", {
       sme: sme,
-      file: fileName,
     });
     let processType = process_file_config[fileName].type;
 
     switch (processType) {
       case "max":
-        await maxValue(jobId, sme, data, process_file_config[fileName].col);
+        await maxValue(jobId, sme, data, col_name);
         break;
       case "min":
-        await minValue(jobId, sme, data, process_file_config[fileName].col);
+        await minValue(jobId, sme, data, col_name);
         break;
       case "bool":
-        await booleanValue(jobId, sme, data, process_file_config[fileName].col);
+        await booleanValue(jobId, sme, data, col_name);
         break;
       default:
         break;
     }
   } catch (error) {
-    await log("error", jobId, sme, "initialUpdate", "FN CALL", {
+    await log("error", jobId, sme, "philMonitorTableUpdate", "FN CALL", {
       sme: sme,
-      file: fileName,
       error: error,
     });
   }
 }
 
-module.exports = initialUpdate;
+module.exports = philMonitorTableUpdate;

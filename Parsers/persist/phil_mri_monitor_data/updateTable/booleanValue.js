@@ -5,15 +5,19 @@ const {
   getExistingDates,
   updateTable,
   insertData,
-} = require("../../../utils/phil_mri_monitor_helpers");
+} = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_comm_error
 
-async function minValue(jobId, sme, data, column) {
+async function booleanValue(jobId, sme, data, column) {
   try {
-    await log("info", jobId, sme, "minValue", "FN CALL", {
+    await log("info", jobId, sme, "booleanValue", "FN CALL", {
       sme: sme,
     });
     // Get all rows/dates for this sme
-    const systemDates = await getExistingDates(jobId, sme);
+    const startDate = data[data.length - 1].host_date;
+    const endDate = data[0].host_date;
+    
+    const values = [sme, startDate, endDate];
+    const systemDates = await getExistingDates(jobId, sme, values, 2);
 
     let bucket = [];
     let prevData = data[0].host_date; //Set to first date in file data(file capture groups)
@@ -28,17 +32,23 @@ async function minValue(jobId, sme, data, column) {
       }
       if (currentDate !== prevData) {
         // Not equal means a change in dates
-        const minValue = Math.min(...bucket);
+        let maxValue = Math.max(...bucket);
+
+        if (maxValue > 0) {
+          maxValue = 1;
+        } else {
+          maxValue = 0;
+        }
 
         if (systemDates.includes(prevData)) {
           // If date exists for sme: UPDATE row
-          await updateTable(jobId, column, [minValue, sme, prevData]);
+          await updateTable(jobId, column, [maxValue, sme, prevData]);
           bucket = [];
           prevData = obs.host_date;
           bucket.push(obs[column]);
         } else {
           // If date dose not exist: INSERT new row
-          await insertData(jobId, column, [sme, prevData, minValue]);
+          await insertData(jobId, column, [sme, prevData, maxValue]);
           bucket = [];
           prevData = obs.host_date;
           bucket.push(obs[column]);
@@ -46,26 +56,41 @@ async function minValue(jobId, sme, data, column) {
       }
     }
 
-    // Work with last set of dates in array
+    // Deal with last set of dates in array
     if (systemDates.includes(prevData)) {
       // If date exists for sme: UPDATE row
-      const minValue = Math.min(...bucket);
+      let maxValue = Math.max(...bucket);
+
+      if (maxValue > 0) {
+        maxValue = 1;
+      } else {
+        maxValue = 0;
+      }
+
       await updateTable(jobId, column, [
-        minValue,
+        maxValue,
         sme,
         data[data.length - 1].host_date,
       ]);
     } else {
       // If date dose not exist: INSERT new row
-      const minValue = Math.min(...bucket);
+      let maxValue = Math.max(...bucket);
+
+      if (maxValue > 0) {
+        maxValue = 1;
+      } else {
+        maxValue = 0;
+      }
+
       await insertData(jobId, column, [
         sme,
         data[data.length - 1].host_date,
-        minValue,
+        maxValue,
       ]);
     }
   } catch (error) {
-    await log("error", jobId, sme, "minValue", "FN CALL", {
+    console.log(error);
+    await log("error", jobId, sme, "booleanValue", "FN CALL", {
       sme: sme,
       column: column,
       error: error,
@@ -73,4 +98,4 @@ async function minValue(jobId, sme, data, column) {
   }
 }
 
-module.exports = minValue;
+module.exports = booleanValue;

@@ -3,15 +3,52 @@ require("dotenv").config({ path: "../.env" });
 const { log } = require("../logger");
 const pgPool = require("../db/pg-pool");
 
-async function getExistingDates(jobId, sme) {
+async function getSystemDbData(sme) {
+  const queryStr =
+    "SELECT * FROM philips_mri_monitoring_data WHERE equipment_id = ($1)";
+  return await pgPool.query(queryStr, [sme]);
+}
+
+async function getExistingDates(jobId, sme, values, condition) {
   try {
     await log("info", jobId, sme, "getExistingDates", "FN CALL", {
       sme: sme,
     });
-    const text =
-      "SELECT host_date FROM philips_mri_monitoring_data WHERE equipment_id = ($1) ORDER BY host_date ASC";
+    let queryStr;
+    let value = []
+    if (condition === 1) {
+      queryStr =
+      "SELECT host_date FROM philips_mri_monitoring_data WHERE equipment_id = ($1) ORDER BY host_date DESC";
+      value = [sme]
+    } 
+    if (condition === 2) {
+      queryStr = `SELECT host_date FROM philips_mri_monitoring_data WHERE equipment_id = $1 AND host_date BETWEEN $2 AND $3`
+      value = values
+    }
+  
+    const systemDates = await pgPool.query(queryStr, value);
+    const systemDatesToArray = [];
+    for await (const date of systemDates.rows) {
+      systemDatesToArray.push(date.host_date);
+    }
+    return systemDatesToArray;
+  } catch (error) {
+    await log("error", jobId, sme, "getExistingDates", "FN CALL", {
+      sme: sme,
+      error: error,
+    });
+  }
+}
+
+async function getExistingNotNullDates(jobId, sme, col_name) {
+  try {
+    await log("info", jobId, sme, "getExistingDates", "FN CALL", {
+      sme: sme,
+    });
+    const queryStr =
+      `SELECT host_date FROM philips_mri_monitoring_data WHERE equipment_id = ($1) AND ${col_name} IS NOT NULL ORDER BY host_date DESC LIMIT 1`;
     const v = [sme];
-    const systemDates = await pgPool.query(text, v);
+    const systemDates = await pgPool.query(queryStr, v);
     const systemDatesToArray = [];
     for await (const date of systemDates.rows) {
       systemDatesToArray.push(date.host_date);
@@ -99,7 +136,9 @@ const process_file_config = {
 };
 
 module.exports = {
+  getSystemDbData,
   getExistingDates,
+  getExistingNotNullDates,
   updateTable,
   insertData,
   process_file_config,
