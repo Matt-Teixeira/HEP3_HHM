@@ -20,17 +20,23 @@ async function insertDisplayData(jobId, filePath, sysConfigData, data) {
 
     const systemDbData = await pgPool.query(text, value);
 
+    console.time();
     if (systemDbData.rowCount === 0) {
       // Create entry for new SME
       for (const prop in data) {
-        const fileName = prop
-        await initialUpdate(sme, fileName, data[prop]);
+        const fileName = prop;
+        await initialUpdate(jobId, sme, fileName, data[prop]);
       }
+      console.timeEnd();
     } else {
       // find most recent date in database and start process on that data for data[prop]
     }
   } catch (error) {
-    console.log(error);
+    await log("error", jobId, sme, "insertDisplayData", "FN CALL", {
+      sme: sme,
+      modality,
+      file: filePath,
+    });
   }
 }
 

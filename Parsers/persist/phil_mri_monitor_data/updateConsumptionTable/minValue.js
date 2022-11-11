@@ -1,17 +1,19 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
 const { log } = require("../../../logger");
-const pgPool = require("../../../db/pg-pool");
 const {
   getExistingDates,
   updateTable,
   insertData,
 } = require("../../../utils/phil_mri_monitor_helpers");
 
-async function helium_level(sme, data) {
+async function minValue(jobId, sme, data, column) {
   try {
+    await log("info", jobId, sme, "minValue", "FN CALL", {
+      sme: sme,
+    });
     // Get all rows/dates for this sme
-    const systemDates = await getExistingDates(sme);
+    const systemDates = await getExistingDates(jobId, sme);
 
     let bucket = [];
     let prevData = data[0].host_date; //Set to first date in file data(file capture groups)
@@ -20,34 +22,35 @@ async function helium_level(sme, data) {
       let currentDate = obs.host_date;
 
       if (currentDate === prevData) {
-        bucket.push(obs.helium_level_value);
+        bucket.push(obs[column]);
         prevData = currentDate;
         continue;
       }
-      if (currentDate !== prevData) { // Not equal means a change in dates
+      if (currentDate !== prevData) {
+        // Not equal means a change in dates
         const minValue = Math.min(...bucket);
 
         if (systemDates.includes(prevData)) {
           // If date exists for sme: UPDATE row
-          await updateTable("helium_level_value", [minValue, sme, prevData]);
+          await updateTable(jobId, column, [minValue, sme, prevData]);
           bucket = [];
           prevData = obs.host_date;
-          bucket.push(obs.helium_level_value);
+          bucket.push(obs[column]);
         } else {
           // If date dose not exist: INSERT new row
-          await insertData("helium_level_value", [sme, prevData, minValue]);
+          await insertData(jobId, column, [sme, prevData, minValue]);
           bucket = [];
           prevData = obs.host_date;
-          bucket.push(obs.helium_level_value);
+          bucket.push(obs[column]);
         }
       }
     }
 
-    // Deal with last set of dates in array
+    // Work with last set of dates in array
     if (systemDates.includes(prevData)) {
       // If date exists for sme: UPDATE row
       const minValue = Math.min(...bucket);
-      await updateTable("helium_level_value", [
+      await updateTable(jobId, column, [
         minValue,
         sme,
         data[data.length - 1].host_date,
@@ -55,15 +58,19 @@ async function helium_level(sme, data) {
     } else {
       // If date dose not exist: INSERT new row
       const minValue = Math.min(...bucket);
-      await insertData("helium_level_value", [
+      await insertData(jobId, column, [
         sme,
         data[data.length - 1].host_date,
         minValue,
       ]);
     }
   } catch (error) {
-    console.log(error);
+    await log("error", jobId, sme, "minValue", "FN CALL", {
+      sme: sme,
+      column: column,
+      error: error,
+    });
   }
 }
 
-module.exports = helium_level;
+module.exports = minValue;
