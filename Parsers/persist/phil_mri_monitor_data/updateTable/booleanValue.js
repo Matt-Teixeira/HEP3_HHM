@@ -2,15 +2,22 @@
 require("dotenv").config({ path: "../../.env" });
 const { log } = require("../../../logger");
 const {
-  getExistingDates,
+  getDateRanges,
   updateTable,
   insertData,
-} = require("../../../utils/phil_mri_monitor_helpers"); //mag_dps_status_minutes
+} = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_comm_error
 
-async function mag_dps_status_minutes(sme, data) {
+async function booleanValue(jobId, sme, data, column) {
   try {
+    await log("info", jobId, sme, "booleanValue", "FN CALL", {
+      sme: sme,
+    });
     // Get all rows/dates for this sme
-    const systemDates = await getExistingDates(sme);
+    const startDate = data[data.length - 1].host_date;
+    const endDate = data[0].host_date;
+    
+    const values = [sme, startDate, endDate];
+    const systemDates = await getDateRanges(jobId, sme, values);
 
     let bucket = [];
     let prevData = data[0].host_date; //Set to first date in file data(file capture groups)
@@ -19,7 +26,7 @@ async function mag_dps_status_minutes(sme, data) {
       let currentDate = obs.host_date;
 
       if (currentDate === prevData) {
-        bucket.push(obs.mag_dps_status_minutes);
+        bucket.push(obs[column]);
         prevData = currentDate;
         continue;
       }
@@ -27,22 +34,24 @@ async function mag_dps_status_minutes(sme, data) {
         // Not equal means a change in dates
         let maxValue = Math.max(...bucket);
 
+        if (maxValue > 0) {
+          maxValue = 1;
+        } else {
+          maxValue = 0;
+        }
+
         if (systemDates.includes(prevData)) {
           // If date exists for sme: UPDATE row
-          await updateTable("mag_dps_status_minutes", [
-            maxValue,
-            sme,
-            prevData,
-          ]);
+          await updateTable(jobId, column, [maxValue, sme, prevData]);
           bucket = [];
           prevData = obs.host_date;
-          bucket.push(obs.mag_dps_status_minutes);
+          bucket.push(obs[column]);
         } else {
           // If date dose not exist: INSERT new row
-          await insertData("mag_dps_status_minutes", [sme, prevData, maxValue]);
+          await insertData(jobId, column, [sme, prevData, maxValue]);
           bucket = [];
           prevData = obs.host_date;
-          bucket.push(obs.mag_dps_status_minutes);
+          bucket.push(obs[column]);
         }
       }
     }
@@ -52,7 +61,13 @@ async function mag_dps_status_minutes(sme, data) {
       // If date exists for sme: UPDATE row
       let maxValue = Math.max(...bucket);
 
-      await updateTable("mag_dps_status_minutes", [
+      if (maxValue > 0) {
+        maxValue = 1;
+      } else {
+        maxValue = 0;
+      }
+
+      await updateTable(jobId, column, [
         maxValue,
         sme,
         data[data.length - 1].host_date,
@@ -61,7 +76,13 @@ async function mag_dps_status_minutes(sme, data) {
       // If date dose not exist: INSERT new row
       let maxValue = Math.max(...bucket);
 
-      await insertData("mag_dps_status_minutes", [
+      if (maxValue > 0) {
+        maxValue = 1;
+      } else {
+        maxValue = 0;
+      }
+
+      await insertData(jobId, column, [
         sme,
         data[data.length - 1].host_date,
         maxValue,
@@ -69,7 +90,12 @@ async function mag_dps_status_minutes(sme, data) {
     }
   } catch (error) {
     console.log(error);
+    await log("error", jobId, sme, "booleanValue", "FN CALL", {
+      sme: sme,
+      column: column,
+      error: error,
+    });
   }
 }
 
-module.exports = mag_dps_status_minutes;
+module.exports = booleanValue;

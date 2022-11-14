@@ -2,15 +2,22 @@
 require("dotenv").config({ path: "../../.env" });
 const { log } = require("../../../logger");
 const {
-  getExistingDates,
+  getDateRanges,
   updateTable,
   insertData,
-} = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_temp_alarm
+} = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_malf_minutes
 
-async function cryo_comp_temp_alarm(sme, data) {
+async function maxValue(jobId, sme, data, column) {
   try {
+    await log("info", jobId, sme, "maxValue", "FN CALL", {
+      sme: sme,
+    });
+    const startDate = data[data.length - 1].host_date;
+    const endDate = data[0].host_date;
+    
+    const values = [sme, startDate, endDate];
+    const systemDates = await getDateRanges(jobId, sme, values);
     // Get all rows/dates for this sme
-    const systemDates = await getExistingDates(sme);
 
     let bucket = [];
     let prevData = data[0].host_date; //Set to first date in file data(file capture groups)
@@ -19,32 +26,26 @@ async function cryo_comp_temp_alarm(sme, data) {
       let currentDate = obs.host_date;
 
       if (currentDate === prevData) {
-        bucket.push(obs.cryo_comp_temp_alarm);
+        bucket.push(obs[column]);
         prevData = currentDate;
         continue;
       }
       if (currentDate !== prevData) {
         // Not equal means a change in dates
-        let maxValue = Math.max(...bucket);
-
-        if (maxValue > 0) {
-          maxValue = 1;
-        } else {
-          maxValue = 0;
-        }
+        const maxValue = Math.max(...bucket);
 
         if (systemDates.includes(prevData)) {
           // If date exists for sme: UPDATE row
-          await updateTable("cryo_comp_temp_alarm", [maxValue, sme, prevData]);
+          await updateTable(jobId, column, [maxValue, sme, prevData]);
           bucket = [];
           prevData = obs.host_date;
-          bucket.push(obs.cryo_comp_temp_alarm);
+          bucket.push(obs[column]);
         } else {
           // If date dose not exist: INSERT new row
-          await insertData("cryo_comp_temp_alarm", [sme, prevData, maxValue]);
+          await insertData(jobId, column, [sme, prevData, maxValue]);
           bucket = [];
           prevData = obs.host_date;
-          bucket.push(obs.cryo_comp_temp_alarm);
+          bucket.push(obs[column]);
         }
       }
     }
@@ -52,30 +53,16 @@ async function cryo_comp_temp_alarm(sme, data) {
     // Deal with last set of dates in array
     if (systemDates.includes(prevData)) {
       // If date exists for sme: UPDATE row
-      let maxValue = Math.max(...bucket);
-
-      if (maxValue > 0) {
-        maxValue = 1;
-      } else {
-        maxValue = 0;
-      }
-
-      await updateTable("cryo_comp_temp_alarm", [
+      const maxValue = Math.max(...bucket);
+      await updateTable(jobId, column, [
         maxValue,
         sme,
         data[data.length - 1].host_date,
       ]);
     } else {
       // If date dose not exist: INSERT new row
-      let maxValue = Math.max(...bucket);
-
-      if (maxValue > 0) {
-        maxValue = 1;
-      } else {
-        maxValue = 0;
-      }
-
-      await insertData("cryo_comp_temp_alarm", [
+      const maxValue = Math.max(...bucket);
+      await insertData(jobId, column, [
         sme,
         data[data.length - 1].host_date,
         maxValue,
@@ -83,7 +70,12 @@ async function cryo_comp_temp_alarm(sme, data) {
     }
   } catch (error) {
     console.log(error);
+    await log("error", jobId, sme, "maxValue", "FN CALL", {
+      sme: sme,
+      column: column,
+      error: error,
+    });
   }
 }
 
-module.exports = cryo_comp_temp_alarm;
+module.exports = maxValue;

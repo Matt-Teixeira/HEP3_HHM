@@ -1,15 +1,17 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
 const { log } = require("../../../logger");
-const pgPool = require("../../../db/pg-pool");
 const {
   getExistingDates,
   updateTable,
   insertData,
-} = require("../../../utils/phil_mri_monitor_helpers"); //tech_room_humidity
+} = require("../../../utils/phil_mri_monitor_helpers");
 
-async function tech_room_humidity(sme, data) {
+async function minValue(jobId, sme, data, column) {
   try {
+    await log("info", jobId, sme, "minValue", "FN CALL", {
+      sme: sme,
+    });
     // Get all rows/dates for this sme
     const systemDates = await getExistingDates(sme);
 
@@ -20,51 +22,55 @@ async function tech_room_humidity(sme, data) {
       let currentDate = obs.host_date;
 
       if (currentDate === prevData) {
-        bucket.push(obs.tech_room_humidity);
+        bucket.push(obs[column]);
         prevData = currentDate;
         continue;
       }
       if (currentDate !== prevData) {
         // Not equal means a change in dates
-        const minValue = Math.max(...bucket);
+        const minValue = Math.min(...bucket);
 
         if (systemDates.includes(prevData)) {
           // If date exists for sme: UPDATE row
-          await updateTable("tech_room_humidity", [minValue, sme, prevData]);
+          await updateTable(jobId, column, [minValue, sme, prevData]);
           bucket = [];
           prevData = obs.host_date;
-          bucket.push(obs.tech_room_humidity);
+          bucket.push(obs[column]);
         } else {
           // If date dose not exist: INSERT new row
-          await insertData("tech_room_humidity", [sme, prevData, minValue]);
+          await insertData(jobId, column, [sme, prevData, minValue]);
           bucket = [];
           prevData = obs.host_date;
-          bucket.push(obs.tech_room_humidity);
+          bucket.push(obs[column]);
         }
       }
     }
 
-    // Deal with last set of dates in array
+    // Work with last set of dates in array
     if (systemDates.includes(prevData)) {
       // If date exists for sme: UPDATE row
-      const minValue = Math.max(...bucket);
-      await updateTable("tech_room_humidity", [
+      const minValue = Math.min(...bucket);
+      await updateTable(jobId, column, [
         minValue,
         sme,
         data[data.length - 1].host_date,
       ]);
     } else {
       // If date dose not exist: INSERT new row
-      const minValue = Math.max(...bucket);
-      await insertData("tech_room_humidity", [
+      const minValue = Math.min(...bucket);
+      await insertData(jobId, column, [
         sme,
         data[data.length - 1].host_date,
         minValue,
       ]);
     }
   } catch (error) {
-    console.log(error);
+    await log("error", jobId, sme, "minValue", "FN CALL", {
+      sme: sme,
+      column: column,
+      error: error,
+    });
   }
 }
 
-module.exports = tech_room_humidity;
+module.exports = minValue;

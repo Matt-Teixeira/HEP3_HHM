@@ -7,8 +7,11 @@ const {
   insertData,
 } = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_malf_minutes
 
-async function cryo_comp_malf_minutes(sme, data) {
+async function maxValue(jobId, sme, data, column) {
   try {
+    await log("info", jobId, sme, "maxValue", "FN CALL", {
+      sme: sme,
+    });
     // Get all rows/dates for this sme
     const systemDates = await getExistingDates(sme);
 
@@ -19,26 +22,26 @@ async function cryo_comp_malf_minutes(sme, data) {
       let currentDate = obs.host_date;
 
       if (currentDate === prevData) {
-        bucket.push(obs.cryo_comp_malf_minutes);
+        bucket.push(obs[column]);
         prevData = currentDate;
         continue;
       }
       if (currentDate !== prevData) {
         // Not equal means a change in dates
-        const minValue = Math.max(...bucket);
+        const maxValue = Math.max(...bucket);
 
         if (systemDates.includes(prevData)) {
           // If date exists for sme: UPDATE row
-          await updateTable("cryo_comp_malf_minutes", [minValue, sme, prevData]);
+          await updateTable(jobId, column, [maxValue, sme, prevData]);
           bucket = [];
           prevData = obs.host_date;
-          bucket.push(obs.cryo_comp_malf_minutes);
+          bucket.push(obs[column]);
         } else {
           // If date dose not exist: INSERT new row
-          await insertData("cryo_comp_malf_minutes", [sme, prevData, minValue]);
+          await insertData(jobId, column, [sme, prevData, maxValue]);
           bucket = [];
           prevData = obs.host_date;
-          bucket.push(obs.cryo_comp_malf_minutes);
+          bucket.push(obs[column]);
         }
       }
     }
@@ -46,24 +49,29 @@ async function cryo_comp_malf_minutes(sme, data) {
     // Deal with last set of dates in array
     if (systemDates.includes(prevData)) {
       // If date exists for sme: UPDATE row
-      const minValue = Math.max(...bucket);
-      await updateTable("cryo_comp_malf_minutes", [
-        minValue,
+      const maxValue = Math.max(...bucket);
+      await updateTable(jobId, column, [
+        maxValue,
         sme,
         data[data.length - 1].host_date,
       ]);
     } else {
       // If date dose not exist: INSERT new row
-      const minValue = Math.max(...bucket);
-      await insertData("cryo_comp_malf_minutes", [
+      const maxValue = Math.max(...bucket);
+      await insertData(jobId, column, [
         sme,
         data[data.length - 1].host_date,
-        minValue,
+        maxValue,
       ]);
     }
   } catch (error) {
     console.log(error);
+    await log("error", jobId, sme, "maxValue", "FN CALL", {
+      sme: sme,
+      column: column,
+      error: error,
+    });
   }
 }
 
-module.exports = cryo_comp_malf_minutes;
+module.exports = maxValue;

@@ -1,8 +1,9 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
 const { log } = require("../../../logger");
-const pgPool = require("../../../db/pg-pool");
-const initialUpdate = require("../../../persist/phil_mri_monitor_data/updateConsumptionTable");
+const initialUpdate = require("../../../persist/phil_mri_monitor_data/initialUpdate");
+const updatePhilMriTable = require("../../../persist/phil_mri_monitor_data/updateTable/updatePhilMriTable");
+const { getSystemDbData } = require("../../../utils/phil_mri_monitor_helpers");
 
 async function insertDisplayData(jobId, filePath, sysConfigData, data) {
   const sme = sysConfigData[0].id;
@@ -14,23 +15,31 @@ async function insertDisplayData(jobId, filePath, sysConfigData, data) {
       file: filePath,
     });
 
-    const text =
-      "SELECT * FROM philips_mri_monitoring_data WHERE equipment_id = ($1)";
-    const value = [sme];
+    const systemDbData = await getSystemDbData(sme);
 
-    const systemDbData = await pgPool.query(text, value);
-
+    console.time();
     if (systemDbData.rowCount === 0) {
       // Create entry for new SME
       for (const prop in data) {
-        const fileName = prop
-        await initialUpdate(sme, fileName, data[prop]);
+        const fileName = prop;
+        await initialUpdate(jobId, sme, fileName, data[prop]);
       }
     } else {
       // find most recent date in database and start process on that data for data[prop]
+
+      for (const prop in data) {
+        const fileName = prop;
+        await updatePhilMriTable(jobId, sme, fileName, data[prop]);
+      }
     }
+    console.timeEnd();
   } catch (error) {
     console.log(error);
+    await log("error", jobId, sme, "insertDisplayData", "FN CALL", {
+      sme: sme,
+      modality,
+      file: filePath,
+    });
   }
 }
 
