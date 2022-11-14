@@ -5,7 +5,7 @@ const pgPool = require("../db/pg-pool");
 
 async function getSystemDbData(sme) {
   const queryStr =
-    "SELECT * FROM philips_mri_monitoring_data WHERE equipment_id = ($1)";
+    "SELECT equipment_id, host_date FROM philips_mri_monitoring_data WHERE equipment_id = ($1) LIMIT 1";
   return await pgPool.query(queryStr, [sme]);
 }
 
@@ -57,6 +57,7 @@ async function getExistingNotNullDates(jobId, sme, col_name) {
     for await (const date of systemDates.rows) {
       systemDatesToArray.push(date.host_date);
     }
+    console.log("System Date in ARRAY: ", systemDatesToArray);
     return systemDatesToArray;
   } catch (error) {
     await log("error", jobId, sme, "getExistingDates", "FN CALL", {
