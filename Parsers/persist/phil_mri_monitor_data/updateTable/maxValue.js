@@ -1,9 +1,8 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
-const pgPool = require("../../../db/pg-pool");
 const { log } = require("../../../logger");
 const {
-  getExistingDates,
+  getDateRanges,
   updateTable,
   insertData,
 } = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_malf_minutes
@@ -17,7 +16,7 @@ async function maxValue(jobId, sme, data, column) {
     const endDate = data[0].host_date;
     
     const values = [sme, startDate, endDate];
-    const systemDates = await getExistingDates(jobId, sme, values, 2);
+    const systemDates = await getDateRanges(jobId, sme, values);
     // Get all rows/dates for this sme
 
     let bucket = [];

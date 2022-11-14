@@ -2,7 +2,7 @@
 require("dotenv").config({ path: "../../.env" });
 const { log } = require("../../../logger");
 const {
-  getExistingDates,
+  getDateRanges,
   updateTable,
   insertData,
 } = require("../../../utils/phil_mri_monitor_helpers");
@@ -12,12 +12,13 @@ async function minValue(jobId, sme, data, column) {
     await log("info", jobId, sme, "minValue", "FN CALL", {
       sme: sme,
     });
+    
     // Get all rows/dates for this sme
     const startDate = data[data.length - 1].host_date;
     const endDate = data[0].host_date;
     
     const values = [sme, startDate, endDate];
-    const systemDates = await getExistingDates(jobId, sme, values, 2);
+    const systemDates = await getDateRanges(jobId, sme, values);
 
     let bucket = [];
     let prevData = data[0].host_date; //Set to first date in file data(file capture groups)

@@ -2,7 +2,7 @@
 require("dotenv").config({ path: "../../.env" });
 const { log } = require("../../../logger");
 const {
-  getExistingDates,
+  getDateRanges,
   updateTable,
   insertData,
 } = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_comm_error
@@ -17,7 +17,7 @@ async function booleanValue(jobId, sme, data, column) {
     const endDate = data[0].host_date;
     
     const values = [sme, startDate, endDate];
-    const systemDates = await getExistingDates(jobId, sme, values, 2);
+    const systemDates = await getDateRanges(jobId, sme, values);
 
     let bucket = [];
     let prevData = data[0].host_date; //Set to first date in file data(file capture groups)
