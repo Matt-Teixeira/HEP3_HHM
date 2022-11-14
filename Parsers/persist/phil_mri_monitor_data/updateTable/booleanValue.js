@@ -12,40 +12,45 @@ async function booleanValue(jobId, sme, data, column) {
     await log("info", jobId, sme, "booleanValue", "FN CALL", {
       sme: sme,
     });
-    // Get all rows/dates for this sme
+
+    // Get date ranges for smaller query and loop
     const startDate = data[data.length - 1].host_date;
     const endDate = data[0].host_date;
-    
+
     const values = [sme, startDate, endDate];
     const systemDates = await getDateRanges(jobId, sme, values);
 
+    // Aggregation bucket
     let bucket = [];
     let prevData = data[0].host_date; //Set to first date in file data(file capture groups)
 
+    // loop through each observation in the array of match groups. Seperated by column name.
     for await (const obs of data) {
       let currentDate = obs.host_date;
 
+      // If dates are the same, push data to array for future aggregation
       if (currentDate === prevData) {
         bucket.push(obs[column]);
         prevData = currentDate;
         continue;
       }
       if (currentDate !== prevData) {
-        // Not equal means a change in dates
+        // Not equal means a change in dates and begin aggregation
         let maxValue = Math.max(...bucket);
 
+        // Set value to = 1 or 0 (boolean)
         if (maxValue > 0) {
           maxValue = 1;
         } else {
           maxValue = 0;
         }
 
+        // If date exists for sme: UPDATE row
         if (systemDates.includes(prevData)) {
-          // If date exists for sme: UPDATE row
           await updateTable(jobId, column, [maxValue, sme, prevData]);
-          bucket = [];
-          prevData = obs.host_date;
-          bucket.push(obs[column]);
+          bucket = []; // Empty bucket
+          prevData = obs.host_date; // Set to new date in iteration
+          bucket.push(obs[column]); // Begin by pushing new data to our aggregation bucket
         } else {
           // If date dose not exist: INSERT new row
           await insertData(jobId, column, [sme, prevData, maxValue]);
@@ -56,7 +61,7 @@ async function booleanValue(jobId, sme, data, column) {
       }
     }
 
-    // Deal with last set of dates in array
+    // Work with last set of dates in array
     if (systemDates.includes(prevData)) {
       // If date exists for sme: UPDATE row
       let maxValue = Math.max(...bucket);
