@@ -11,24 +11,35 @@ const bulkInsert = require("../../../persist/queryBuilder");
 const { blankLineTest } = require("../../../utils/regExHelpers");
 const convertDates = require("../../../utils/dates");
 
-async function phil_cv_eventlog(jobId, filePath, sysConfigData) {
-  const version = "eventlog";
-  const dateTimeVersion = "type_3";
-  const sme = sysConfigData[0].id;
-  const manufacturer = sysConfigData[0].manufacturer;
-  const modality = sysConfigData[0].modality;
+async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
+  const dateTimeVersion = sysConfigData.dateTimeVersion;
+  const sme = sysConfigData.id;
+  const filePath = sysConfigData.hhm_config.file_path;
 
   const data = [];
 
   try {
+    const dailyFileDir = await fs.promises.readdir(filePath);
+    let latestDailyDir;
+    for (let i = dailyFileDir.length - 1; i > 0; i--) {
+      const dailyMatchRe = /daily/;
+      let match = dailyMatchRe.test(dailyFileDir[i]);
+      if (match) {
+        latestDailyDir = dailyFileDir[i];
+        break;
+      }
+    }
+    //const latestDailyDir = dailyFileDir[dailyFileDir.length - 1];
+    const completeFilePath = `${filePath}/${latestDailyDir}/${fileToParse}`;
+
+    console.log(completeFilePath);
+
     await log("info", "NA", sme, "phil_cv_eventlog", "FN CALL", {
-      sme: sme,
-      modality,
-      file: filePath,
+      file: completeFilePath,
     });
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(filePath),
+      input: fs.createReadStream(completeFilePath),
       crlfDelay: Infinity,
     });
 
@@ -55,20 +66,10 @@ async function phil_cv_eventlog(jobId, filePath, sysConfigData) {
     const mappedData = mapDataToSchema(data, philips_cv_eventlog_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(
-      dataToArray,
-      manufacturer,
-      "CV",
-      version,
-      sme,
-      filePath,
-      jobId
-    );
+    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
   } catch (error) {
     await log("error", "NA", sme, "phil_cv_eventlog", "FN CALL", {
       sme: sme,
-      modality,
-      file: filePath,
       error: error.message,
     });
   }

@@ -15,7 +15,7 @@ async function insertDisplayData(jobId, filePath, sysConfigData, data) {
       file: filePath,
     });
 
-    const systemDbData = await getSystemDbData(sme);
+    const systemDbData = await getSystemDbData(jobId, sme);
 
     console.time();
     if (systemDbData.rowCount === 0) {

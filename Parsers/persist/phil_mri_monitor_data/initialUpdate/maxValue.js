@@ -9,11 +9,8 @@ const {
 
 async function maxValue(jobId, sme, data, column) {
   try {
-    await log("info", jobId, sme, "maxValue", "FN CALL", {
-      sme: sme,
-    });
     // Get all rows/dates for this sme
-    const systemDates = await getExistingDates(sme);
+    const systemDates = await getExistingDates(jobId, sme);
 
     let bucket = [];
     let prevData = data[0].host_date; //Set to first date in file data(file capture groups)
