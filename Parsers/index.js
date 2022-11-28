@@ -1,5 +1,6 @@
 ("use strict");
 require("dotenv").config();
+const crypto = require("crypto");
 const { log } = require("./logger");
 const pgPool = require("./db/pg-pool");
 const siemens_parser = require("./jobs/Siemens");
@@ -21,6 +22,9 @@ const filePaths = {
     cv_eventlog_1: "./test_data/Philips/CV/SME00001/EventLog.txe",
     cv_eventlog_2: "./test_data/Philips/CV/SME00003/EventLog.txe",
     cv_eventlog_3: "./test_data/Philips/CV/SME00004/EventLog.txe",
+    cv_eventlog_4:
+      "/opt/hhm-files/C0051/SHIP003/SME00444/daily_2022_11_22/EventLog.txe",
+    systems: ["SME00444", "SME02535", "SME00445", "SME00446", "SME07761", "SME00782", "SME00784", "SME00785", "SME00786", "SME01227", "SME02548", "SME02377", "SME02378", "SME02579", "SME02580", "SME00886", "SME00888", "end"],              
   },
   ge: {
     ct_gesys_1: "./test_data/GE/CT/SME00821/gesys_PFRT16.log",
@@ -45,26 +49,23 @@ const filePaths = {
   },
 };
 
-const determinManufacturer = async (jobId, filePath) => {
+const determinManufacturer = async (jobId, sme) => {
   try {
-    const sme = get_sme(filePath);
     let string = "SELECT * from systems WHERE id = $1";
     let value = [sme];
     const sysConfigData = await pgPool.query(string, value);
 
-    await log("info", jobId, sme, "determinManufacturer", "FN CALL", {
-      file: filePath,
-    });
+    await log("info", jobId, sme, "determinManufacturer", "FN CALL");
 
     switch (sysConfigData.rows[0].manufacturer) {
       case "Siemens":
-        await siemens_parser(jobId, filePath, sysConfigData.rows);
+        await siemens_parser(jobId, sysConfigData.rows[0]);
         break;
       case "Philips":
-        await philips_parser(jobId, filePath, sysConfigData.rows);
+        await philips_parser(jobId, sysConfigData.rows[0]);
         break;
       case "GE":
-        await ge_parser(jobId, filePath, sysConfigData.rows);
+        await ge_parser(jobId, sysConfigData.rows[0]);
         break;
       default:
         break;
@@ -76,11 +77,17 @@ const determinManufacturer = async (jobId, filePath) => {
   }
 };
 
-const onBoot = async (filePath) => {
+const onBoot = async (arrayOfSystems) => {
   try {
-    let jobId = 0;
+    let jobId = crypto.randomUUID();
     await log("info", "NA", "NA", "onBoot", `FN CALL`);
-    await determinManufacturer(jobId++, filePath);
+    for await (const system of arrayOfSystems) {
+      if(system === "end"){
+        console.log("*************** END **************");
+        return
+      }
+      await determinManufacturer(jobId, system);
+    }
   } catch (error) {
     await log("error", "NA", "NA", "onBoot", "FN CATCH", {
       error: error,
@@ -88,4 +95,4 @@ const onBoot = async (filePath) => {
   }
 };
 
-onBoot(filePaths.philips.mri_monitor_1);
+onBoot(filePaths.philips.systems);

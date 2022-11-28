@@ -293,7 +293,7 @@ module.exports = queries = {
     `,
     },
     CV: {
-      eventlog: `
+      EventLog: `
       INSERT INTO philips_cv_eventlog(
         equipment_id,
         category,
