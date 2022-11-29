@@ -104,7 +104,7 @@ module.exports = queries = {
   },
   Siemens: {
     CT: {
-      windows: `
+      EvtApplication_Today: `
       INSERT INTO siemens_ct (
           equipment_id,
           host_state,
@@ -126,7 +126,7 @@ module.exports = queries = {
       `,
     },
     MRI: {
-      windows: `
+      EvtApplication_Today: `
       INSERT INTO siemens_mri (
           equipment_id,
           host_state,

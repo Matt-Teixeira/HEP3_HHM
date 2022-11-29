@@ -7,6 +7,10 @@ async function bulkInsert(jobId, data, sysConfigData, fileToParse) {
   try {
     const fileVersion = fileToParse.split(".")[0];
 
+    console.log(sysConfigData.manufacturer)
+    console.log(sysConfigData.hhm_config.modality)
+    console.log(fileVersion);
+
     const query =
       queries[`${sysConfigData.manufacturer}`][`${sysConfigData.hhm_config.modality}`][`${fileVersion}`];
     console.log(query);

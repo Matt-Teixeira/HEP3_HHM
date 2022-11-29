@@ -10,25 +10,28 @@ const { siemens_ct_mri } = require("../../persist/pg-schemas");
 const bulkInsert = require("../../persist/queryBuilder");
 const { testTabs } = require("../../utils/regExHelpers");
 const convertDates = require("../../utils/dates");
+const constructFilePath = require("../../utils/constructFilePath");
 
-const parse_win_10 = async (jobId, filePath, sysConfigData) => {
-  const version = "windows";
-  const dateTimeVersion = "type_3";
-  const sme = sysConfigData[0].id;
-  const manufacturer = sysConfigData[0].manufacturer;
-  const modality = sysConfigData[0].modality;
+const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
+  const dateTimeVersion = sysConfigData.hhm_config.dateTimeVersion;
+  const sme = sysConfigData.id;
+  const dirPath = sysConfigData.hhm_config.file_path;
 
   const data = [];
+  console.log(sysConfigData);
+  console.log(fileToParse);
 
   try {
-    await log("info", jobId, sme, "parse_win_10", "FN CALL", {
-      sme: sme,
-      modality,
-      file: filePath,
-    });
+    await log("info", jobId, sme, "parse_win_10", "FN CALL");
+
+    /* const completeFilePath = await constructFilePath(
+      dirPath,
+      fileToParse,
+      sysConfigData.hhm_config.regExFileStr
+    ); */
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(filePath),
+      input: fs.createReadStream(`${dirPath}/${fileToParse}`),
       crlfDelay: Infinity,
     });
 
@@ -44,15 +47,7 @@ const parse_win_10 = async (jobId, filePath, sysConfigData) => {
     const mappedData = mapDataToSchema(data, siemens_ct_mri);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(
-      dataToArray,
-      manufacturer,
-      modality,
-      version,
-      sme,
-      filePath,
-      jobId
-    );
+    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
     return true;
   } catch (error) {
     console.log(error);
