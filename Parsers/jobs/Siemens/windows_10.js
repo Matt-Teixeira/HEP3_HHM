@@ -8,7 +8,7 @@ const groupsToArrayObj = require("../../parse/prep-groups-for-array");
 const mapDataToSchema = require("../../persist/map-data-to-schema");
 const { siemens_ct_mri } = require("../../persist/pg-schemas");
 const bulkInsert = require("../../persist/queryBuilder");
-const { testTabs } = require("../../utils/regExHelpers");
+const { blankLineTest } = require("../../utils/regExHelpers");
 const convertDates = require("../../utils/dates");
 const constructFilePath = require("../../utils/constructFilePath");
 
@@ -18,8 +18,8 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
   const dirPath = sysConfigData.hhm_config.file_path;
 
   const data = [];
-  console.log(sysConfigData);
-  console.log(fileToParse);
+  // console.log(sysConfigData);
+  // console.log(fileToParse);
 
   try {
     await log("info", jobId, sme, "parse_win_10", "FN CALL");
@@ -37,8 +37,17 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
 
     for await (const line of rl) {
       let matches = line.match(win_10_re.re_v1);
-      // Test for tabs
-      await testTabs(matches, sme);
+      if (matches === null) {
+        const isNewLine = blankLineTest(line);
+        if (isNewLine) {
+          continue;
+        } else {
+          await log("error", jobId, "NA", "Not_New_Line", "FN CALL", {
+            message: "This is not a blank new line - Bad Match",
+            line: line,
+          });
+        }
+      }
       convertDates(matches.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(sme, matches.groups);
       data.push(matchData);
@@ -50,9 +59,9 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
     await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
     return true;
   } catch (error) {
-    console.log(error);
     await log("error", jobId, sme, "parse_win_10", "FN CATCH", {
       error: error,
+      file: fileToParse,
     });
   }
 };

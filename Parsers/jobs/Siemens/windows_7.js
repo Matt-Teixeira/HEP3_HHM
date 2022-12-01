@@ -31,6 +31,9 @@ const parse_win_7 = async (jobId, filePath, sysConfigData) => {
     let matchesArray = [...matches];
 
     for await (let match of matchesArray) {
+      if(match === null) {
+        throw new Error("Bad match")
+      }
       let matchGroups = match.groups.big_group.match(win_7_re.small_group);
       convertDates(matchGroups.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(sme, matchGroups.groups);
