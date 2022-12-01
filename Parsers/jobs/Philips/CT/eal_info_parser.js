@@ -9,6 +9,7 @@ const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { philips_ct_eal_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
+const { blankLineTest } = require("../../../utils/regExHelpers");
 
 async function phil_ct_eal_info(jobId, filePath, sysConfigData) {
   const version = "eal_info";
@@ -33,6 +34,17 @@ async function phil_ct_eal_info(jobId, filePath, sysConfigData) {
 
     for await (const line of rl) {
       let matches = line.match(philips_re.ct_eal);
+      if (matches === null) {
+        const isNewLine = blankLineTest(line);
+        if (isNewLine) {
+          continue;
+        } else {
+          await log("error", jobId, "NA", "Not_New_Line", "FN CALL", {
+            message: "This is not a blank new line - Bad Match",
+            line: line,
+          });
+        }
+      }
 
       convertDates(matches.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(sme, matches.groups);

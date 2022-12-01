@@ -7,9 +7,13 @@ async function bulkInsert(jobId, data, sysConfigData, fileToParse) {
   try {
     const fileVersion = fileToParse.split(".")[0];
 
+    // console.log(sysConfigData.manufacturer)
+    // console.log(sysConfigData.hhm_config.modality)
+    // console.log(fileVersion);
+
     const query =
       queries[`${sysConfigData.manufacturer}`][`${sysConfigData.hhm_config.modality}`][`${fileVersion}`];
-    console.log(query);
+    // console.log(query);
 
     const payload = await convertRowsToColumns(jobId, sysConfigData.id, data);
     const insertData = await pgPool.query(query, payload);
@@ -19,7 +23,6 @@ async function bulkInsert(jobId, data, sysConfigData, fileToParse) {
       rowsInserted: insertData.rowCount,
     });
   } catch (error) {
-    console.log(error);
     await log("error", jobId, sysConfigData.id, "bulkInsert", `FN CALL`, {
       error,
     });

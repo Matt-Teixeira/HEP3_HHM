@@ -44,11 +44,10 @@ async function phil_ct_events(jobId, filePath, sysConfigData) {
             line: line,
           });
         }
-      } else {
-        convertDates(matches.groups, dateTimeVersion);
-        const matchData = groupsToArrayObj(sme, matches.groups);
-        data.push(matchData);
       }
+      convertDates(matches.groups, dateTimeVersion);
+      const matchData = groupsToArrayObj(sme, matches.groups);
+      data.push(matchData);
     }
 
     // First line contains headers: remove

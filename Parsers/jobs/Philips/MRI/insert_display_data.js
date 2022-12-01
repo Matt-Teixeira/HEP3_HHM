@@ -17,7 +17,6 @@ async function insertDisplayData(jobId, filePath, sysConfigData, data) {
 
     const systemDbData = await getSystemDbData(jobId, sme);
 
-    console.time();
     if (systemDbData.rowCount === 0) {
       // Create entry for new SME
       for (const prop in data) {
@@ -32,7 +31,7 @@ async function insertDisplayData(jobId, filePath, sysConfigData, data) {
         await updatePhilMriTable(jobId, sme, fileName, data[prop]);
       }
     }
-    console.timeEnd();
+
   } catch (error) {
     console.log(error);
     await log("error", jobId, sme, "insertDisplayData", "FN CALL", {

@@ -10,29 +10,19 @@ const { philips_cv_eventlog_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const { blankLineTest } = require("../../../utils/regExHelpers");
 const convertDates = require("../../../utils/dates");
+const constructFilePath = require("../../../utils/constructFilePath");
 
 async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = sysConfigData.dateTimeVersion;
   const sme = sysConfigData.id;
-  const filePath = sysConfigData.hhm_config.file_path;
-
-  const data = [];
+  const filePath = sysConfigData.hhm_config.file_path; // Path to system log data on Debian server
 
   try {
-    const dailyFileDir = await fs.promises.readdir(filePath);
-    let latestDailyDir;
-    for (let i = dailyFileDir.length - 1; i > 0; i--) {
-      const dailyMatchRe = /daily/;
-      let match = dailyMatchRe.test(dailyFileDir[i]);
-      if (match) {
-        latestDailyDir = dailyFileDir[i];
-        break;
-      }
-    }
-    //const latestDailyDir = dailyFileDir[dailyFileDir.length - 1];
-    const completeFilePath = `${filePath}/${latestDailyDir}/${fileToParse}`;
-
-    console.log(completeFilePath);
+    const completeFilePath = await constructFilePath(
+      filePath,
+      fileToParse,
+      sysConfigData.hhm_config.regExFileStr
+    );
 
     await log("info", "NA", sme, "phil_cv_eventlog", "FN CALL", {
       file: completeFilePath,
@@ -43,6 +33,7 @@ async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
       crlfDelay: Infinity,
     });
 
+    const data = [];
     for await (const line of rl) {
       let matches = line.match(philips_re.cv.eventlog);
       if (matches === null) {

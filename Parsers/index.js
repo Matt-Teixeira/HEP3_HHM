@@ -24,7 +24,25 @@ const filePaths = {
     cv_eventlog_3: "./test_data/Philips/CV/SME00004/EventLog.txe",
     cv_eventlog_4:
       "/opt/hhm-files/C0051/SHIP003/SME00444/daily_2022_11_22/EventLog.txe",
-    systems: ["SME00444", "SME02535", "SME00445", "SME00446", "SME07761", "SME00782", "SME00784", "SME00785", "SME00786", "SME01227", "SME02548", "SME02377", "SME02378", "SME02579", "SME02580", "SME00886", "SME00888", "end"],              
+    systems: [
+      "SME00444",
+      "SME02535",
+      "SME00445",
+      "SME00446",
+      "SME07761",
+      "SME00782",
+      "SME00784",
+      "SME00785",
+      "SME00786",
+      "SME01227",
+      "SME02548",
+      "SME02377",
+      "SME02378",
+      "SME02579",
+      "SME02580",
+      "SME00886",
+      "SME00888",
+    ],
   },
   ge: {
     ct_gesys_1: "./test_data/GE/CT/SME00821/gesys_PFRT16.log",
@@ -46,16 +64,30 @@ const filePaths = {
     ct_10_3: "/opt/hhm-files/C0137/SHIP009/SME01112/EvtApplication_Today.txt",
     ct_10_4: "/opt/hhm-files/C0137/SHIP009/SME08712/EvtApplication_Today.txt",
     mri_10: "/opt/hhm-files/C0137/SHIP019/SME01101/EvtApplication_Today.txt",
+    systems: [
+      "SME01136", // MRI
+      "SME08716",
+      "SME01101",
+      "SME01125",
+      "SME00885", // CT 
+      "SME00894",
+      "SME00868",
+      "SME00854",
+      "SME00855",
+      "SME00856",
+      "SME01129",
+      "SME00871",
+    ],
   },
 };
 
-const determinManufacturer = async (jobId, sme) => {
+const determineManufacturer = async (jobId, sme) => {
   try {
     let string = "SELECT * from systems WHERE id = $1";
     let value = [sme];
     const sysConfigData = await pgPool.query(string, value);
 
-    await log("info", jobId, sme, "determinManufacturer", "FN CALL");
+    await log("info", jobId, sme, "determineManufacturer", "FN CALL");
 
     switch (sysConfigData.rows[0].manufacturer) {
       case "Siemens":
@@ -71,7 +103,7 @@ const determinManufacturer = async (jobId, sme) => {
         break;
     }
   } catch (error) {
-    await log("error", "NA", "NA", "determinManufacturer", "FN CATCH", {
+    await log("error", "NA", "NA", "determineManufacturer", "FN CATCH", {
       error: error,
     });
   }
@@ -81,13 +113,13 @@ const onBoot = async (arrayOfSystems) => {
   try {
     let jobId = crypto.randomUUID();
     await log("info", "NA", "NA", "onBoot", `FN CALL`);
+    console.time();
     for await (const system of arrayOfSystems) {
-      if(system === "end"){
-        console.log("*************** END **************");
-        return
-      }
-      await determinManufacturer(jobId, system);
+      await determineManufacturer(jobId, system);
     }
+    console.log("*************** END **************");
+    console.timeEnd();
+    return;
   } catch (error) {
     await log("error", "NA", "NA", "onBoot", "FN CATCH", {
       error: error,
@@ -95,4 +127,4 @@ const onBoot = async (arrayOfSystems) => {
   }
 };
 
-onBoot(filePaths.philips.systems);
+onBoot(filePaths.siemens.systems);
