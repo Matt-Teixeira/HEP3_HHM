@@ -10,25 +10,25 @@ const { phil_mri_logcurrent_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const { blankLineTest } = require("../../../utils/regExHelpers");
 const convertDates = require("../../../utils/dates");
+const constructFilePath = require("../../../utils/constructFilePath");
 
-async function phil_mri_logcurrent(jobId, filePath, sysConfigData) {
-  const version = "logcurrent";
-  const dateTimeVersion = "type_3";
-  const sme = sysConfigData[0].id;
-  const manufacturer = sysConfigData[0].manufacturer;
-  const modality = sysConfigData[0].modality;
+async function phil_mri_logcurrent(jobId, sysConfigData, fileToParse) {
+  const dateTimeVersion = fileToParse.datetimeVersion;
+  const sme = sysConfigData.id;
 
   const data = [];
 
   try {
-    await log("info", jobId, sme, "phil_mri_logcurrent", "FN CALL", {
-      sme: sme,
-      modality,
-      file: filePath,
-    });
+    await log("info", jobId, sme, "phil_mri_logcurrent", "FN CALL");
+
+    const completeFilePath = await constructFilePath(
+      sysConfigData.hhm_config.file_path,
+      fileToParse,
+      fileToParse.regEx
+    );
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(filePath),
+      input: fs.createReadStream(completeFilePath),
       crlfDelay: Infinity,
     });
 
@@ -56,15 +56,7 @@ async function phil_mri_logcurrent(jobId, filePath, sysConfigData) {
     const mappedData = mapDataToSchema(data, phil_mri_logcurrent_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(
-      dataToArray,
-      manufacturer,
-      modality,
-      version,
-      sme,
-      filePath,
-      jobId
-    );
+    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
   } catch (error) {
     await log("error", jobId, sme, "phil_mri_logcurrent", "FN CALL", {
       sme: sme,

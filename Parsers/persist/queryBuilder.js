@@ -5,15 +5,15 @@ const queries = require("./queries");
 
 async function bulkInsert(jobId, data, sysConfigData, fileToParse) {
   try {
-    const fileVersion = fileToParse.split(".")[0];
+    //const fileVersion = fileToParse.split(".")[0];
 
-    // console.log(sysConfigData.manufacturer)
-    // console.log(sysConfigData.hhm_config.modality)
-    // console.log(fileVersion);
+    console.log(sysConfigData.manufacturer)
+    console.log(sysConfigData.hhm_config.modality)
+    console.log(fileToParse.file);
 
     const query =
-      queries[`${sysConfigData.manufacturer}`][`${sysConfigData.hhm_config.modality}`][`${fileVersion}`];
-    // console.log(query);
+      queries[`${sysConfigData.manufacturer}`][`${sysConfigData.hhm_config.modality}`][`${fileToParse.file}`];
+    console.log(query);
 
     const payload = await convertRowsToColumns(jobId, sysConfigData.id, data);
     const insertData = await pgPool.query(query, payload);

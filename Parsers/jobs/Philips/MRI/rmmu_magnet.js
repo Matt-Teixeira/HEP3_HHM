@@ -5,19 +5,21 @@ const fs = require("node:fs").promises;
 const { philips_re } = require("../../../parse/parsers");
 const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
 const mapDataToSchema = require("../../../persist/map-data-to-schema");
-const { phil_mri_rmmu_short_schema } = require("../../../persist/pg-schemas");
+const {
+  philips_mri_rmmu_magnet_schema,
+} = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
 const constructFilePath = require("../../../utils/constructFilePath");
 
-async function phil_mri_rmmu_short(jobId, sysConfigData, fileToParse) {
+async function phil_mri_rmmu_magnet(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
   const sme = sysConfigData.id;
 
   const data = [];
 
   try {
-    await log("info", "NA", sme, "phil_mri_rmmu_short", "FN CALL");
+    await log("info", jobId, sme, "phil_mri_rmmu_magnet", "FN CALL");
 
     const completeFilePath = await constructFilePath(
       sysConfigData.hhm_config.file_path,
@@ -27,7 +29,7 @@ async function phil_mri_rmmu_short(jobId, sysConfigData, fileToParse) {
 
     const fileData = (await fs.readFile(completeFilePath)).toString();
 
-    let matches = fileData.matchAll(philips_re.mri.rmmu_short_re);
+    let matches = fileData.matchAll(philips_re.mri.rmmu_magnet);
     let metaData = fileData.match(philips_re.mri.rmmu_meta_data);
 
     for await (let match of matches) {
@@ -41,12 +43,12 @@ async function phil_mri_rmmu_short(jobId, sysConfigData, fileToParse) {
       data.push(matchData);
     }
 
-    const mappedData = mapDataToSchema(data, phil_mri_rmmu_short_schema);
+    const mappedData = mapDataToSchema(data, philips_mri_rmmu_magnet_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
     await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
   } catch (error) {
-    await log("error", "NA", sme, "phil_mri_rmmu_short", "FN CALL", {
+    await log("error", jobId, sme, "phil_mri_rmmu_magnet", "FN CALL", {
       sme: sme,
       modality,
       file: filePath,
@@ -55,4 +57,4 @@ async function phil_mri_rmmu_short(jobId, sysConfigData, fileToParse) {
   }
 }
 
-module.exports = phil_mri_rmmu_short;
+module.exports = phil_mri_rmmu_magnet;

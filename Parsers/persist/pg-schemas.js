@@ -216,6 +216,26 @@ const phil_mri_rmmu_long_schema = {
   date_time: null,
 };
 
+const philips_mri_rmmu_magnet_schema = {
+  equipment_id: null,
+  system_reference_number: null,
+  hospital_name: null,
+  serial_number_magnet: null,
+  serial_number_meu: null,
+  LineNo: null,
+  year: null,
+  mo: null,
+  dy: null,
+  hr: null,
+  mn: null,
+  ss: null,
+  hs: null,
+  Event: null,
+  Data: null,
+  Descr: null,
+  date_time: null
+};
+
 const philips_cv_eventlog_schema = {
   equipment_id: null,
   category: null,
@@ -244,6 +264,7 @@ module.exports = {
   phil_mri_logcurrent_schema,
   phil_mri_rmmu_short_schema,
   phil_mri_rmmu_long_schema,
+  philips_mri_rmmu_magnet_schema,
   ge_ct_gesys_schema,
   ge_cv_syserror_schema,
   philips_cv_eventlog_schema,
