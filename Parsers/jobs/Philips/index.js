@@ -7,9 +7,7 @@ const philipsModalities = async (jobId, sysConfigData) => {
   await log("info", jobId, "NA", "philipsModalities", "FN CALL");
 
   try {
-    const modality = sysConfigData.modality;
-
-    console.log(modality, sysConfigData);
+    const modality = sysConfigData.hhm_config.modality;
 
     switch (modality) {
       case "MRI":

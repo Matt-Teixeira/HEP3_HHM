@@ -8,24 +8,27 @@ const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { phil_mri_rmmu_long_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
+const constructFilePath = require("../../../utils/constructFilePath");
 
-async function phil_mri_rmmu_long(jobId, filePath, sysConfigData) {
-  const version = "rmmu_long";
-  const dateTimeVersion = "type_4";
-  const sme = sysConfigData[0].id;
-  const manufacturer = sysConfigData[0].manufacturer;
-  const modality = sysConfigData[0].modality;
+async function phil_mri_rmmu_long(jobId, sysConfigData, fileToParse) {
+  const dateTimeVersion = fileToParse.datetimeVersion;
+  const sme = sysConfigData.id;
+
+  //console.log(sysConfigData);
+  //console.log(fileToParse);
 
   const data = [];
 
   try {
-    await log("info", jobId, sme, "phil_mri_rmmu_long", "FN CALL", {
-      sme: sme,
-      modality,
-      file: filePath,
-    });
+    await log("info", jobId, sme, "phil_mri_rmmu_long", "FN CALL");
 
-    const fileData = (await fs.readFile(filePath)).toString();
+    const completeFilePath = await constructFilePath(
+      sysConfigData.hhm_config.file_path,
+      fileToParse,
+      fileToParse.regEx
+    );
+
+    const fileData = (await fs.readFile(completeFilePath)).toString();
 
     let matches = fileData.matchAll(philips_re.mri.rmmu_long_re);
     let metaData = fileData.match(philips_re.mri.rmmu_meta_data);
@@ -44,15 +47,7 @@ async function phil_mri_rmmu_long(jobId, filePath, sysConfigData) {
     const mappedData = mapDataToSchema(data, phil_mri_rmmu_long_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(
-      dataToArray,
-      manufacturer,
-      modality,
-      version,
-      sme,
-      filePath,
-      jobId
-    );
+    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
   } catch (error) {
     await log("error", jobId, sme, "phil_mri_rmmu_long", "FN CALL", {
       sme: sme,

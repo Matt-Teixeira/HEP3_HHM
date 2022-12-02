@@ -24,7 +24,7 @@ const filePaths = {
     cv_eventlog_3: "./test_data/Philips/CV/SME00004/EventLog.txe",
     cv_eventlog_4:
       "/opt/hhm-files/C0051/SHIP003/SME00444/daily_2022_11_22/EventLog.txe",
-    systems: [
+    cv_systems: [
       "SME00444",
       "SME02535",
       "SME00445",
@@ -43,6 +43,7 @@ const filePaths = {
       "SME00886",
       "SME00888",
     ],
+    mri_systems: ["SME01138"],
   },
   ge: {
     ct_gesys_1: "./test_data/GE/CT/SME00821/gesys_PFRT16.log",
@@ -65,27 +66,61 @@ const filePaths = {
     ct_10_4: "/opt/hhm-files/C0137/SHIP009/SME08712/EvtApplication_Today.txt",
     mri_10: "/opt/hhm-files/C0137/SHIP019/SME01101/EvtApplication_Today.txt",
     systems: [
-      "SME01136", // MRI
-      "SME08716",
-      "SME01101",
+      //"SME01136", // MRI
+      //"SME08716",
+      //"SME01101",
       "SME01125",
-      "SME00885", // CT 
-      "SME00894",
-      "SME00868",
-      "SME00854",
-      "SME00855",
-      "SME00856",
-      "SME01129",
-      "SME00871",
+      "SME00885", // CT
+      //"SME00894",
+      //"SME00868",
+      //"SME00854",
+      //"SME00855",
+      //"SME00856",
+      //"SME01129",
+      //"SME00871",
     ],
   },
 };
 
+const systems = [
+  "SME00894",
+  "SME00868",
+  "SME00854",
+  "SME00855",
+  "SME00856",
+  "SME01129",
+  "SME00871",
+  "SME00885",
+  "SME08716",
+  "SME01101",
+  "SME01125",
+  "SME01136",
+  "SME00444",
+  "SME02535",
+  "SME00445",
+  "SME00446",
+  "SME07761",
+  "SME00782",
+  "SME00784",
+  "SME00785",
+  "SME00786",
+  "SME01227",
+  "SME02548",
+  "SME02377",
+  "SME02378",
+  "SME02579",
+  "SME02580",
+  "SME00886",
+  "SME00888",
+  "SME01138",
+];
+
 const determineManufacturer = async (jobId, sme) => {
   try {
-    let string = "SELECT * from systems WHERE id = $1";
+    let queryString =
+      "SELECT id, manufacturer, hhm_config from systems WHERE id = $1";
     let value = [sme];
-    const sysConfigData = await pgPool.query(string, value);
+    const sysConfigData = await pgPool.query(queryString, value);
 
     await log("info", jobId, sme, "determineManufacturer", "FN CALL");
 
@@ -111,10 +146,10 @@ const determineManufacturer = async (jobId, sme) => {
 
 const onBoot = async (arrayOfSystems) => {
   try {
-    let jobId = crypto.randomUUID();
     await log("info", "NA", "NA", "onBoot", `FN CALL`);
     console.time();
     for await (const system of arrayOfSystems) {
+      let jobId = crypto.randomUUID();
       await determineManufacturer(jobId, system);
     }
     console.log("*************** END **************");
