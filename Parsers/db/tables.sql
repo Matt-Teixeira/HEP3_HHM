@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS philips_ct_events;
 DROP TABLE IF EXISTS philips_mri_logcurrent;
 DROP TABLE IF EXISTS philips_mri_rmmu_short;
 DROP TABLE IF EXISTS philips_mri_rmmu_long;
+DROP TABLE IF EXISTS philips_mri_rmmu_magnet
 DROP TABLE IF EXISTS philips_cv_eventlog;
 DROP TABLE IF EXISTS philips_mri_monitor;
 DROP TABLE IF EXISTS philips_mri_monitoring_data
@@ -254,6 +255,27 @@ CREATE TABLE philips_mri_rmmu_long(
     CompressorReset varchar(2),
     Chd INT,
     Cpr INT,
+    date_time TEXT
+);
+
+CREATE TABLE philips_mri_rmmu_magnet(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    system_reference_number TEXT,
+    hospital_name TEXT,
+    serial_number_magnet TEXT,
+    serial_number_meu TEXT,
+    lineno INT,
+    year INT,
+    mo INT,
+    dy INT,
+    hr INT,
+    mn INT,
+    ss INT,
+    hs INT,
+    event TEXT,
+    data TEXT,
+    descr TEXT,
     date_time TEXT
 );
 
