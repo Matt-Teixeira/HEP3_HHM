@@ -66,18 +66,18 @@ const filePaths = {
     ct_10_4: "/opt/hhm-files/C0137/SHIP009/SME08712/EvtApplication_Today.txt",
     mri_10: "/opt/hhm-files/C0137/SHIP019/SME01101/EvtApplication_Today.txt",
     systems: [
-      //"SME01136", // MRI
-      //"SME08716",
-      //"SME01101",
+      "SME01136",  //MRI
+      "SME08716",
+      "SME01101",
       "SME01125",
-      "SME00885", // CT
-      //"SME00894",
-      //"SME00868",
-      //"SME00854",
-      //"SME00855",
-      //"SME00856",
-      //"SME01129",
-      //"SME00871",
+      "SME00885",  //CT
+      "SME00894",
+      "SME00868",
+      "SME00854",
+      "SME00855",
+      "SME00856",
+      "SME01129",
+      "SME00871",
     ],
   },
 };
@@ -162,4 +162,4 @@ const onBoot = async (arrayOfSystems) => {
   }
 };
 
-onBoot(filePaths.siemens.systems);
+onBoot(filePaths.philips.mri_systems);

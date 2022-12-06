@@ -12,3 +12,12 @@ deltaStore
 *.sh
 *.pem
 test_data/
+
+# Generated Files
+
+GE_Cath
+GE_Imaging
+Philips_CT
+Philips_Cath
+Philips_MRI
+Siemens_Files

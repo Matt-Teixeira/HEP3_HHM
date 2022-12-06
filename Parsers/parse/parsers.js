@@ -56,6 +56,8 @@ const philips_re = {
       /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<AvgPwr>\d+),(?<MinPwr>\d+),(?<MaxPwr>\d+),(?<AvgAbs>\d+),(?<AvgPrMbars>\d+),(?<MinPrMbars>\d+),(?<MaxPrMbars>\d+),(?<LHePct>\d+),(?<LHe2>\d+),(?<DiffPressureSwitch>[YN]+?),(?<TempAlarm>[YN]+?),(?<PressureAlarm>[YN]+?),(?<Cerr>[YN]+?),(?<CompressorReset>[YN]+?),(?<Chd>\d+),(?<Cpr>\d+)/g,
     rmmu_magnet:
       /(?<LineNo>\d+?),(?<year>\d+?),(?<mo>\d+?),(?<dy>\d+?),(?<hr>\d+?),(?<mn>\d+?),(?<ss>\d+?),(?<hs>\d+?),(?<Event>\d+?),(?<Data>\d+?),(?<Descr>.*)/g,
+    rmmu_history:
+      /(?<Time>\d+?),(?<Stat>\d+?),(?<AvgPwr>\d+?),(?<MinPwr>\d+?),(?<MaxPwr>\d+?),(?<MinPr>\d+?),(?<MaxPr>\d+?),(?<LHe1>\d+?),(?<LHe2>\d+?),(?<DPS>\d+?),(?<TALM>\d+?),(?<PALM>\d+?),(?<CRes>\d+?)/g,
     monitor: {
       monitor_1HRFAmp1_AvgPower:
         /(?<host_date>\d{4}-\d{2}-\d{2})\s(?<host_time>\d{2}:\d{2}:\d{2})\s(?<avg_power>(-)?\d+(\.\d+)?)/g,

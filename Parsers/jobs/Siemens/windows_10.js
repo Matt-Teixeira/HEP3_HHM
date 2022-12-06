@@ -31,7 +31,7 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
     ); */
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(`${dirPath}/${fileToParse}`),
+      input: fs.createReadStream(`${dirPath}/${fileToParse.file}`),
       crlfDelay: Infinity,
     });
 
