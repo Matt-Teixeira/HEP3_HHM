@@ -9,52 +9,39 @@ const { ge_ct_gesys_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
 
-async function ge_ct_gesys(jobId, filePath, sysConfigData, file_type) {
-  const version = "gesys";
-  const dateTimeVersion = "type_2";
-  const sme = sysConfigData[0].id;
-  const manufacturer = sysConfigData[0].manufacturer;
-  const modality = sysConfigData[0].modality;
+async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
+  const dateTimeVersion = fileToParse.datetimeVersion;
+  const sme = sysConfigData.id;
+
   const data = [];
 
   try {
-    await log("info", jobId, sysConfigData[0].id, "ge_ct_gesys", "FN CALL", {
-      sme: sysConfigData[0].id,
-      modality: sysConfigData[0].modality,
-      file: filePath,
-    });
+    await log("info", sme, "ge_ct_gesys", "FN CALL");
 
-    const fileData = (await fs.readFile(filePath)).toString();
+    const completeFilePath = `${sysConfigData.hhm_config.file_path}/${fileToParse.file}${fileToParse.file_suffix}`;
+
+    const fileData = (await fs.readFile(completeFilePath)).toString();
 
     let matches = fileData.match(ge_re.ct.gesys.block);
     for await (let match of matches) {
       const matchGroups = match.match(ge_re.ct.gesys.new);
       convertDates(matchGroups.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(
-        sysConfigData[0].id,
+        sme,
         matchGroups.groups
       );
       data.push(matchData);
     }
+
+    
     const mappedData = mapDataToSchema(data, ge_ct_gesys_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(
-      dataToArray,
-      manufacturer,
-      modality,
-      version,
-      sme,
-      filePath,
-      jobId
-    );
+    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
   } catch (error) {
-    await log("error", jobId, sysConfigData[0].id, "ge_ct_gesys", "FN CALL", {
-      sme: sysConfigData[0].id,
-      manufacturer: sysConfigData[0].manufacturer,
-      modality: sysConfigData[0].modality,
-      file: filePath,
-      error: error.message,
+    console.log(error)
+    await log("error", sme, "ge_ct_gesys", "FN CALL", {
+      error: error,
     });
   }
 }

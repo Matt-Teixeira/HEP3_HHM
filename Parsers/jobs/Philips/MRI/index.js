@@ -10,9 +10,12 @@ const phil_mri_rmmu_magnet = require("./rmmu_magnet");
 const phil_mri_rmmu_history = require("./rmmu_history");
 
 const philips_mri_parsers = async (jobId, sysConfigData) => {
+  const file_types = sysConfigData.hhm_config.file_types;
   try {
-    await log("info", "NA", "NA", "philips_mri_parsers", "FN CALL");
-    const file_types = sysConfigData.hhm_config.file_types;
+    await log("info", jobId, "NA", "philips_mri_parsers", "FN CALL");
+    
+
+    console.log(file_types)
 
     for await (const file of file_types) {
       //console.log(file)
@@ -29,9 +32,9 @@ const philips_mri_parsers = async (jobId, sysConfigData) => {
         case "rmmu_magnet":
           await phil_mri_rmmu_magnet(jobId, sysConfigData, file);
           break;
-        case "rmmu_history.log":
+        /* case "rmmu_history.log":
           await phil_mri_rmmu_history(jobId, sysConfigData, file);
-          break;
+          break; */
         case "monitor":
           const data = await phil_mri_monitor_jsonb(
             jobId,
@@ -45,10 +48,10 @@ const philips_mri_parsers = async (jobId, sysConfigData) => {
       }
     }
   } catch (error) {
-    await log("error", "NA", "NA", "philips_mri_parsers", "FN CATCH", {
+    console.log(error)
+    await log("error", jobId, "NA", "philips_mri_parsers", "FN CATCH", {
       error: error,
-      file: filePath,
-      type: file_type,
+      type: file_types.file,
     });
   }
 };
