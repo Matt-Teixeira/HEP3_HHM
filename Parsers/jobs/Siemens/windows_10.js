@@ -20,15 +20,9 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
   const data = [];
   // console.log(sysConfigData);
   // console.log(fileToParse);
-
+  let line_num = 1;
   try {
     await log("info", jobId, sme, "parse_win_10", "FN CALL");
-
-    /* const completeFilePath = await constructFilePath(
-      dirPath,
-      fileToParse,
-      sysConfigData.hhm_config.regExFileStr
-    ); */
 
     const rl = readline.createInterface({
       input: fs.createReadStream(`${dirPath}/${fileToParse.file}`),
@@ -51,6 +45,7 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
       convertDates(matches.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(sme, matches.groups);
       data.push(matchData);
+      line_num++;
     }
 
     const mappedData = mapDataToSchema(data, siemens_ct_mri);
@@ -60,6 +55,7 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
     return true;
   } catch (error) {
     await log("error", jobId, sme, "parse_win_10", "FN CATCH", {
+      line: line_num,
       error: error,
       file: fileToParse,
     });

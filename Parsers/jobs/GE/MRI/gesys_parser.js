@@ -9,54 +9,39 @@ const { ge_mri_gesys_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
 
-async function ge_mri_gesys(jobId, filePath, sysConfigData) {
-  const version = "gesys";
-  const dateTimeVersion = "type_2";
-  const sme = sysConfigData[0].id;
-  const manufacturer = sysConfigData[0].manufacturer;
-  const modality = sysConfigData[0].modality;
+async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
+  const dateTimeVersion = fileToParse.datetimeVersion;
+  const sme = sysConfigData.id;
 
   const data = [];
-  
-  try {
-    await log("info", "NA", sme, "ge_mri_gesys", "FN CALL", {
-      sme: sme,
-      modality,
-      file: filePath,
-    });
 
-    const fileData = (await fs.readFile(filePath)).toString();
+  try {
+    await log("info", sme, "ge_mri_gesys", "FN CALL");
+
+    const completeFilePath = `${sysConfigData.hhm_config.file_path}/${fileToParse.file}${fileToParse.file_suffix}`;
+
+    const fileData = (await fs.readFile(completeFilePath)).toString();
 
     let matches = fileData.match(ge_re.mri.gesys.block);
-
     for await (let match of matches) {
-      // Step to filter regEx permutations into arrays and combine later
       const matchGroups = match.match(ge_re.mri.gesys.new);
       convertDates(matchGroups.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(sme, matchGroups.groups);
+      const matchData = groupsToArrayObj(
+        sme,
+        matchGroups.groups
+      );
       data.push(matchData);
     }
 
+    
     const mappedData = mapDataToSchema(data, ge_mri_gesys_schema);
-
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(
-      dataToArray,
-      manufacturer,
-      modality,
-      version,
-      sme,
-      filePath,
-      jobId
-    );
+    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
   } catch (error) {
-    await log("error", "NA", sme, "ge_mri_gesys", "FN CALL", {
-      sme: sme,
-      manufacturer,
-      modality,
-      file: filePath,
-      error: error.message,
+    console.log(error)
+    await log("error", sme, "ge_mri_gesys", "FN CALL", {
+      error: error,
     });
   }
 }

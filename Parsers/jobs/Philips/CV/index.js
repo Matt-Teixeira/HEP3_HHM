@@ -9,7 +9,7 @@ const philips_cv_parsers = async (jobId, sysConfigData) => {
   try {
     await log("info", "NA", "NA", "philips_cv_parsers", "FN CALL");
     for await (const file of file_types) {
-      switch (file) {
+      switch (file.file) {
         case "EventLog.txe":
           await phil_cv_eventlog(jobId, sysConfigData, file);
           break;

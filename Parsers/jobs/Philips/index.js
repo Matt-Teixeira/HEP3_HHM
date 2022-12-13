@@ -16,7 +16,7 @@ const philipsModalities = async (jobId, sysConfigData) => {
       case "CT":
         await philips_ct_parsers(jobId, sysConfigData);
         break;
-      case "CV/IR":
+      case "CV":
         await philips_cv_parsers(jobId, sysConfigData);
         break;
       default:

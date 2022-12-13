@@ -13,16 +13,17 @@ const convertDates = require("../../../utils/dates");
 const constructFilePath = require("../../../utils/constructFilePath");
 
 async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
-  const dateTimeVersion = sysConfigData.dateTimeVersion;
+  const dateTimeVersion = fileToParse.datetimeVersion;
   const sme = sysConfigData.id;
-  const filePath = sysConfigData.hhm_config.file_path; // Path to system log data on Debian server
 
   try {
-    const completeFilePath = await constructFilePath(
+    /* const completeFilePath = await constructFilePath(
       filePath,
       fileToParse,
       sysConfigData.hhm_config.regExFileStr
-    );
+    ); */
+
+    const completeFilePath = `${sysConfigData.hhm_config.file_path}/${fileToParse.file}`
 
     await log("info", "NA", sme, "phil_cv_eventlog", "FN CALL", {
       file: completeFilePath,
