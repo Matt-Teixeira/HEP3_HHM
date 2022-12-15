@@ -10,7 +10,8 @@ const ge_parser = require("./jobs/GE");
 const filePaths = {
   philips: {
     cv_systems: [
-      "SME00444",
+      "SME00445",
+      "SME00446",
       "SME07761",
       "SME00782",
       "SME00785",
@@ -33,8 +34,14 @@ const filePaths = {
       "SME08325",
       "SME00888",
       "SME00892",
+      "SME00349",
+      "SME00527",
       "SME00529",
       "SME00530",
+      "SME00508",
+      "SME00509",
+      "SME00510",
+      "SME00511",
       "SME01387",
       "SME01388",
       "SME01389",
@@ -48,7 +55,6 @@ const filePaths = {
       "SME11677",
       "SME11722",
       "SME11723",
-      "SME11724",
       "SME11724",
     ],
     mri_systems: ["SME01138"],
@@ -76,22 +82,20 @@ const filePaths = {
   },
   siemens: {
     systems: [
-      "SME01136", //MRI
+      "SME01136",
       "SME08716",
       "SME01101",
-      "SME01125",
-      "SME00885", //CT
+      "SME00885",
       "SME00894",
-      "SME00868",
-      "SME00854",
-      "SME00855",
-      "SME00856",
-      "SME01129",
-      "SME00871",
       "SME01092",
-      // "SME01094", 12 Gb
+      "SME01129",
+      "SME00868",
       "SME01112",
       "SME08712",
+      "SME00854",
+      "SME00855",
+      "SME00871",
+      //"SME01094", 12gb
     ],
   },
 };
@@ -143,4 +147,4 @@ const onBoot = async (arrayOfSystems) => {
   }
 };
 
-onBoot(filePaths.philips.mri_systems);
+onBoot(filePaths.ge.mri_systems);

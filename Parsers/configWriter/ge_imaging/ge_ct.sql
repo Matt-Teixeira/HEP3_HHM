@@ -1,8 +1,4 @@
 UPDATE systems
-SET hhm_config = '{"file_path": "/opt/hhm-files/C0348/SHIP002/SME10071", "file_types": [{"file": "gesys", "datetimeVersion": "type_2"}], "modality": "CT"}'
-WHERE id = 'SME10071';
-
-UPDATE systems
 SET hhm_config = '{"file_path": "/opt/hhm-files/C0051/SHIP098/SME12444", "file_types": [{"file": "gesys", "datetimeVersion": "type_2"}], "modality": "CT"}'
 WHERE id = 'SME12444';
 
