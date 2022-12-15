@@ -12,6 +12,7 @@ const ge_ct_parsers = async (jobId, sysConfigData) => {
     for await (const file of file_list) {
       switch (file.file) {
         case "gesys":
+          console.log("In gesys");
           await ge_ct_gesys(jobId, sysConfigData, file);
           break;
 
