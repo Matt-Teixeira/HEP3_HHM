@@ -22,3 +22,5 @@ Philips_CT
 Philips_Cath
 Philips_MRI
 Siemens_Files
+
+configWriter/*.sql

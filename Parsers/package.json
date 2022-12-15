@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "update": "./proj.sh",
+    "ge_config": "node configWriter/ge_imaging/index.js",
+    "phil_mri_config": "node configWriter/phil_mri/index.js"
   },
   "keywords": [],
   "author": "",
