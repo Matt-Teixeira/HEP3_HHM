@@ -52,10 +52,10 @@ const filePaths = {
       "SME01391",
       "SME01392",
       "SME01393",
-      "SME11677",
       "SME11722",
-      "SME11723",
       "SME11724",
+      //"SME11723", no such file or directory
+      //"SME11677", no such file or directory
     ],
     mri_systems: ["SME01138"],
   },
@@ -147,4 +147,4 @@ const onBoot = async (arrayOfSystems) => {
   }
 };
 
-onBoot(filePaths.ge.mri_systems);
+onBoot(filePaths.siemens.systems);
