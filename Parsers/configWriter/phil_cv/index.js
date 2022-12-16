@@ -9,19 +9,17 @@ const readFile = async () => {
     crlfDelay: Infinity,
   });
 
-  let prev_sme = ""
+  let prev_sme = "";
   for await (const line of rl) {
     let matches = line.match(re);
 
     let current_sme = matches.groups.file_path.split("/")[5];
-    
+
     if (current_sme === prev_sme) {
-        continue;
+      continue;
     }
 
     prev_sme = current_sme;
-    console.log(current_sme)
-    
 
     let update = "UPDATE systems" + "\n";
     let set = "SET hhm_config = ";
