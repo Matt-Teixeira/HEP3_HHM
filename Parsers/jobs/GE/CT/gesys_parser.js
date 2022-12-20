@@ -8,7 +8,10 @@ const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { ge_ct_gesys_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
-const isFileModified = require("../../../utils/isFileModified");
+const {
+  isFileModified,
+  updateFileModTime,
+} = require("../../../utils/isFileModified");
 
 async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
@@ -44,11 +47,16 @@ async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
     const mappedData = mapDataToSchema(data, ge_ct_gesys_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
-
-    //const completeFilePath = `${sysConfigData.hhm_config.file_path}/${fileToParse.file}${fileToParse.file_suffix}`;
+    const insertSuccess = await bulkInsert(
+      jobId,
+      dataToArray,
+      sysConfigData,
+      fileToParse
+    );
+    if (insertSuccess) {
+      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+    }
   } catch (error) {
-    console.log(error);
     await log("error", sme, "ge_ct_gesys", "FN CALL", {
       error: error,
     });

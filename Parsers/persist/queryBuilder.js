@@ -5,15 +5,19 @@ const queries = require("./queries");
 
 async function bulkInsert(jobId, data, sysConfigData, fileToParse) {
   try {
-    const fileQuery = fileToParse.query
+    if (data.length === 0) {
+      throw new Error("File is empty/no matches");
+    }
+    const fileQuery = fileToParse.query;
 
-    /*console.log(fileToParse)
-    console.log(sysConfigData.manufacturer)
-    console.log(sysConfigData.hhm_config.modality)
-    console.log(fileVersion); */
+    console.log(sysConfigData.manufacturer);
+    console.log(sysConfigData.hhm_config.modality);
+    console.log(fileQuery);
 
     const query =
-      queries[`${sysConfigData.manufacturer}`][`${sysConfigData.hhm_config.modality}`][`${fileToParse.query}`];
+      queries[`${sysConfigData.manufacturer}`][
+        `${sysConfigData.hhm_config.modality}`
+      ][`${fileToParse.query}`];
     console.log(query);
 
     const payload = await convertRowsToColumns(jobId, sysConfigData.id, data);
@@ -23,9 +27,11 @@ async function bulkInsert(jobId, data, sysConfigData, fileToParse) {
       query: JSON.stringify(query),
       rowsInserted: insertData.rowCount,
     });
+    return true;
   } catch (error) {
+    console.log(error);
     await log("error", jobId, sysConfigData.id, "bulkInsert", `FN CALL`, {
-      error,
+      error: error.message,
     });
   }
 }

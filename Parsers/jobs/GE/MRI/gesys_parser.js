@@ -8,7 +8,10 @@ const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { ge_mri_gesys_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
-const isFileModified = require("../../../utils/isFileModified");
+const {
+  isFileModified,
+  updateFileModTime,
+} = require("../../../utils/isFileModified");
 
 async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
@@ -46,7 +49,15 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
     const mappedData = mapDataToSchema(data, ge_mri_gesys_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
+    const insertSuccess = await bulkInsert(
+      jobId,
+      dataToArray,
+      sysConfigData,
+      fileToParse
+    );
+    if (insertSuccess) {
+      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+    }
 
     // Set mod date-time
   } catch (error) {

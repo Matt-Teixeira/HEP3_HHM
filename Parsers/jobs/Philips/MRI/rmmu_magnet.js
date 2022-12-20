@@ -11,7 +11,10 @@ const {
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
 const constructFilePath = require("../../../utils/constructFilePath");
-const isFileModified = require("../../../utils/isFileModified");
+const {
+  isFileModified,
+  updateFileModTime,
+} = require("../../../utils/isFileModified");
 
 async function phil_mri_rmmu_magnet(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
@@ -57,7 +60,15 @@ async function phil_mri_rmmu_magnet(jobId, sysConfigData, fileToParse) {
     const mappedData = mapDataToSchema(data, philips_mri_rmmu_magnet_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
+    const insertSuccess = await bulkInsert(
+      jobId,
+      dataToArray,
+      sysConfigData,
+      fileToParse
+    );
+    if (insertSuccess) {
+      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+    }
   } catch (error) {
     await log("error", jobId, sme, "phil_mri_rmmu_magnet", "FN CALL", {
       sme: sme,

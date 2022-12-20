@@ -4,7 +4,7 @@ const philips_mri_parsers = require("./MRI");
 const philips_cv_parsers = require("./CV");
 
 const philipsModalities = async (jobId, sysConfigData) => {
-  await log("info", jobId, "NA", "philipsModalities", "FN CALL");
+  await log("info", jobId, sysConfigData.id, "philipsModalities", "FN CALL");
 
   try {
     const modality = sysConfigData.hhm_config.modality;
@@ -23,7 +23,7 @@ const philipsModalities = async (jobId, sysConfigData) => {
         break;
     }
   } catch (error) {
-    await log("error", "NA", "NA", "philipsModalities", "FN CATCH", {
+    await log("error", jobId, sysConfigData.id, "philipsModalities", "FN CATCH", {
       error: error,
     });
   }

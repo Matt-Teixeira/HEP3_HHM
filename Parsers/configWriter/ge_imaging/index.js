@@ -32,7 +32,7 @@ const readFile = async () => {
         `'{"file_path": "${matches.groups.file_path}", "modality": "MRI"}'` +
         "\n";
       let file_config =
-        `'[{"query": "gesys", "file_name": "", "datetimeVersion": "type_2", "last_mod": ""}]'` +
+        `'[{"query": "gesys", "file_name": "", "datetimeVersion": "type_2", "last_mod": "", "index": 0}]'` +
         "\n";
       let where = `WHERE id = '${current_sme}';` + "\n";
 

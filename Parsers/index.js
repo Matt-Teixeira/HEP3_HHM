@@ -30,13 +30,11 @@ const filePaths = {
       "SME11259",
       "SME11530",
       "SME11532",
-      "SME11925",
       "SME11927",
       "SME08325",
       "SME00888",
       "SME00892",
       "SME00349",
-      "SME00527",
       "SME00529",
       "SME00530",
       "SME00508",
@@ -90,12 +88,11 @@ const filePaths = {
       "SME01092",
       "SME01129",
       "SME00868",
-      "SME01112",
       "SME08712",
       "SME00854",
       "SME00855",
       "SME00871",
-      //"SME01094", 12gb
+      "SME01094", //12gb file not there
     ],
   },
 };
@@ -109,7 +106,6 @@ const all = [
   "SME01092",
   "SME01129",
   "SME00868",
-  "SME01112",
   "SME08712",
   "SME00854",
   "SME00855",
@@ -153,13 +149,11 @@ const all = [
   "SME11259",
   "SME11530",
   "SME11532",
-  "SME11925",
   "SME11927",
   "SME08325",
   "SME00888",
   "SME00892",
   "SME00349",
-  "SME00527",
   "SME00529",
   "SME00530",
   "SME00508",
@@ -179,7 +173,7 @@ const all = [
   "SME11722",
   "SME11724",
 ];
-
+/* 
 const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
@@ -230,4 +224,55 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(filePaths.ge.ct_systems);
+onBoot(filePaths.siemens.systems);
+
+ */
+const determineManufacturer = async (jobId, system) => {
+  try {
+    await log("info", jobId, system.id, "determineManufacturer", "FN CALL");
+
+    switch (system.manufacturer) {
+      case "Siemens":
+        await siemens_parser(jobId, system);
+        break;
+      case "Philips":
+        await philips_parser(jobId, system);
+        break;
+      case "GE":
+        await ge_parser(jobId, system);
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    await log("error", jobId, system.id, "determineManufacturer", "FN CATCH", {
+      error: error,
+    });
+  }
+};
+
+const onBoot = async () => {
+  try {
+    await log("info", "NA", "NA", "onBoot", `FN CALL`);
+    console.time();
+
+    const system_array = await pgPool.query(
+      "SELECT id, manufacturer, hhm_config, file_config from systems WHERE hhm_config IS NOT NULL"
+    );
+
+    for await (const system of system_array.rows) {
+      let jobId = crypto.randomUUID();
+      await determineManufacturer(jobId, system);
+    }
+    console.log("*************** END ***************");
+    console.timeEnd();
+    return;
+  } catch (error) {
+    await log("error", "NA", "NA", "onBoot", "FN CATCH", {
+      error: error,
+    });
+  }
+}; 
+
+onBoot();
+

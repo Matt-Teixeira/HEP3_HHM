@@ -1,17 +1,12 @@
 ("use strict");
 require("dotenv").config();
 const { log } = require("../../../logger");
-const ge_mri_gesys = require("./gesys_parser")
-
+const ge_mri_gesys = require("./gesys_parser");
 
 const ge_mri_parsers = async (jobId, sysConfigData) => {
   try {
     await log("info", jobId, "NA", "ge_ct_parsers", "FN CALL");
-
-    //const file_list = sysConfigData.hhm_config.file_types;
-
     for await (const file of sysConfigData.file_config) {
-      console.log(file.query);
       switch (file.query) {
         case "gesys":
           await ge_mri_gesys(jobId, sysConfigData, file);
@@ -20,12 +15,9 @@ const ge_mri_parsers = async (jobId, sysConfigData) => {
           break;
       }
     }
-
   } catch (error) {
-    await log("error", "NA", "NA", "ge_mri_parsers", "FN CATCH", {
-      error: error,
-      file: filePath,
-      type: file_type
+    await log("error", jobId, sysConfigData.id, "ge_mri_parsers", "FN CATCH", {
+      error: error.message,
     });
   }
 };

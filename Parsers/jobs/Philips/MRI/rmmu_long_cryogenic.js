@@ -9,7 +9,10 @@ const { phil_mri_rmmu_long_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
 const constructFilePath = require("../../../utils/constructFilePath");
-const isFileModified = require("../../../utils/isFileModified");
+const {
+  isFileModified,
+  updateFileModTime,
+} = require("../../../utils/isFileModified");
 
 async function phil_mri_rmmu_long(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
@@ -55,9 +58,16 @@ async function phil_mri_rmmu_long(jobId, sysConfigData, fileToParse) {
     const mappedData = mapDataToSchema(data, phil_mri_rmmu_long_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
+    const insertSuccess = await bulkInsert(
+      jobId,
+      dataToArray,
+      sysConfigData,
+      fileToParse
+    );
+    if (insertSuccess) {
+      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+    }
   } catch (error) {
-    console.log(error)
     await log("error", jobId, sme, "phil_mri_rmmu_long", "FN CALL", {
       sme: sme,
       error: error.message,

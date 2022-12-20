@@ -7,9 +7,7 @@ const parse_win_10 = require("./windows_10");
 const determineOsVersion = async (jobId, sysConfigData) => {
   await log("info", jobId, sysConfigData.id, "determineOsVersion", "FN CALL");
 
-  const file_types = sysConfigData.hhm_config.file_types;
-
-  for await (const file of file_types) {
+  for await (const file of sysConfigData.file_config) {
     switch (sysConfigData.hhm_config.windowsVersion) {
       case "win_7":
         await parse_win_7(jobId, sysConfigData, file);
@@ -24,9 +22,16 @@ const determineOsVersion = async (jobId, sysConfigData) => {
 
   try {
   } catch (error) {
-    await log("error", jobId, sysConfigData.id, "determineOsVersion", "FN CATCH", {
-      error: error,
-    });
+    await log(
+      "error",
+      jobId,
+      sysConfigData.id,
+      "determineOsVersion",
+      "FN CATCH",
+      {
+        error: error,
+      }
+    );
   }
 };
 
