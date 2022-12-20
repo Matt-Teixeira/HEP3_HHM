@@ -5,7 +5,7 @@ const queries = require("./queries");
 
 async function bulkInsert(jobId, data, sysConfigData, fileToParse) {
   try {
-    const fileVersion = fileToParse.file.split(".")[0];
+    const fileQuery = fileToParse.query
 
     /*console.log(fileToParse)
     console.log(sysConfigData.manufacturer)
@@ -13,7 +13,7 @@ async function bulkInsert(jobId, data, sysConfigData, fileToParse) {
     console.log(fileVersion); */
 
     const query =
-      queries[`${sysConfigData.manufacturer}`][`${sysConfigData.hhm_config.modality}`][`${fileVersion}`];
+      queries[`${sysConfigData.manufacturer}`][`${sysConfigData.hhm_config.modality}`][`${fileToParse.query}`];
     console.log(query);
 
     const payload = await convertRowsToColumns(jobId, sysConfigData.id, data);

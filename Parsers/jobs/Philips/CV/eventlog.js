@@ -10,27 +10,31 @@ const { philips_cv_eventlog_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const { blankLineTest } = require("../../../utils/regExHelpers");
 const convertDates = require("../../../utils/dates");
-const constructFilePath = require("../../../utils/constructFilePath");
+const isFileModified = require("../../../utils/isFileModified");
 
 async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
   const sme = sysConfigData.id;
 
   try {
-    /* const completeFilePath = await constructFilePath(
-      filePath,
-      fileToParse,
-      sysConfigData.hhm_config.regExFileStr
-    ); */
+    const complete_file_path = `${sysConfigData.hhm_config.file_path}/${fileToParse.file}`;
 
-    const completeFilePath = `${sysConfigData.hhm_config.file_path}/${fileToParse.file}`
+    const isUpdatedFile = await isFileModified(
+      jobId,
+      sme,
+      complete_file_path,
+      sysConfigData.last_mod_time
+    );
+
+    // dont continue if file is not updated
+    if (!isUpdatedFile) return;
 
     await log("info", "NA", sme, "phil_cv_eventlog", "FN CALL", {
-      file: completeFilePath,
+      file: complete_file_path,
     });
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(completeFilePath),
+      input: fs.createReadStream(complete_file_path),
       crlfDelay: Infinity,
     });
 

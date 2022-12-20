@@ -10,6 +10,7 @@ const ge_parser = require("./jobs/GE");
 const filePaths = {
   philips: {
     cv_systems: [
+      "SME11722",
       "SME00445",
       "SME00446",
       "SME07761",
@@ -52,7 +53,6 @@ const filePaths = {
       "SME01391",
       "SME01392",
       "SME01393",
-      "SME11722",
       "SME11724",
       //"SME11723", no such file or directory
       //"SME11677", no such file or directory
@@ -100,12 +100,94 @@ const filePaths = {
   },
 };
 
+const all = [
+  "SME01136",
+  "SME08716",
+  "SME01101",
+  "SME00885",
+  "SME00894",
+  "SME01092",
+  "SME01129",
+  "SME00868",
+  "SME01112",
+  "SME08712",
+  "SME00854",
+  "SME00855",
+  "SME00871",
+  "SME12424",
+  "SME01096",
+  "SME01422",
+  "SME12444",
+  "SME12446",
+  "SME12445",
+  "SME12451",
+  "SME12412",
+  "SME12413",
+  "SME12443",
+  "SME00896",
+  "SME01091",
+  "SME00847",
+  "SME01430",
+  "SME01429",
+  "SME01431",
+  "SME01432",
+  "SME01433",
+  "SME10071",
+  "SME01138",
+  "SME00445",
+  "SME00446",
+  "SME07761",
+  "SME00782",
+  "SME00785",
+  "SME00786",
+  "SME01227",
+  "SME02548",
+  "SME02535",
+  "SME02552",
+  "SME07852",
+  "SME07855",
+  "SME07860",
+  "SME07862",
+  "SME07864",
+  "SME08102",
+  "SME11259",
+  "SME11530",
+  "SME11532",
+  "SME11925",
+  "SME11927",
+  "SME08325",
+  "SME00888",
+  "SME00892",
+  "SME00349",
+  "SME00527",
+  "SME00529",
+  "SME00530",
+  "SME00508",
+  "SME00509",
+  "SME00510",
+  "SME00511",
+  "SME01387",
+  "SME01388",
+  "SME01389",
+  "SME01397",
+  "SME01398",
+  "SME01396",
+  "SME01390",
+  "SME01391",
+  "SME01392",
+  "SME01393",
+  "SME11722",
+  "SME11724",
+];
+
 const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
-      "SELECT id, manufacturer, hhm_config from systems WHERE id = $1";
+      "SELECT id, manufacturer, hhm_config, file_config from systems WHERE id = $1";
     let value = [sme];
     const sysConfigData = await pgPool.query(queryString, value);
+
+    //console.log(sysConfigData.rows[0]);
 
     await log("info", jobId, sme, "determineManufacturer", "FN CALL");
 
@@ -129,11 +211,12 @@ const determineManufacturer = async (jobId, sme) => {
   }
 };
 
-const onBoot = async (arrayOfSystems) => {
+const onBoot = async (systems_list) => {
   try {
     await log("info", "NA", "NA", "onBoot", `FN CALL`);
     console.time();
-    for await (const system of arrayOfSystems) {
+
+    for await (const system of systems_list) {
       let jobId = crypto.randomUUID();
       await determineManufacturer(jobId, system);
     }
@@ -147,4 +230,4 @@ const onBoot = async (arrayOfSystems) => {
   }
 };
 
-onBoot(filePaths.siemens.systems);
+onBoot(filePaths.ge.ct_systems);

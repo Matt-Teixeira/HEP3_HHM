@@ -11,6 +11,7 @@ const {
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
 const constructFilePath = require("../../../utils/constructFilePath");
+const isFileModified = require("../../../utils/isFileModified");
 
 async function phil_mri_rmmu_magnet(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
@@ -21,13 +22,23 @@ async function phil_mri_rmmu_magnet(jobId, sysConfigData, fileToParse) {
   try {
     await log("info", jobId, sme, "phil_mri_rmmu_magnet", "FN CALL");
 
-    const completeFilePath = await constructFilePath(
+    const complete_file_path = await constructFilePath(
       sysConfigData.hhm_config.file_path,
       fileToParse,
       fileToParse.regEx
     );
 
-    const fileData = (await fs.readFile(completeFilePath)).toString();
+    const isUpdatedFile = await isFileModified(
+      jobId,
+      sme,
+      complete_file_path,
+      fileToParse
+    );
+
+    // dont continue if file is not updated
+    if (!isUpdatedFile) return;
+
+    const fileData = (await fs.readFile(complete_file_path)).toString();
 
     let matches = fileData.matchAll(philips_re.mri.rmmu_magnet);
     let metaData = fileData.match(philips_re.mri.rmmu_meta_data);

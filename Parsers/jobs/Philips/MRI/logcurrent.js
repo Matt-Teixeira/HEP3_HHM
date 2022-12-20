@@ -11,6 +11,7 @@ const bulkInsert = require("../../../persist/queryBuilder");
 const { blankLineTest } = require("../../../utils/regExHelpers");
 const convertDates = require("../../../utils/dates");
 const constructFilePath = require("../../../utils/constructFilePath");
+const isFileModified = require("../../../utils/isFileModified");
 
 async function phil_mri_logcurrent(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
@@ -21,14 +22,24 @@ async function phil_mri_logcurrent(jobId, sysConfigData, fileToParse) {
   try {
     await log("info", jobId, sme, "phil_mri_logcurrent", "FN CALL");
 
-    const completeFilePath = await constructFilePath(
+    const complete_file_path = await constructFilePath(
       sysConfigData.hhm_config.file_path,
       fileToParse,
       fileToParse.regEx
     );
 
+    const isUpdatedFile = await isFileModified(
+      jobId,
+      sme,
+      complete_file_path,
+      fileToParse
+    );
+
+    // dont continue if file is not updated
+    if (!isUpdatedFile) return;
+
     const rl = readline.createInterface({
-      input: fs.createReadStream(completeFilePath),
+      input: fs.createReadStream(complete_file_path),
       crlfDelay: Infinity,
     });
 

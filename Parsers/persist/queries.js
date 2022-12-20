@@ -216,7 +216,7 @@ module.exports = queries = {
       $1::text[], $2::date[], $3::time[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::text[]
     )
       `,
-      rmmu_short_: `
+      rmmu_short: `
     INSERT INTO philips_mri_rmmu_short(
       equipment_id,
       system_reference_number,
@@ -253,7 +253,7 @@ module.exports = queries = {
     $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::text[], $24::text[], $25::text[], $26::text[], $27::text[], $28::numeric[], $29::numeric[], $30::text[]
   )
     `,
-      rmmu_long_: `
+      rmmu_long: `
     INSERT INTO philips_mri_rmmu_long(
       equipment_id,
       system_reference_number,

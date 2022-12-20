@@ -29,11 +29,24 @@ const readFile = async () => {
       let update = "UPDATE systems" + "\n";
       let set = "SET hhm_config = ";
       let hhm_config =
-        `'{"file_path": "${matches.groups.file_path}", "file_types": [{"file": "gesys", "datetimeVersion": "type_2"}], "modality": "MRI"}'` +
+        `'{"file_path": "${matches.groups.file_path}", "modality": "MRI"}'` +
+        "\n";
+      let file_config =
+        `'[{"query": "gesys", "file_name": "", "datetimeVersion": "type_2", "last_mod": ""}]'` +
         "\n";
       let where = `WHERE id = '${current_sme}';` + "\n";
 
-      let string = update + set + hhm_config + where + "\n";
+      let string =
+        update +
+        set +
+        hhm_config +
+        where +
+        "\n" +
+        update +
+        "SET file_config = " +
+        file_config +
+        where +
+        "\n";
 
       await fsp.writeFile(`./configWriter/ge_imaging/ge_mri.sql`, string, {
         encoding: "utf-8",
@@ -56,11 +69,24 @@ const readFile = async () => {
       let update = "UPDATE systems" + "\n";
       let set = "SET hhm_config = ";
       let hhm_config =
-        `'{"file_path": "${matches.groups.file_path}", "file_types": [{"file": "gesys", "datetimeVersion": "type_2"}], "modality": "CT"}'` +
+        `'{"file_path": "${matches.groups.file_path}", "modality": "CT"}'` +
         "\n";
       let where = `WHERE id = '${current_sme}';` + "\n";
+      let file_config =
+        `'[{"query": "gesys", "file_name": "", "datetimeVersion": "type_2", "last_mod": ""}]'` +
+        "\n";
 
-      let string = update + set + hhm_config + where + "\n";
+        let string =
+        update +
+        set +
+        hhm_config +
+        where +
+        "\n" +
+        update +
+        "SET file_config = " +
+        file_config +
+        where +
+        "\n";
 
       await fsp.writeFile(`./configWriter/ge_imaging/ge_ct.sql`, string, {
         encoding: "utf-8",

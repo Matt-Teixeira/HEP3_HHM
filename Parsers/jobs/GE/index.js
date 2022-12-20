@@ -10,6 +10,7 @@ const geModalities = async (jobId, sysConfigData) => {
 
     switch (sysConfigData.hhm_config.modality) {
       case "MRI":
+        console.log("IN MRI PARSER")
         await ge_mri_parsers(jobId, sysConfigData);
         break;
       case "CT":

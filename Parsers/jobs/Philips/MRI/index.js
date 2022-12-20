@@ -15,18 +15,17 @@ const philips_mri_parsers = async (jobId, sysConfigData) => {
     await log("info", jobId, "NA", "philips_mri_parsers", "FN CALL");
     
 
-    console.log(file_types)
+    // console.log(sysConfigData.file_config);
 
-    for await (const file of file_types) {
-      //console.log(file)
-      switch (file.file) {
+    for await (const file of sysConfigData.file_config) {
+      switch (file.query) {
         case "logcurrent":
           await phil_mri_logcurrent(jobId, sysConfigData, file);
           break;
-        case "rmmu_short_":
+        case "rmmu_short":
           await phil_mri_rmmu_short(jobId, sysConfigData, file);
           break;
-        case "rmmu_long_":
+        case "rmmu_long":
           await phil_mri_rmmu_long(jobId, sysConfigData, file);
           break;
         case "rmmu_magnet":

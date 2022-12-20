@@ -7,14 +7,11 @@ const ge_ct_parsers = async (jobId, sysConfigData) => {
   try {
     await log("info", jobId, "NA", "ge_ct_parsers", "FN CALL");
 
-    const file_list = sysConfigData.hhm_config.file_types;
-
-    for await (const file of file_list) {
-      switch (file.file) {
+    for await (const file of sysConfigData.file_config) {
+      switch (file.query) {
         case "gesys":
           await ge_ct_gesys(jobId, sysConfigData, file);
           break;
-
         default:
           break;
       }

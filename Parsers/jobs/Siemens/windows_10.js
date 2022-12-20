@@ -10,7 +10,7 @@ const { siemens_ct_mri } = require("../../persist/pg-schemas");
 const bulkInsert = require("../../persist/queryBuilder");
 const { blankLineTest } = require("../../utils/regExHelpers");
 const convertDates = require("../../utils/dates");
-const constructFilePath = require("../../utils/constructFilePath");
+const isFileModified = require("../../utils/isFileModified");
 
 const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
   const dateTimeVersion = sysConfigData.hhm_config.dateTimeVersion;
@@ -18,14 +18,25 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
   const dirPath = sysConfigData.hhm_config.file_path;
 
   const data = [];
-  // console.log(sysConfigData);
-  // console.log(fileToParse);
+
   let line_num = 1;
   try {
     await log("info", jobId, sme, "parse_win_10", "FN CALL");
 
+    const complete_file_path = `${dirPath}/${fileToParse.file}`;
+
+    const isUpdatedFile = await isFileModified(
+      jobId,
+      sme,
+      complete_file_path,
+      sysConfigData.last_mod_time
+    );
+
+    // dont continue if file is not updated
+    if (!isUpdatedFile) return;
+
     const rl = readline.createInterface({
-      input: fs.createReadStream(`${dirPath}/${fileToParse.file}`),
+      input: fs.createReadStream(complete_file_path),
       crlfDelay: Infinity,
     });
 
