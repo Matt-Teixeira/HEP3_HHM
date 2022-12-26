@@ -47,6 +47,21 @@ CREATE TABLE siemens_ct(
     date_time TEXT
 );
 
+CREATE TABLE siemens_cv(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id VARCHAR(10),
+    host_time TIME,
+    source_group TEXT,
+    type_group INT,
+    text_group TEXT,
+    domain_group TEXT,
+    id_group INT,
+    month TEXT,
+    day INT,
+    year INT,
+    date_time TEXT
+);
+
 CREATE TABLE ge_mri_gesys(
     id BIGSERIAL PRIMARY KEY,
     equipment_id TEXT,

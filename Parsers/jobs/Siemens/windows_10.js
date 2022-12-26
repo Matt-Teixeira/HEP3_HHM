@@ -24,7 +24,6 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
 
   let line_num = 1;
   try {
-    console.log(sme);
     await log("info", jobId, sme, "parse_win_10", "FN CALL");
 
     const complete_file_path = `${dirPath}/${fileToParse.file_name}`;
@@ -63,7 +62,6 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
       line_num++;
     }
 
-    
     const mappedData = mapDataToSchema(data, siemens_ct_mri);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 

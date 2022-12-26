@@ -173,15 +173,13 @@ const all = [
   "SME11722",
   "SME11724",
 ];
-/* 
+
 const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
       "SELECT id, manufacturer, hhm_config, file_config from systems WHERE id = $1";
     let value = [sme];
     const sysConfigData = await pgPool.query(queryString, value);
-
-    //console.log(sysConfigData.rows[0]);
 
     await log("info", jobId, sme, "determineManufacturer", "FN CALL");
 
@@ -224,12 +222,12 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(filePaths.siemens.systems);
+onBoot(["SME00884"]);
 
- */
-const determineManufacturer = async (jobId, system) => {
+/* const determineManufacturer = async (jobId, system) => {
   try {
     await log("info", jobId, system.id, "determineManufacturer", "FN CALL");
+    console.log(system.id)
 
     switch (system.manufacturer) {
       case "Siemens":
@@ -276,3 +274,5 @@ const onBoot = async () => {
 
 onBoot();
 
+ */
+// scp -r avante-debian:/home/matt-teixeira/hep3/hhm_parsers/Parsers/test_data SME01444

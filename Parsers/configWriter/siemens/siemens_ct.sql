@@ -29,6 +29,11 @@ file_config = '[{"query": "EvtApplication_Today", "file_name": "EvtApplication_T
 WHERE id = 'SME00868';
 
 UPDATE systems
+SET hhm_config = '{"file_path": "/opt/hhm-files/C0137/SHIP009/SME01112", "modality": "CT", "windowsVersion": "win_10"}',
+file_config = '[{"query": "EvtApplication_Today", "file_name": "EvtApplication_Today.txt", "datetimeVersion": "type_3", "index": 0, "last_mod": ""}]'
+WHERE id = 'SME01112';
+
+UPDATE systems
 SET hhm_config = '{"file_path": "/opt/hhm-files/C0137/SHIP009/SME08712", "modality": "CT", "windowsVersion": "win_10"}',
 file_config = '[{"query": "EvtApplication_Today", "file_name": "EvtApplication_Today.txt", "datetimeVersion": "type_3", "index": 0, "last_mod": ""}]'
 WHERE id = 'SME08712';

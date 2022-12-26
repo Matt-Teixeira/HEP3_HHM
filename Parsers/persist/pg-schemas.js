@@ -97,6 +97,20 @@ const siemens_ct_mri = {
   date_time: null,
 };
 
+const siemens_cv_schema = {
+  equipment_id: null,
+  host_time: null,
+  source_group: null,
+  type_group: null,
+  text_group: null,
+  domain_group: null,
+  id_group: null,
+  month: null,
+  day: null,
+  year: null,
+  date_time: null,
+};
+
 const philips_ct_eal_schema = {
   equipment_id: null,
   line: null,
@@ -233,7 +247,7 @@ const philips_mri_rmmu_magnet_schema = {
   Event: null,
   Data: null,
   Descr: null,
-  date_time: null
+  date_time: null,
 };
 
 const philips_cv_eventlog_schema = {
@@ -259,6 +273,7 @@ const philips_cv_eventlog_schema = {
 module.exports = {
   ge_mri_gesys_schema,
   siemens_ct_mri,
+  siemens_cv_schema,
   philips_ct_eal_schema,
   philips_ct_events_schema,
   phil_mri_logcurrent_schema,

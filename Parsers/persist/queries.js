@@ -125,6 +125,26 @@ module.exports = queries = {
       )
       `,
     },
+    CV: {
+      EvtApplication_Today: `
+      INSERT INTO siemens_cv (
+          equipment_id,
+          host_time,
+          source_group,
+          type_group,
+          text_group,
+          domain_group,
+          id_group,
+          month,
+          day,
+          year,
+          date_time
+      )
+      SELECT * FROM UNNEST (
+        $1::text[], $2::time[], $3::text[], $4::numeric[], $5::text[], $6::text[], $7::numeric[], $8::text[], $9::numeric[], $10::numeric[], $11::text[]
+      )
+      `,
+    },
     MRI: {
       EvtApplication_Today: `
       INSERT INTO siemens_mri (
@@ -291,7 +311,7 @@ module.exports = queries = {
     $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::numeric[], $24::text[], $25::text[], $26::text[], $27::text[], $28::text[], $29::numeric[], $30::numeric[], $31::text[]
   )
     `,
-    rmmu_magnet: `
+      rmmu_magnet: `
     INSERT INTO philips_mri_rmmu_magnet(
       equipment_id,
       system_reference_number,
