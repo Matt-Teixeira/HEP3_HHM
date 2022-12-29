@@ -8,6 +8,10 @@ const mapDataToSchema = require("../../persist/map-data-to-schema");
 const { siemens_cv_schema } = require("../../persist/pg-schemas");
 const bulkInsert = require("../../persist/queryBuilder");
 const convertDates = require("../../utils/dates");
+const {
+  isFileModified,
+  updateFileModTime,
+} = require("../../utils/isFileModified");
 
 const parse_win_7 = async (jobId, sysConfigData, fileToParse) => {
   const dateTimeVersion = fileToParse.datetimeVersion;
@@ -21,20 +25,26 @@ const parse_win_7 = async (jobId, sysConfigData, fileToParse) => {
 
     const complete_file_path = `${dirPath}/${fileToParse.file_name}`;
 
+    const isUpdatedFile = await isFileModified(
+      jobId,
+      sme,
+      complete_file_path,
+      fileToParse
+    );
+
+    // dont continue if file is not updated
+    if (!isUpdatedFile) return;
+
     const fileData = (await fs.readFile(complete_file_path)).toString();
 
-    let matches = fileData.match(
-      /(?<big_group>Source.*(\r\n)Domain:.*(\r\n)Type:.*(\r\n)ID:.*(\r\n)Date:.*(\r\n)Text:.*)/g
-    );
+    let matches = fileData.match(win_7_re.big_group);
 
     for await (let match of matches) {
       //console.log(match + "\n")
       if (match === null) {
         throw new Error("Bad match");
       }
-      let matchGroups = match.match(
-        /Source:(?<source_group>.*)(\r\n)Domain:(?<domain_group>.*)(\r\n)Type:(?<type_group>.*)(\r\n)ID:(?<id_group>.*)(\r\n)(Date:.*\s(?<month>\w+)\s(?<day>\d+),\s(?<year>\d+),\s(?<host_time>.*))(\r\n)Text:(?<text_group>.*)\n?/
-      );
+      let matchGroups = match.match(win_7_re.small_group);
 
       convertDates(matchGroups.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(sme, matchGroups.groups);
@@ -50,6 +60,11 @@ const parse_win_7 = async (jobId, sysConfigData, fileToParse) => {
       sysConfigData,
       fileToParse
     );
+    if (insertSuccess) {
+      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+    }
+
+    return true;
   } catch (error) {
     await log("error", jobId, sme, "parse_win_7", "FN CATCH", {
       error: error,

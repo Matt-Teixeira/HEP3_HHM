@@ -174,6 +174,7 @@ const all = [
   "SME11724",
 ];
 
+/* 
 const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
@@ -222,9 +223,10 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(["SME00884"]);
+onBoot(["SME01444"]);
+ */
 
-/* const determineManufacturer = async (jobId, system) => {
+const determineManufacturer = async (jobId, system) => {
   try {
     await log("info", jobId, system.id, "determineManufacturer", "FN CALL");
     console.log(system.id)
@@ -274,5 +276,4 @@ const onBoot = async () => {
 
 onBoot();
 
- */
 // scp -r avante-debian:/home/matt-teixeira/hep3/hhm_parsers/Parsers/test_data SME01444

@@ -8,8 +8,6 @@ async function isFileModified(jobId, sme, complete_file_path, fileToParse) {
 
     let fileModTime = date_time.mtime.toISOString();
 
-    console.log(fileModTime === fileToParse.last_mod);
-
     if (fileModTime === fileToParse.last_mod) {
       console.log("File not mod since last data pull");
       await log("warn", jobId, sme, "parse_win_10", "FN CALL", {
@@ -29,8 +27,6 @@ async function updateFileModTime(jobId, sme, complete_file_path, fileToParse) {
     let date_time = await fs.stat(complete_file_path);
 
     let fileModTime = date_time.mtime.toISOString();
-
-    console.log(fileModTime === fileToParse.last_mod);
 
     let queryStr =
       "UPDATE systems SET file_config = jsonb_set(file_config, $1, $2, false) WHERE id = $3";
