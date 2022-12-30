@@ -19,6 +19,8 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
 
   const data = [];
 
+  let counter = 0;
+
   try {
     await log("info", sme, "ge_mri_gesys", "FN CALL");
 
@@ -39,8 +41,18 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
     const fileData = (await fs.readFile(complete_file_path)).toString();
 
     let matches = fileData.match(ge_re.mri.gesys.block);
+
     for await (let match of matches) {
       const matchGroups = match.match(ge_re.mri.gesys.new);
+      // matchGroups will be null if no match
+      if (!matchGroups) {
+        await log("warn", sme, "ge_mri_gesys", "FN CALL", {
+          message: "Failed match",
+          prev_epoch: data[data.length - 1].epoch,
+          sr_group: data[data.length - 1].sr,
+        });
+        continue;
+      }
       convertDates(matchGroups.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(sme, matchGroups.groups);
       data.push(matchData);
@@ -59,11 +71,13 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
       await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
     }
 
+    return;
+
     // Set mod date-time
   } catch (error) {
     console.log(error);
     await log("error", sme, "ge_mri_gesys", "FN CALL", {
-      error: error,
+      error: error.message,
     });
   }
 }

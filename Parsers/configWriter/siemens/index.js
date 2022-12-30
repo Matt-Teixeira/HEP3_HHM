@@ -28,7 +28,7 @@ const readFile = async () => {
     if (system_data.rows[0].modality === "MRI") {
       let update = "UPDATE systems" + "\n";
       let set_hhm = "SET hhm_config = ";
-      let set_file = "file_config = ";
+      let set_file = "hhm_file_config = ";
       let hhm_config =
         `'{"file_path": "${matches.groups.file_path}", "modality": "MRI", "windowsVersion": "win_10"}'` +
         "," +
@@ -58,7 +58,7 @@ const readFile = async () => {
     if (system_data.rows[0].modality === "CT") {
       let update = "UPDATE systems" + "\n";
       let set_hhm = "SET hhm_config = ";
-      let set_file = "file_config = ";
+      let set_file = "hhm_file_config = ";
       let hhm_config =
         `'{"file_path": "${matches.groups.file_path}", "modality": "CT", "windowsVersion": "win_10"}'` +
         "," +

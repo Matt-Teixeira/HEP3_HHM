@@ -2,7 +2,7 @@ module.exports = queries = {
   GE: {
     MRI: {
       gesys: `
-        INSERT INTO ge_mri_gesys (
+        INSERT INTO hhm.ge_mri_gesys (
           equipment_id,
           epoch,
           record_number_concurrent,
@@ -38,7 +38,7 @@ module.exports = queries = {
     },
     CT: {
       gesys: `
-      INSERT INTO ge_ct_gesys (
+      INSERT INTO hhm.ge_ct_gesys (
         equipment_id,
         epoch,
         record_number_concurrent,
@@ -74,7 +74,7 @@ module.exports = queries = {
     },
     CV: {
       sysError: `
-      INSERT INTO ge_cv_syserror (
+      INSERT INTO hhm.ge_cv_syserror (
         equipment_id,
         sequencenumber,
         host_date,
@@ -105,7 +105,7 @@ module.exports = queries = {
   Siemens: {
     CT: {
       EvtApplication_Today: `
-      INSERT INTO siemens_ct (
+      INSERT INTO hhm.siemens_ct (
           equipment_id,
           host_state,
           host_date,
@@ -127,7 +127,7 @@ module.exports = queries = {
     },
     CV: {
       EvtApplication_Today: `
-      INSERT INTO siemens_cv (
+      INSERT INTO hhm.siemens_cv (
           equipment_id,
           host_time,
           source_group,
@@ -147,7 +147,7 @@ module.exports = queries = {
     },
     MRI: {
       EvtApplication_Today: `
-      INSERT INTO siemens_mri (
+      INSERT INTO hhm.siemens_mri (
           equipment_id,
           host_state,
           host_date,
@@ -171,7 +171,7 @@ module.exports = queries = {
   Philips: {
     CT: {
       eal_info: `
-      INSERT INTO philips_ct_eal (
+      INSERT INTO hhm.philips_ct_eal (
         equipment_id,
         line,
         err_type,
@@ -194,7 +194,7 @@ module.exports = queries = {
       )
       `,
       events: `
-      INSERT INTO philips_ct_events (
+      INSERT INTO hhm.philips_ct_events (
       equipment_id,
       eventtime,
       blob,
@@ -214,7 +214,7 @@ module.exports = queries = {
     },
     MRI: {
       logcurrent: `
-      INSERT INTO philips_mri_logcurrent (
+      INSERT INTO hhm.philips_mri_logcurrent (
         equipment_id,
         host_date,
         host_time,
@@ -237,7 +237,7 @@ module.exports = queries = {
     )
       `,
       rmmu_short: `
-    INSERT INTO philips_mri_rmmu_short(
+    INSERT INTO hhm.philips_mri_rmmu_short(
       equipment_id,
       system_reference_number,
       hospital_name,
@@ -274,7 +274,7 @@ module.exports = queries = {
   )
     `,
       rmmu_long: `
-    INSERT INTO philips_mri_rmmu_long(
+    INSERT INTO hhm.philips_mri_rmmu_long(
       equipment_id,
       system_reference_number,
       hospital_name,
@@ -312,7 +312,7 @@ module.exports = queries = {
   )
     `,
       rmmu_magnet: `
-    INSERT INTO philips_mri_rmmu_magnet(
+    INSERT INTO hhm.philips_mri_rmmu_magnet(
       equipment_id,
       system_reference_number,
       hospital_name,
@@ -338,7 +338,7 @@ module.exports = queries = {
     },
     CV: {
       EventLog: `
-      INSERT INTO philips_cv_eventlog(
+      INSERT INTO hhm.philips_cv_eventlog(
         equipment_id,
         category,
         host_date,

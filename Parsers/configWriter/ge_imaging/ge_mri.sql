@@ -1,17 +1,41 @@
 UPDATE systems
+SET hhm_config = '{"file_path": "/opt/hhm-files/C0051/SHIP003/SME02524", "modality": "MRI"}'
+WHERE id = 'SME02524';
+
+UPDATE systems
+SET hhm_file_config = '[{"query": "gesys", "file_name": "gesys_mr2-ow0.log", "datetimeVersion": "type_2", "last_mod": "", "index": 0}]'
+WHERE id = 'SME02524';
+
+UPDATE systems
+SET hhm_config = '{"file_path": "/opt/hhm-files/C0051/SHIP054/SME02583", "modality": "MRI"}'
+WHERE id = 'SME02583';
+
+UPDATE systems
+SET hhm_file_config = '[{"query": "gesys", "file_name": "gesys_DVMR.log", "datetimeVersion": "type_2", "last_mod": "", "index": 0}]'
+WHERE id = 'SME02583';
+
+UPDATE systems
 SET hhm_config = '{"file_path": "/opt/hhm-files/C0051/SHIP104/SME12424", "modality": "MRI"}'
 WHERE id = 'SME12424';
 
 UPDATE systems
-SET file_config = '[{"query": "gesys", "file_name": "", "datetimeVersion": "type_2", "last_mod": ""}]'
+SET hhm_file_config = '[{"query": "gesys", "file_name": "gesys_gemr1.log", "datetimeVersion": "type_2", "last_mod": "", "index": 0}]'
 WHERE id = 'SME12424';
+
+UPDATE systems
+SET hhm_config = '{"file_path": "/opt/hhm-files/C0137/SHIP001/SME01123", "modality": "MRI"}'
+WHERE id = 'SME01123';
+
+UPDATE systems
+SET hhm_file_config = '[{"query": "gesys", "file_name": "gesys_PCNMR001.log", "datetimeVersion": "type_2", "last_mod": "", "index": 0}]'
+WHERE id = 'SME01123';
 
 UPDATE systems
 SET hhm_config = '{"file_path": "/opt/hhm-files/C0137/SHIP005/SME01096", "modality": "MRI"}'
 WHERE id = 'SME01096';
 
 UPDATE systems
-SET file_config = '[{"query": "gesys", "file_name": "", "datetimeVersion": "type_2", "last_mod": ""}]'
+SET hhm_file_config = '{"query": "gesys", "file_name": "gesys_PARMR002.log", "datetimeVersion": "type_2", "last_mod": "", "index": 0}, {"query": "gesys", "file_name": "gesys_mroc.log", "datetimeVersion": "type_2", "last_mod": "", "index": 1}'
 WHERE id = 'SME01096';
 
 UPDATE systems
@@ -19,6 +43,6 @@ SET hhm_config = '{"file_path": "/opt/hhm-files/C027932/SHIP013/SME01422", "moda
 WHERE id = 'SME01422';
 
 UPDATE systems
-SET file_config = '[{"query": "gesys", "file_name": "", "datetimeVersion": "type_2", "last_mod": ""}]'
+SET hhm_file_config = '[{"query": "gesys", "file_name": "gesys_GRDMR01.log", "datetimeVersion": "type_2", "last_mod": "", "index": 0}]'
 WHERE id = 'SME01422';
 

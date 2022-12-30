@@ -29,7 +29,7 @@ async function updateFileModTime(jobId, sme, complete_file_path, fileToParse) {
     let fileModTime = date_time.mtime.toISOString();
 
     let queryStr =
-      "UPDATE systems SET file_config = jsonb_set(file_config, $1, $2, false) WHERE id = $3";
+      "UPDATE systems SET hhm_file_config = jsonb_set(hhm_file_config, $1, $2, false) WHERE id = $3";
     let values = [`{${fileToParse.index},last_mod}`, `"${fileModTime}"`, sme];
     await pgPool.query(queryStr, values);
     console.log("File changed: date time updated");
@@ -44,5 +44,5 @@ async function updateFileModTime(jobId, sme, complete_file_path, fileToParse) {
 module.exports = { isFileModified, updateFileModTime };
 
 /* let queryStr =
-        "WITH file_index AS ( SELECT ('{'||index-1||',last_mod}')::text[] AS path FROM systems ,jsonb_array_elements(file_config) WITH ORDINALITY arr(file, index) WHERE file->>'file_name' = $1) UPDATE systems SET file_config = jsonb_set(file_config, file_index.path, $2, true) FROM file_index WHERE id = $3 RETURNING *";
+        "WITH file_index AS ( SELECT ('{'||index-1||',last_mod}')::text[] AS path FROM systems ,jsonb_array_elements(hhm_file_config) WITH ORDINALITY arr(file, index) WHERE file->>'file_name' = $1) UPDATE systems SET hhm_file_config = jsonb_set(hhm_file_config, file_index.path, $2, true) FROM file_index WHERE id = $3 RETURNING *";
       values = [fileToParse.file_name, `"${d}"`, sme]; */

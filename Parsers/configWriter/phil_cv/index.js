@@ -23,7 +23,7 @@ const readFile = async () => {
 
     let update = "UPDATE systems" + "\n";
     let set_hhm = "SET hhm_config = ";
-    let set_file = "file_config = ";
+    let set_file = "hhm_file_config = ";
     let hhm_config =
       `'{"file_path": "${matches.groups.file_path}", "modality": "CV"}'` +
       "," +

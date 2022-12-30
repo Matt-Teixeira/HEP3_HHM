@@ -43,7 +43,7 @@ const readFile = async () => {
         where +
         "\n" +
         update +
-        "SET file_config = " +
+        "SET hhm_file_config = " +
         file_config +
         where +
         "\n";
@@ -73,7 +73,7 @@ const readFile = async () => {
         "\n";
       let where = `WHERE id = '${current_sme}';` + "\n";
       let file_config =
-        `'[{"query": "gesys", "file_name": "", "datetimeVersion": "type_2", "last_mod": ""}]'` +
+        `'[{"query": "gesys", "file_name": "", "datetimeVersion": "type_2", "last_mod": "", "index": 0}]'` +
         "\n";
 
         let string =
@@ -83,7 +83,7 @@ const readFile = async () => {
         where +
         "\n" +
         update +
-        "SET file_config = " +
+        "SET hhm_file_config = " +
         file_config +
         where +
         "\n";
