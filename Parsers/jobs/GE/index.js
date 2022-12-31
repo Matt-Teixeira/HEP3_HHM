@@ -15,7 +15,7 @@ const geModalities = async (jobId, sysConfigData) => {
       case "CT":
         await ge_ct_parsers(jobId, sysConfigData);
         break;
-      case "CV/IR":
+      case "CV":
         await ge_cv_parsers(jobId, sysConfigData);
         break;
       default:

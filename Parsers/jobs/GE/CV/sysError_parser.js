@@ -10,24 +10,34 @@ const { ge_cv_syserror_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const { blankLineTest } = require("../../../utils/regExHelpers");
 const convertDates = require("../../../utils/dates");
+const {
+  isFileModified,
+  updateFileModTime,
+} = require("../../../utils/isFileModified");
 
-async function ge_cv_sys_error(jobId, filePath, sysConfigData) {
-  const version = "sysError";
-  const dateTimeVersion = "type_3";
-  const sme = sysConfigData[0].id;
-  const manufacturer = sysConfigData[0].manufacturer;
-  const modality = sysConfigData[0].modality;
+async function ge_cv_sys_error(jobId, sysConfigData, fileToParse) {
+  const dateTimeVersion = fileToParse.datetimeVersion;
+  const sme = sysConfigData.id;
+
   const data = [];
 
   try {
-    await log("info", jobId, sme, "ge_cv_sys_error", "FN CALL", {
-      sme: sme,
-      modality,
-      file: filePath,
-    });
+    await log("info", jobId, sme, "ge_ct_gesys", "FN CALL");
+
+    let complete_file_path = `${sysConfigData.hhm_config.file_path}/${fileToParse.file_name}`;
+
+    const isUpdatedFile = await isFileModified(
+      jobId,
+      sme,
+      complete_file_path,
+      fileToParse
+    );
+
+    // dont continue if file is not updated
+    if (!isUpdatedFile) return;
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(filePath),
+      input: fs.createReadStream(complete_file_path),
       crlfDelay: Infinity,
     });
 
@@ -50,31 +60,28 @@ async function ge_cv_sys_error(jobId, filePath, sysConfigData) {
       }
     }
 
+    console.log(data[1])
+
     data.shift();
 
     const mappedData = mapDataToSchema(data, ge_cv_syserror_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(
+    const insertSuccess = await bulkInsert(
+      jobId,
       dataToArray,
-      manufacturer,
-      "CV",
-      version,
-      sme,
-      filePath,
-      jobId
+      sysConfigData,
+      fileToParse
     );
+    if (insertSuccess) {
+      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+      console.log("Insert Success")
+    }
   } catch (error) {
     await log("error", jobId, sme, "ge_cv_sys_error", "FN CALL", {
       error: error,
-      sme: sme,
-      manufacturer,
-      modality,
-      file: filePath,
     });
   }
 }
 
 module.exports = ge_cv_sys_error;
-
-// insert into ge_cv_syserror(equipment_id, sequencenumber, host_date, host_time) VALUES('SME00843', '1', '2021-04-23', '07:49:05:103')

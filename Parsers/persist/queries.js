@@ -2,7 +2,7 @@ module.exports = queries = {
   GE: {
     MRI: {
       gesys: `
-        INSERT INTO ge_mri_gesys (
+        INSERT INTO hhm.ge_mri_gesys (
           equipment_id,
           epoch,
           record_number_concurrent,
@@ -38,7 +38,7 @@ module.exports = queries = {
     },
     CT: {
       gesys: `
-      INSERT INTO ge_ct_gesys (
+      INSERT INTO hhm.ge_ct_gesys (
         equipment_id,
         epoch,
         record_number_concurrent,
@@ -74,7 +74,7 @@ module.exports = queries = {
     },
     CV: {
       sysError: `
-      INSERT INTO ge_cv_syserror (
+      INSERT INTO hhm.ge_cv_syserror (
         equipment_id,
         sequencenumber,
         host_date,
@@ -105,7 +105,7 @@ module.exports = queries = {
   Siemens: {
     CT: {
       EvtApplication_Today: `
-      INSERT INTO siemens_ct (
+      INSERT INTO hhm.siemens_ct (
           equipment_id,
           host_state,
           host_date,
@@ -125,9 +125,29 @@ module.exports = queries = {
       )
       `,
     },
+    CV: {
+      EvtApplication_Today: `
+      INSERT INTO hhm.siemens_cv (
+          equipment_id,
+          host_time,
+          source_group,
+          type_group,
+          text_group,
+          domain_group,
+          id_group,
+          month,
+          day,
+          year,
+          date_time
+      )
+      SELECT * FROM UNNEST (
+        $1::text[], $2::time[], $3::text[], $4::numeric[], $5::text[], $6::text[], $7::numeric[], $8::text[], $9::numeric[], $10::numeric[], $11::text[]
+      )
+      `,
+    },
     MRI: {
       EvtApplication_Today: `
-      INSERT INTO siemens_mri (
+      INSERT INTO hhm.siemens_mri (
           equipment_id,
           host_state,
           host_date,
@@ -151,7 +171,7 @@ module.exports = queries = {
   Philips: {
     CT: {
       eal_info: `
-      INSERT INTO philips_ct_eal (
+      INSERT INTO hhm.philips_ct_eal (
         equipment_id,
         line,
         err_type,
@@ -174,7 +194,7 @@ module.exports = queries = {
       )
       `,
       events: `
-      INSERT INTO philips_ct_events (
+      INSERT INTO hhm.philips_ct_events (
       equipment_id,
       eventtime,
       blob,
@@ -194,7 +214,7 @@ module.exports = queries = {
     },
     MRI: {
       logcurrent: `
-      INSERT INTO philips_mri_logcurrent (
+      INSERT INTO hhm.philips_mri_logcurrent (
         equipment_id,
         host_date,
         host_time,
@@ -206,8 +226,8 @@ module.exports = queries = {
         group_1,
         message,
         packets_created,
-        data_created_gb,
-        size_copy_gb,
+        data_created_value,
+        size_copy_value,
         data_8,
         reconstructor,
         date_time
@@ -216,8 +236,8 @@ module.exports = queries = {
       $1::text[], $2::date[], $3::time[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::text[]
     )
       `,
-      rmmu_short_: `
-    INSERT INTO philips_mri_rmmu_short(
+      rmmu_short: `
+    INSERT INTO hhm.philips_mri_rmmu_short(
       equipment_id,
       system_reference_number,
       hospital_name,
@@ -231,30 +251,30 @@ module.exports = queries = {
       mn,
       ss,
       hs,
-      AvgPwr,
-      MinPwr,
-      MaxPwr,
-      AvgAbs,
-      AvgPrMbars,
-      MinPrMbars,
-      MaxPrMbars,
-      LHePct,
-      LHe2,
-      DiffPressureSwitch,
-      TempAlarm,
-      PressureAlarm,
-      Cerr,
-      CompressorReset,
-      Chd,
-      Cpr,
+      AvgPwr_value,
+      MinPwr_value,
+      MaxPwr_value,
+      AvgAbs_value,
+      AvgPrMbars_value,
+      MinPrMbars_value,
+      MaxPrMbars_value,
+      LHePct_value,
+      LHe2_value,
+      DiffPressureSwitch_state,
+      TempAlarm_state,
+      PressureAlarm_state,
+      Cerr_state,
+      CompressorReset_state,
+      Chd_value,
+      Cpr_value,
       date_time
   )
   SELECT * FROM UNNEST (
     $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::text[], $24::text[], $25::text[], $26::text[], $27::text[], $28::numeric[], $29::numeric[], $30::text[]
   )
     `,
-      rmmu_long_: `
-    INSERT INTO philips_mri_rmmu_long(
+      rmmu_long: `
+    INSERT INTO hhm.philips_mri_rmmu_long(
       equipment_id,
       system_reference_number,
       hospital_name,
@@ -268,31 +288,31 @@ module.exports = queries = {
       mn,
       ss,
       hs,
-      dow,
-      AvgPwr,
-      MinPwr,
-      MaxPwr,
-      AvgAbs,
-      AvgPrMbars,
-      MinPrMbars,
-      MaxPrMbars,
-      LHePct,
-      LHe2,
-      DiffPressureSwitch,
-      TempAlarm,
-      PressureAlarm,
-      Cerr,
-      CompressorReset,
-      Chd,
-      Cpr,
+      dow_value,
+      AvgPwr_value,
+      MinPwr_value,
+      MaxPwr_value,
+      AvgAbs_value,
+      AvgPrMbars_value,
+      MinPrMbars_value,
+      MaxPrMbars_value,
+      LHePct_value,
+      LHe2_value,
+      DiffPressureSwitch_state,
+      TempAlarm_state,
+      PressureAlarm_state,
+      Cerr_state,
+      CompressorReset_state,
+      Chd_value,
+      Cpr_value,
       date_time
   )
   SELECT * FROM UNNEST (
     $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::numeric[], $24::text[], $25::text[], $26::text[], $27::text[], $28::text[], $29::numeric[], $30::numeric[], $31::text[]
   )
     `,
-    rmmu_magnet: `
-    INSERT INTO philips_mri_rmmu_magnet(
+      rmmu_magnet: `
+    INSERT INTO hhm.philips_mri_rmmu_magnet(
       equipment_id,
       system_reference_number,
       hospital_name,
@@ -318,7 +338,7 @@ module.exports = queries = {
     },
     CV: {
       EventLog: `
-      INSERT INTO philips_cv_eventlog(
+      INSERT INTO hhm.philips_cv_eventlog(
         equipment_id,
         category,
         host_date,

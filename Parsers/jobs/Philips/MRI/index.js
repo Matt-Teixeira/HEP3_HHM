@@ -10,23 +10,18 @@ const phil_mri_rmmu_magnet = require("./rmmu_magnet");
 const phil_mri_rmmu_history = require("./rmmu_history");
 
 const philips_mri_parsers = async (jobId, sysConfigData) => {
-  const file_types = sysConfigData.hhm_config.file_types;
   try {
-    await log("info", jobId, "NA", "philips_mri_parsers", "FN CALL");
-    
+    await log("info", jobId, sysConfigData.id, "philips_mri_parsers", "FN CALL");
 
-    console.log(file_types)
-
-    for await (const file of file_types) {
-      //console.log(file)
-      switch (file.file) {
+    for await (const file of sysConfigData.hhm_file_config) {
+      switch (file.query) {
         case "logcurrent":
           await phil_mri_logcurrent(jobId, sysConfigData, file);
           break;
-        case "rmmu_short_":
+        case "rmmu_short":
           await phil_mri_rmmu_short(jobId, sysConfigData, file);
           break;
-        case "rmmu_long_":
+        case "rmmu_long":
           await phil_mri_rmmu_long(jobId, sysConfigData, file);
           break;
         case "rmmu_magnet":
@@ -48,10 +43,8 @@ const philips_mri_parsers = async (jobId, sysConfigData) => {
       }
     }
   } catch (error) {
-    console.log(error)
-    await log("error", jobId, "NA", "philips_mri_parsers", "FN CATCH", {
-      error: error,
-      type: file_types.file,
+    await log("error", jobId, sysConfigData, "philips_mri_parsers", "FN CATCH", {
+      error: error.message,
     });
   }
 };

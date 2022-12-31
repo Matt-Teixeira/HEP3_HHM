@@ -22,13 +22,19 @@ const readFile = async () => {
     prev_sme = current_sme;
 
     let update = "UPDATE systems" + "\n";
-    let set = "SET hhm_config = ";
+    let set_hhm = "SET hhm_config = ";
+    let set_file = "hhm_file_config = ";
     let hhm_config =
-      `'{"file_path": "${matches.groups.file_path}", "file_types": [{"file": "EventLog.txe", "datetimeVersion": "type_3"}], "modality": "CV"}'` +
+      `'{"file_path": "${matches.groups.file_path}", "modality": "CV"}'` +
+      "," +
       "\n";
-    let where = `WHERE id = '${current_sme}';` + "\n";
+    let where = `WHERE id = '${current_sme}';` + "\n" + "\n";
 
-    let string = update + set + hhm_config + where + "\n";
+    let file_config =
+      `'[{"query": "EventLog", "file_name": "EventLog.txe", "datetimeVersion": "type_3", "index": 0, "last_mod": ""}]'` +
+      "\n";
+
+    let string = update + set_hhm + hhm_config + set_file + file_config + where;
 
     await fsp.writeFile(`./configWriter/phil_cv/phil_cv.sql`, string, {
       encoding: "utf-8",

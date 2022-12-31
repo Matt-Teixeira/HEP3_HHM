@@ -8,6 +8,10 @@ const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { ge_ct_gesys_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
+const {
+  isFileModified,
+  updateFileModTime,
+} = require("../../../utils/isFileModified");
 
 async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
@@ -16,40 +20,43 @@ async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
   const data = [];
 
   try {
-    await log("info", sme, "ge_ct_gesys", "FN CALL");
+    await log("info", jobId, sme, "ge_ct_gesys", "FN CALL");
 
-    // Get file names in directory - loop through them and find gesys_* files
-    let files_in_dir = await fs.readdir(sysConfigData.hhm_config.file_path);
+    let complete_file_path = `${sysConfigData.hhm_config.file_path}/${fileToParse.file_name}`;
 
-    const re = /gesys_/;
-    for await (let file of files_in_dir) {
-      let is_gesys_file = re.test(file);
+    const isUpdatedFile = await isFileModified(
+      jobId,
+      sme,
+      complete_file_path,
+      fileToParse
+    );
 
-      if (is_gesys_file) {
-        let complete_file_path = `${sysConfigData.hhm_config.file_path}/${file}`;
+    // dont continue if file is not updated
+    if (!isUpdatedFile) return;
 
-        const fileData = (await fs.readFile(complete_file_path)).toString();
+    const fileData = (await fs.readFile(complete_file_path)).toString();
 
-        let matches = fileData.match(ge_re.ct.gesys.block);
-        for await (let match of matches) {
-          const matchGroups = match.match(ge_re.ct.gesys.new);
-          convertDates(matchGroups.groups, dateTimeVersion);
-          const matchData = groupsToArrayObj(sme, matchGroups.groups);
-          data.push(matchData);
-        }
-
-        const mappedData = mapDataToSchema(data, ge_ct_gesys_schema);
-        const dataToArray = mappedData.map(({ ...rest }) =>
-          Object.values(rest)
-        );
-
-        await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
-      }
+    let matches = fileData.match(ge_re.ct.gesys.block);
+    for await (let match of matches) {
+      const matchGroups = match.match(ge_re.ct.gesys.new);
+      convertDates(matchGroups.groups, dateTimeVersion);
+      const matchData = groupsToArrayObj(sme, matchGroups.groups);
+      data.push(matchData);
     }
 
-    //const completeFilePath = `${sysConfigData.hhm_config.file_path}/${fileToParse.file}${fileToParse.file_suffix}`;
+    const mappedData = mapDataToSchema(data, ge_ct_gesys_schema);
+    const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
+
+    const insertSuccess = await bulkInsert(
+      jobId,
+      dataToArray,
+      sysConfigData,
+      fileToParse
+    );
+    if (insertSuccess) {
+      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+    }
   } catch (error) {
-    console.log(error);
     await log("error", sme, "ge_ct_gesys", "FN CALL", {
       error: error,
     });

@@ -10,27 +10,34 @@ const { philips_cv_eventlog_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const { blankLineTest } = require("../../../utils/regExHelpers");
 const convertDates = require("../../../utils/dates");
-const constructFilePath = require("../../../utils/constructFilePath");
+const {
+  isFileModified,
+  updateFileModTime,
+} = require("../../../utils/isFileModified");
 
 async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
   const sme = sysConfigData.id;
 
   try {
-    /* const completeFilePath = await constructFilePath(
-      filePath,
-      fileToParse,
-      sysConfigData.hhm_config.regExFileStr
-    ); */
+    const complete_file_path = `${sysConfigData.hhm_config.file_path}/${fileToParse.file_name}`;
 
-    const completeFilePath = `${sysConfigData.hhm_config.file_path}/${fileToParse.file}`
+    const isUpdatedFile = await isFileModified(
+      jobId,
+      sme,
+      complete_file_path,
+      fileToParse
+    );
 
-    await log("info", "NA", sme, "phil_cv_eventlog", "FN CALL", {
-      file: completeFilePath,
+    // dont continue if file is not updated
+    if (!isUpdatedFile) return;
+
+    await log("info", jobId, sme, "phil_cv_eventlog", "FN CALL", {
+      file: complete_file_path,
     });
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(completeFilePath),
+      input: fs.createReadStream(complete_file_path),
       crlfDelay: Infinity,
     });
 
@@ -42,7 +49,7 @@ async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
         if (isNewLine) {
           continue;
         } else {
-          await log("error", "NA", "NA", "Not_New_Line", "FN CALL", {
+          await log("error", jobId, sme, "Not_New_Line", "FN CALL", {
             message: "This is not a blank new line - Bad Match",
             line,
           });
@@ -58,11 +65,20 @@ async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
     const mappedData = mapDataToSchema(data, philips_cv_eventlog_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
 
-    await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
+    const insertSuccess = await bulkInsert(
+      jobId,
+      dataToArray,
+      sysConfigData,
+      fileToParse
+    );
+    if (insertSuccess) {
+      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+    }
   } catch (error) {
-    await log("error", "NA", sme, "phil_cv_eventlog", "FN CALL", {
+    await log("error", jobId, sme, "phil_cv_eventlog", "FN CALL", {
       sme: sme,
       error: error.message,
+      file: fileToParse,
     });
   }
 }

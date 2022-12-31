@@ -8,6 +8,10 @@ const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { ge_mri_gesys_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
+const {
+  isFileModified,
+  updateFileModTime,
+} = require("../../../utils/isFileModified");
 
 async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
@@ -15,41 +19,65 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
 
   const data = [];
 
+  let counter = 0;
+
   try {
     await log("info", sme, "ge_mri_gesys", "FN CALL");
 
-    // Get file names in directory - loop through them and find gesys_* files
-    let files_in_dir = await fs.readdir(sysConfigData.hhm_config.file_path);
+    // Check mod date/time
 
-    const re = /gesys_/;
-    for await (let file of files_in_dir) {
-      let is_gesys_file = re.test(file);
+    let complete_file_path = `${sysConfigData.hhm_config.file_path}/${fileToParse.file_name}`;
 
-      if (is_gesys_file) {
-        let complete_file_path = `${sysConfigData.hhm_config.file_path}/${file}`;
+    const isUpdatedFile = await isFileModified(
+      jobId,
+      sme,
+      complete_file_path,
+      fileToParse
+    );
 
-        const fileData = (await fs.readFile(complete_file_path)).toString();
+    // dont continue if file is not updated
+    if (!isUpdatedFile) return;
 
-        let matches = fileData.match(ge_re.mri.gesys.block);
-        for await (let match of matches) {
-          const matchGroups = match.match(ge_re.mri.gesys.new);
-          convertDates(matchGroups.groups, dateTimeVersion);
-          const matchData = groupsToArrayObj(sme, matchGroups.groups);
-          data.push(matchData);
-        }
+    const fileData = (await fs.readFile(complete_file_path)).toString();
 
-        const mappedData = mapDataToSchema(data, ge_mri_gesys_schema);
-        const dataToArray = mappedData.map(({ ...rest }) =>
-          Object.values(rest)
-        );
+    let matches = fileData.match(ge_re.mri.gesys.block);
 
-        await bulkInsert(jobId, dataToArray, sysConfigData, fileToParse);
+    for await (let match of matches) {
+      const matchGroups = match.match(ge_re.mri.gesys.new);
+      // matchGroups will be null if no match
+      if (!matchGroups) {
+        await log("warn", sme, "ge_mri_gesys", "FN CALL", {
+          message: "Failed match",
+          prev_epoch: data[data.length - 1].epoch,
+          sr_group: data[data.length - 1].sr,
+        });
+        continue;
       }
+      convertDates(matchGroups.groups, dateTimeVersion);
+      const matchData = groupsToArrayObj(sme, matchGroups.groups);
+      data.push(matchData);
     }
+
+    const mappedData = mapDataToSchema(data, ge_mri_gesys_schema);
+    const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
+
+    const insertSuccess = await bulkInsert(
+      jobId,
+      dataToArray,
+      sysConfigData,
+      fileToParse
+    );
+    if (insertSuccess) {
+      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+    }
+
+    return;
+
+    // Set mod date-time
   } catch (error) {
     console.log(error);
     await log("error", sme, "ge_mri_gesys", "FN CALL", {
-      error: error,
+      error: error.message,
     });
   }
 }
