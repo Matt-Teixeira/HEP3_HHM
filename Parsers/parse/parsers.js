@@ -43,7 +43,7 @@ const philips_re = {
   ct_events:
     /(?<eventtime>.*?)[|](?<blob>.*?)[|](?<type>.*?)[|](?<tstampnum>.*?)[|](?<eal>.*?)[|](?<level>.*?)[|](?<ermodulernum>.*?)[|](?<dtime>.*?)[|](?<msg>.*)?/,
   mri_logcurrent:
-    /((?<host_date>\d{4}-\d{2}-\d{2})\s(?<host_time>\d{2}:\d{2}:\d{2}\.\d+)\s(?<row_type>\w+)\s(?<event_type>\w+)\s(?<subsystem>.*?)\s+(?<code_1>\w+)\s(?<code_2>\w+)(\s(?<group_1>\w+))?\s+(?<message>.*))|(Number\sof\sPackets\sCreated\s:\s(?<packets_created>\d*\.?\d*)|Total\sSize\sof\sData\sCreated\s:\s(?<data_created_gb>\d*\.?\d*)\s[A-Z]+|Size\sof\sCopy\sDone\s:\s(?<size_copy_gb>\d*\.?\d*)\s[A-Z]+|(?<data_8>>.*)|(?<reconstructor>[A-Za-z].*))/,
+    /((?<host_date>\d{4}-\d{2}-\d{2})\s(?<host_time>\d{2}:\d{2}:\d{2}\.\d+)\s(?<row_type>\w+)\s(?<event_type>\w+)\s(?<subsystem>.*?)\s+(?<code_1>\w+)\s(?<code_2>\w+)(\s(?<group_1>\w+))?\s+(?<message>.*))|(Number\sof\sPackets\sCreated\s:\s(?<packets_created>\d*\.?\d*)|Total\sSize\sof\sData\sCreated\s:\s(?<data_created_value>\d*\.?\d*)\s[A-Z]+|Size\sof\sCopy\sDone\s:\s(?<size_copy_value>\d*\.?\d*)\s[A-Z]+|(?<data_8>>.*)|(?<reconstructor>[A-Za-z].*))/,
   cv: {
     eventlog:
       /(?<category>[\w\. \-\$&\.]+)�(?<host_date>[\d-]+)�(?<host_time>[\d:]+)�(?<error_type>\w*)�(?<num_1>\d+)�(?:Technical ?Event ?ID: {1,3}(?<technical_event_id>\d+) ?�Description: (?<description>[^�\r\n]+)�Channel Identification: (?<channel_id>[^�]+)�Module: (?<module>[^�]+)�Source [Ff]ile: (?<source>[^�]+)�Line Number: (?<line>\d+) ?�Memo: ?(?<memo>[^\r\n�]*)(?:�SubsystemNumber: (?<subsystem_number>\d+)�ThreadName: ?(?<thread_name>[\w \-]*))?|(?<message>[^\r\n]*))/,
@@ -54,9 +54,9 @@ const philips_re = {
     rmmu_meta_data:
       /System.*:(?<system_reference_number>\d+)\s+Hospital.*:(?<hospital_name>.*)\s+Serial.*:(?<serial_number_magnet>.*)\s+Serial.*:(?<serial_number_meu>.*)/,
     rmmu_long_re:
-      /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<dow>\d+),(?<AvgPwr>\d+),(?<MinPwr>\d+),(?<MaxPwr>\d+),(?<AvgAbs>\d+),(?<AvgPrMbars>\d+),(?<MinPrMbars>\d+),(?<MaxPrMbars>\d+),(?<LHePct>\d+),(?<LHe2>\d+),(?<DiffPressureSwitch>[YN]+?),(?<TempAlarm>[YN]+?),(?<PressureAlarm>[YN]+?),(?<Cerr>[YN]+?),(?<CompressorReset>[YN]+?),(?<Chd>\d+),(?<Cpr>\d+)/g,
+      /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<dow_value>\d+),(?<AvgPwr_value>\d+),(?<MinPwr_value>\d+),(?<MaxPwr_value>\d+),(?<AvgAbs_value>\d+),(?<AvgPrMbars_value>\d+),(?<MinPrMbars_value>\d+),(?<MaxPrMbars_value>\d+),(?<LHePct_value>\d+),(?<LHe2_value>\d+),(?<DiffPressureSwitch_state>[YN]+?),(?<TempAlarm_state>[YN]+?),(?<PressureAlarm_state>[YN]+?),(?<Cerr>[YN]+?),(?<CompressorReset_state>[YN]+?),(?<Chd_value>\d+),(?<Cpr_value>\d+)/g,
     rmmu_short_re:
-      /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<AvgPwr>\d+),(?<MinPwr>\d+),(?<MaxPwr>\d+),(?<AvgAbs>\d+),(?<AvgPrMbars>\d+),(?<MinPrMbars>\d+),(?<MaxPrMbars>\d+),(?<LHePct>\d+),(?<LHe2>\d+),(?<DiffPressureSwitch>[YN]+?),(?<TempAlarm>[YN]+?),(?<PressureAlarm>[YN]+?),(?<Cerr>[YN]+?),(?<CompressorReset>[YN]+?),(?<Chd>\d+),(?<Cpr>\d+)/g,
+      /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<AvgPwr_value>\d+),(?<MinPwr_value>\d+),(?<MaxPwr_value>\d+),(?<AvgAbs_value>\d+),(?<AvgPrMbars_value>\d+),(?<MinPrMbars_value>\d+),(?<MaxPrMbars_value>\d+),(?<LHePct_value>\d+),(?<LHe2_value>\d+),(?<DiffPressureSwitch_state>[YN]+?),(?<TempAlarm_state>[YN]+?),(?<PressureAlarm_state>[YN]+?),(?<Cerr_state>[YN]+?),(?<CompressorReset_state>[YN]+?),(?<Chd_value>\d+),(?<Cpr_value>\d+)/g,
     rmmu_magnet:
       /(?<LineNo>\d+?),(?<year>\d+?),(?<mo>\d+?),(?<dy>\d+?),(?<hr>\d+?),(?<mn>\d+?),(?<ss>\d+?),(?<hs>\d+?),(?<Event>\d+?),(?<Data>\d+?),(?<Descr>.*)/g,
     rmmu_history:

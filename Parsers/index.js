@@ -85,7 +85,7 @@ const filePaths = {
   },
 };
 
-/* const determineManufacturer = async (jobId, sme) => {
+const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
       "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE id = $1";
@@ -133,9 +133,9 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot();
-  */
+onBoot(["SME00865"]);
 
+/* 
 const determineManufacturer = async (jobId, system) => {
   try {
     await log("info", jobId, system.id, "determineManufacturer", "FN CALL");
@@ -184,4 +184,4 @@ const onBoot = async () => {
   }
 };
 
-onBoot();
+onBoot(); */

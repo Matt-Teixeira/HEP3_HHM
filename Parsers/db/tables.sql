@@ -199,8 +199,8 @@ CREATE TABLE hhm.philips_mri_logcurrent(
     group_1 TEXT,
     message TEXT,
     packets_created TEXT,
-    data_created_gb TEXT,
-    size_copy_gb TEXT,
+    data_created_value TEXT,
+    size_copy_value TEXT,
     data_8 TEXT,
     reconstructor TEXT,
     date_time TEXT
@@ -221,22 +221,22 @@ CREATE TABLE hhm.philips_mri_rmmu_short(
     mn INT,
     ss INT,
     hs INT,
-    AvgPwr INT,
-    MinPwr INT,
-    MaxPwr INT,
-    AvgAbs INT,
-    AvgPrMbars INT,
-    MinPrMbars INT,
-    MaxPrMbars INT,
-    LHePct INT,
-    LHe2 INT,
-    DiffPressureSwitch varchar(2),
-    TempAlarm varchar(2),
-    PressureAlarm varchar(2),
-    Cerr varchar(2),
-    CompressorReset varchar(2),
-    Chd INT,
-    Cpr INT,
+    AvgPwr_value INT,
+    MinPwr_value INT,
+    MaxPwr_value INT,
+    AvgAbs_value INT,
+    AvgPrMbars_value INT,
+    MinPrMbars_value INT,
+    MaxPrMbars_value INT,
+    LHePct_value INT,
+    LHe2_value INT,
+    DiffPressureSwitch_state varchar(2),
+    TempAlarm_state varchar(2),
+    PressureAlarm_state varchar(2),
+    Cerr_state varchar(2),
+    CompressorReset_state varchar(2),
+    Chd_value INT,
+    Cpr_value INT,
     date_time TEXT
 );
 
@@ -255,23 +255,23 @@ CREATE TABLE hhm.philips_mri_rmmu_long(
     mn INT,
     ss INT,
     hs INT,
-    dow INT,
-    AvgPwr INT,
-    MinPwr INT,
-    MaxPwr INT,
-    AvgAbs INT,
-    AvgPrMbars INT,
-    MinPrMbars INT,
-    MaxPrMbars INT,
-    LHePct INT,
-    LHe2 INT,
-    DiffPressureSwitch varchar(2),
-    TempAlarm varchar(2),
-    PressureAlarm varchar(2),
-    Cerr varchar(2),
-    CompressorReset varchar(2),
-    Chd INT,
-    Cpr INT,
+    dow_value INT,
+    AvgPwr_value INT,
+    MinPwr_value INT,
+    MaxPwr_value INT,
+    AvgAbs_value INT,
+    AvgPrMbars_value INT,
+    MinPrMbars_value INT,
+    MaxPrMbars_value INT,
+    LHePct_value INT,
+    LHe2_value INT,
+    DiffPressureSwitch_state varchar(2),
+    TempAlarm_state varchar(2),
+    PressureAlarm_state varchar(2),
+    Cerr_state varchar(2),
+    CompressorReset_state varchar(2),
+    Chd_value INT,
+    Cpr_value INT,
     date_time TEXT
 );
 
@@ -306,14 +306,49 @@ CREATE TABLE hhm.philips_mri_monitoring_data(
     id BIGSERIAL PRIMARY KEY,
     equipment_id TEXT,
     host_date TEXT,
-    tech_room_humidity DECIMAL,
-    tech_room_temp DECIMAL,
-    cryo_comp_comm_error DECIMAL,
-    cryo_comp_press_alarm DECIMAL,
-    cryo_comp_temp_alarm DECIMAL,
-    cryo_comp_malf_minutes DECIMAL,
-    helium_level_value DECIMAL,
-    long_term_boil_off DECIMAL,
-    mag_dps_status_minutes DECIMAL,
-    quenched DECIMAL
+    tech_room_humidity_value DECIMAL, -- [%] (0=sensor not connected or broken)
+    tech_room_temp_value DECIMAL, -- [C](0=sensor not connected or broken)
+    cryo_comp_comm_error_state DECIMAL, -- 0=OK, > 0 = alarm bool
+    cryo_comp_press_alarm_value DECIMAL, -- (minutes) [0=OK, > 0 = alarm]
+    cryo_comp_temp_alarm_value DECIMAL, -- (minutes) [0=OK, > 0 = alarm]
+    cryo_comp_malf_value DECIMAL, -- (minutes) [-1=Cable error, 0=OK, > 0 = alarm in minutes)]
+    helium_level_value DECIMAL, -- [%]
+    long_term_boil_off_value DECIMAL, -- (-1 = stuck_probe) [ml/h]
+    mag_dps_status_value DECIMAL, -- (minutes) [0=OK,  >0 =Alarm status]
+    quenched_state DECIMAL -- [0=No;1=Yes]
 );
+
+-- System Unites
+
+DROP TABLE IF EXISTS hhm.philips_hhm_units;
+
+CREATE TABLE hhm.philips_hhm_units(
+    system_id text NOT NULL PRIMARY KEY,
+    dow_value TEXT,
+    AvgPwr_value TEXT,
+    MinPwr_value TEXT,
+    MaxPwr_value TEXT,
+    AvgAbs_value TEXT,
+    AvgPrMbars_value TEXT,
+    MinPrMbars_value TEXT,
+    MaxPrMbars_value TEXT,
+    LHePct_value TEXT,
+    LHe2_value TEXT,
+    Chd_value TEXT,
+    Cpr_value TEXT,
+    tech_room_humidity_value TEXT, -- [%] (0=sensor not connected or broken)
+    tech_room_temp_value TEXT, -- [C](0=sensor not connected or broken)
+    cryo_comp_press_alarm_value TEXT, -- (minutes) [0=OK, > 0 = alarm]
+    cryo_comp_temp_alarm_value TEXT, -- (minutes) [0=OK, > 0 = alarm]
+    cryo_comp_malf_value TEXT, -- (minutes) [-1=Cable error, 0=OK, > 0 = alarm in minutes)]
+    helium_level_value TEXT, -- [%]
+    long_term_boil_off_value TEXT, -- (-1 = stuck_probe) [ml/h]
+    mag_dps_status_value TEXT -- (ml/h) [0=OK,  >0 =Alarm status]
+);
+ALTER TABLE ONLY hhm.philips_hhm_units
+    ADD CONSTRAINT fk_system_id FOREIGN KEY (system_id) REFERENCES public.systems(id);
+
+INSERT INTO hhm.philips_hhm_units (system_id, tech_room_humidity_value, tech_room_temp_value, cryo_comp_press_alarm_value, cryo_comp_temp_alarm_value, cryo_comp_malf_value, helium_level_value, long_term_boil_off_value, mag_dps_status_value)
+VALUES ('SME01138', '%', 'C', 'minutes', 'minutes', 'minutes', '%', 'ml/h', 'minutes');
+
+SELECT * FROM hhm.philips_hhm_units;

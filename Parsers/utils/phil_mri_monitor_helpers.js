@@ -6,7 +6,7 @@ const pgPool = require("../db/pg-pool");
 async function getSystemDbData(jobId, sme) {
   try {
     const queryStr =
-      "SELECT equipment_id, host_date FROM philips_mri_monitoring_data WHERE equipment_id = ($1) LIMIT 1";
+      "SELECT equipment_id, host_date FROM hhm.philips_mri_monitoring_data WHERE equipment_id = ($1) LIMIT 1";
     return await pgPool.query(queryStr, [sme]);
   } catch (error) {
     await log("error", jobId, sme, "getSystemDbData", "FN CALL", {
@@ -19,7 +19,7 @@ async function getSystemDbData(jobId, sme) {
 async function getExistingDates(jobId, sme) {
   try {
     const text =
-      "SELECT host_date FROM philips_mri_monitoring_data WHERE equipment_id = ($1)";
+      "SELECT host_date FROM hhm.philips_mri_monitoring_data WHERE equipment_id = ($1)";
     const v = [sme];
     const systemDates = await pgPool.query(text, v);
     const systemDatesToArray = [];
@@ -37,7 +37,7 @@ async function getExistingDates(jobId, sme) {
 
 async function getDateRanges(jobId, sme, values) {
   try {
-    let queryStr = `SELECT host_date FROM philips_mri_monitoring_data WHERE equipment_id = $1 AND host_date BETWEEN $2 AND $3`;
+    let queryStr = `SELECT host_date FROM hhm.philips_mri_monitoring_data WHERE equipment_id = $1 AND host_date BETWEEN $2 AND $3`;
 
     const systemDates = await pgPool.query(queryStr, values);
     const systemDatesToArray = [];
@@ -57,7 +57,7 @@ async function getDateRanges(jobId, sme, values) {
 
 async function getExistingNotNullDates(jobId, sme, col_name) {
   try {
-    const queryStr = `SELECT host_date FROM philips_mri_monitoring_data WHERE equipment_id = ($1) AND ${col_name} IS NOT NULL ORDER BY host_date DESC LIMIT 1`;
+    const queryStr = `SELECT host_date FROM hhm.philips_mri_monitoring_data WHERE equipment_id = ($1) AND ${col_name} IS NOT NULL ORDER BY host_date DESC LIMIT 1`;
     const v = [sme];
     const systemDates = await pgPool.query(queryStr, v);
     const systemDatesToArray = [];
@@ -76,7 +76,7 @@ async function getExistingNotNullDates(jobId, sme, col_name) {
 
 async function updateTable(jobId, col_name, arr) {
   try {
-    const queryStr = `UPDATE philips_mri_monitoring_data SET ${col_name} = $1 WHERE equipment_id = $2 AND host_date = $3`;
+    const queryStr = `UPDATE hhm.philips_mri_monitoring_data SET ${col_name} = $1 WHERE equipment_id = $2 AND host_date = $3`;
     await pgPool.query(queryStr, arr);
   } catch (error) {
     await log("error", jobId, arr[1], "updateTable", "FN CALL", {
@@ -88,7 +88,7 @@ async function updateTable(jobId, col_name, arr) {
 
 async function insertData(jobId, col_name, arr) {
   try {
-    const queryStr = `INSERT INTO philips_mri_monitoring_data(equipment_id, host_date, ${col_name}) VALUES($1, $2, $3)`;
+    const queryStr = `INSERT INTO hhm.philips_mri_monitoring_data(equipment_id, host_date, ${col_name}) VALUES($1, $2, $3)`;
     await pgPool.query(queryStr, arr);
   } catch (error) {
     await log("error", jobId, arr[0], "insertData", "FN CALL", {
@@ -101,39 +101,39 @@ async function insertData(jobId, col_name, arr) {
 const process_file_config = {
   monitor_System_HumTechRoom: {
     type: "max",
-    col: "tech_room_humidity",
+    col: "tech_room_humidity_value",
   },
   monitor_System_TempTechRoom: {
     type: "max",
-    col: "tech_room_temp",
+    col: "tech_room_temp_value",
   },
   monitor_magnet_lt_boiloff: {
     type: "max",
-    col: "long_term_boil_off",
+    col: "long_term_boil_off_value",
   },
   monitor_cryocompressor_time_status: {
     type: "max",
-    col: "cryo_comp_malf_minutes",
+    col: "cryo_comp_malf_value",
   },
   monitor_magnet_pressure_dps: {
     type: "max",
-    col: "mag_dps_status_minutes",
+    col: "mag_dps_status_value",
   },
   monitor_cryocompressor_cerr: {
     type: "bool",
-    col: "cryo_comp_comm_error",
+    col: "cryo_comp_comm_error_state",
   },
   monitor_cryocompressor_palm: {
     type: "bool",
-    col: "cryo_comp_press_alarm",
+    col: "cryo_comp_press_alarm_value",
   },
   monitor_cryocompressor_talm: {
     type: "bool",
-    col: "cryo_comp_temp_alarm",
+    col: "cryo_comp_temp_alarm_value",
   },
   monitor_magnet_quench: {
     type: "bool",
-    col: "quenched",
+    col: "quenched_state",
   },
   monitor_magnet_helium_level_value: {
     type: "min",
