@@ -22,7 +22,7 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
   let counter = 0;
 
   try {
-    await log("info", sme, "ge_mri_gesys", "FN CALL");
+    await log("info", jobId, sme, "ge_mri_gesys", "FN CALL");
 
     // Check mod date/time
 
@@ -35,7 +35,7 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
       fileToParse
     );
 
-    // dont continue if file is not updated
+    // don't continue if file is not updated
     if (!isUpdatedFile) return;
 
     const fileData = (await fs.readFile(complete_file_path)).toString();

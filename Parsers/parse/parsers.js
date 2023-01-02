@@ -54,7 +54,7 @@ const philips_re = {
     rmmu_meta_data:
       /System.*:(?<system_reference_number>\d+)\s+Hospital.*:(?<hospital_name>.*)\s+Serial.*:(?<serial_number_magnet>.*)\s+Serial.*:(?<serial_number_meu>.*)/,
     rmmu_long_re:
-      /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<dow_value>\d+),(?<AvgPwr_value>\d+),(?<MinPwr_value>\d+),(?<MaxPwr_value>\d+),(?<AvgAbs_value>\d+),(?<AvgPrMbars_value>\d+),(?<MinPrMbars_value>\d+),(?<MaxPrMbars_value>\d+),(?<LHePct_value>\d+),(?<LHe2_value>\d+),(?<DiffPressureSwitch_state>[YN]+?),(?<TempAlarm_state>[YN]+?),(?<PressureAlarm_state>[YN]+?),(?<Cerr>[YN]+?),(?<CompressorReset_state>[YN]+?),(?<Chd_value>\d+),(?<Cpr_value>\d+)/g,
+      /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<dow_value>\d+),(?<AvgPwr_value>\d+),(?<MinPwr_value>\d+),(?<MaxPwr_value>\d+),(?<AvgAbs_value>\d+),(?<AvgPrMbars_value>\d+),(?<MinPrMbars_value>\d+),(?<MaxPrMbars_value>\d+),(?<LHePct_value>\d+),(?<LHe2_value>\d+),(?<DiffPressureSwitch_state>[YN]+?),(?<TempAlarm_state>[YN]+?),(?<PressureAlarm_state>[YN]+?),(?<Cerr_state>[YN]+?),(?<CompressorReset_state>[YN]+?),(?<Chd_value>\d+),(?<Cpr_value>\d+)/g,
     rmmu_short_re:
       /(?<LineNo>\d+),(?<year>\d+),(?<mo>\d+),(?<dy>\d+),(?<hr>\d+),(?<mn>\d+),(?<ss>\d+),(?<hs>\d+),(?<AvgPwr_value>\d+),(?<MinPwr_value>\d+),(?<MaxPwr_value>\d+),(?<AvgAbs_value>\d+),(?<AvgPrMbars_value>\d+),(?<MinPrMbars_value>\d+),(?<MaxPrMbars_value>\d+),(?<LHePct_value>\d+),(?<LHe2_value>\d+),(?<DiffPressureSwitch_state>[YN]+?),(?<TempAlarm_state>[YN]+?),(?<PressureAlarm_state>[YN]+?),(?<Cerr_state>[YN]+?),(?<CompressorReset_state>[YN]+?),(?<Chd_value>\d+),(?<Cpr_value>\d+)/g,
     rmmu_magnet:
