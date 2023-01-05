@@ -84,7 +84,37 @@ const filePaths = {
     cv_systems: ["SME00884", "SME01440", "SME01444"],
   },
 };
-/* 
+
+const crothal_demo = [
+  "SME00444",
+  "SME00445",
+  "SME00446",
+  "SME02524",
+  "SME07761",
+  "SME00782",
+  "SME00784",
+  "SME00785",
+  "SME00786",
+  "SME01227",
+  "SME02548",
+  "SME02583",
+  "SME02535",
+  "SME02377",
+  "SME02378",
+  "SME02579",
+  "SME02580",
+  "SME02552",
+  "SME07852",
+  "SME07855",
+  "SME07860",
+  "SME07862",
+  "SME07864",
+  "SME08102",
+  "SME12444",
+  "SME12446",
+  "SME12450",
+];
+
 const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
@@ -117,7 +147,6 @@ const determineManufacturer = async (jobId, sme) => {
 const onBoot = async (systems_list) => {
   try {
     await log("info", "NA", "NA", "onBoot", `FN CALL`);
-    console.log(process.argv);
     console.time();
 
     for await (const system of systems_list) {
@@ -135,8 +164,8 @@ const onBoot = async (systems_list) => {
 };
 
 onBoot(["SME01138"]);
- */
 
+/* 
 const determineManufacturer = async (jobId, system) => {
   try {
     await log("info", jobId, system.id, "determineManufacturer", "FN CALL", {
@@ -170,12 +199,10 @@ const onBoot = async () => {
     console.time();
 
     let queryString =
-      "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE hhm_config IS NOT NULL AND modality = $1";
+      "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE hhm_config IS NOT NULL AND modality = $1"; // AND modality = $1
     let value = [process.argv[2]];
 
     const system_array = await pgPool.query(queryString, value);
-
-    console.log(system_array.rows);
 
     for await (const system of system_array.rows) {
       let jobId = crypto.randomUUID();
@@ -192,3 +219,4 @@ const onBoot = async () => {
 };
 
 onBoot();
+ */

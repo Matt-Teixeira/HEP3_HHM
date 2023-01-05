@@ -7,8 +7,8 @@ const insertJsonB = require("../../../persist/phil_mri_monitor_data/bulk_jsonb_i
 const { getMonitorFiles } = require("../../../utils/regExHelpers");
 
 async function phil_mri_monitor(jobId, filePath, sysConfigData) {
-  const sme = sysConfigData[0].id;
-  const modality = sysConfigData[0].modality;
+  const sme = sysConfigData.id;
+  const modality = sysConfigData.hhm_config.modality;
 
   try {
     await log("info", jobId, sme, "phil_mri_monitor", "FN CALL", {
@@ -21,6 +21,7 @@ async function phil_mri_monitor(jobId, filePath, sysConfigData) {
 
     let files = await fs.readdir(filePath);
 
+    // Run regex to filter out non-monitor files. Returns array of monitoring files to parse
     const monitorFiles = await getMonitorFiles(files);
 
     // Seed jsonData with empty arrays named as file names
@@ -35,7 +36,7 @@ async function phil_mri_monitor(jobId, filePath, sysConfigData) {
       const matchGroups = fileData.matchAll(philips_re.mri.monitor[fileName]);
 
       for await (const group of matchGroups) {
-        // console.log(JSON.stringify(group.groups));
+
         jsonData[fileName].push(group.groups);
       }
     }
@@ -43,7 +44,6 @@ async function phil_mri_monitor(jobId, filePath, sysConfigData) {
 
     return jsonData;
   } catch (error) {
-    console.log(error);
     await log("error", jobId, sme, "phil_mri_monitor", "FN CALL", {
       sme: sme,
       modality,

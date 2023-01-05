@@ -1,3 +1,17 @@
+ALTER TABLE systems
+DROP COLUMN hhm_config;
+
+ALTER TABLE systems
+DROP COLUMN hhm_file_config;
+
+ALTER TABLE systems
+ADD COLUMN hhm_config jsonb;
+
+ALTER TABLE systems
+ADD COLUMN hhm_file_config jsonb;
+
+create schema hhm;
+
 DROP TABLE IF EXISTS hhm.siemens_mri;
 DROP TABLE IF EXISTS hhm.siemens_ct;
 DROP TABLE IF EXISTS hhm.siemens_cv;
@@ -6,14 +20,13 @@ DROP TABLE IF EXISTS hhm.ge_ct_gesys;
 DROP TABLE IF EXISTS hhm.ge_cv_syserror;
 DROP TABLE IF EXISTS hhm.philips_ct_eal;
 DROP TABLE IF EXISTS hhm.philips_ct_events;
+DROP TABLE IF EXISTS hhm.philips_mri_rmmu_magnet;
 DROP TABLE IF EXISTS hhm.philips_mri_logcurrent;
 DROP TABLE IF EXISTS hhm.philips_mri_rmmu_short;
 DROP TABLE IF EXISTS hhm.philips_mri_rmmu_long;
 DROP TABLE IF EXISTS hhm.philips_cv_eventlog;
 DROP TABLE IF EXISTS hhm.philips_mri_monitor;
 DROP TABLE IF EXISTS hhm.philips_mri_monitoring_data;
-
-create schema hhm;
 
 CREATE TABLE hhm.siemens_mri(
     id BIGSERIAL PRIMARY KEY,
@@ -46,7 +59,7 @@ CREATE TABLE hhm.siemens_ct(
     month TEXT,
     day INT,
     year INT,
-    date_time TEXT
+    date_time TIMESTAMP
 );
 
 CREATE TABLE hhm.siemens_cv(
@@ -61,7 +74,7 @@ CREATE TABLE hhm.siemens_cv(
     month TEXT,
     day INT,
     year INT,
-    date_time TEXT
+    date_time TIMESTAMP
 );
 
 CREATE TABLE hhm.ge_mri_gesys(
@@ -92,7 +105,7 @@ CREATE TABLE hhm.ge_mri_gesys(
     message TEXT,
     sr INT,
     en INT,
-    date_time TEXT
+    date_time TIMESTAMP
 );
 
 CREATE TABLE hhm.ge_ct_gesys(
@@ -123,7 +136,7 @@ CREATE TABLE hhm.ge_ct_gesys(
     message TEXT,
     sr INT,
     en INT,
-    date_time TEXT
+    date_time TIMESTAMP
 );
 
 CREATE TABLE hhm.ge_cv_syserror(
@@ -147,7 +160,7 @@ CREATE TABLE hhm.ge_cv_syserror(
     debugtext TEXT,
     sourcefile TEXT,
     sourceline INT,
-    date_time TEXT
+    date_time TIMESTAMP
 );
 
 
@@ -183,7 +196,28 @@ CREATE TABLE hhm.philips_ct_events(
     ermodulernum TEXT,
     dtime TEXT,
     msg TEXT,
-    date_time TEXT
+    date_time TIMESTAMP
+);
+
+CREATE TABLE hhm.philips_mri_rmmu_magnet(
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id TEXT,
+    system_reference_number TEXT,
+    hospital_name TEXT,
+    serial_number_magnet TEXT,
+    serial_number_meu TEXT,
+    lineno INT,
+    year INT,
+    mo INT,
+    dy INT,
+    hr INT,
+    mn INT,
+    ss INT,
+    hs INT,
+    event TEXT,
+    data TEXT,
+    descr TEXT,
+    date_time TIMESTAMP
 );
 
 CREATE TABLE hhm.philips_mri_logcurrent(
@@ -203,7 +237,7 @@ CREATE TABLE hhm.philips_mri_logcurrent(
     size_copy_value TEXT,
     data_8 TEXT,
     reconstructor TEXT,
-    date_time TEXT
+    date_time TIMESTAMP
 );
 
 CREATE TABLE hhm.philips_mri_rmmu_short(
@@ -237,7 +271,7 @@ CREATE TABLE hhm.philips_mri_rmmu_short(
     CompressorReset_state varchar(2),
     Chd_value INT,
     Cpr_value INT,
-    date_time TEXT
+    date_time TIMESTAMP
 );
 
 CREATE TABLE hhm.philips_mri_rmmu_long(
@@ -272,7 +306,7 @@ CREATE TABLE hhm.philips_mri_rmmu_long(
     CompressorReset_state varchar(2),
     Chd_value INT,
     Cpr_value INT,
-    date_time TEXT
+    date_time TIMESTAMP
 );
 
 CREATE TABLE hhm.philips_cv_eventlog(
@@ -293,11 +327,11 @@ CREATE TABLE hhm.philips_cv_eventlog(
     subsystem_number INT,
     thread_name TEXT,
     message TEXT,
-    date_time TEXT
+    date_time TIMESTAMP
 );
 
 CREATE TABLE hhm.philips_mri_monitor(
-    id TEXT PRIMARY KEY,
+    capture_time TIMESTAMP PRIMARY KEY,
     equipment_id TEXT,
     monitoring_data jsonb
 );
@@ -305,7 +339,7 @@ CREATE TABLE hhm.philips_mri_monitor(
 CREATE TABLE hhm.philips_mri_monitoring_data(
     id BIGSERIAL PRIMARY KEY,
     equipment_id TEXT,
-    host_date TEXT,
+    host_date TIMESTAMP,
     tech_room_humidity_value DECIMAL, -- [%] (0=sensor not connected or broken)
     tech_room_temp_value DECIMAL, -- [C](0=sensor not connected or broken)
     cryo_comp_comm_error_state DECIMAL, -- 0=OK, > 0 = alarm bool
@@ -320,9 +354,9 @@ CREATE TABLE hhm.philips_mri_monitoring_data(
 
 -- System Unites
 
-DROP TABLE IF EXISTS hhm.philips_hhm_units;
+DROP TABLE IF EXISTS hhm.philips_mri_units;
 
-CREATE TABLE hhm.philips_hhm_units(
+CREATE TABLE hhm.philips_mri_units(
     system_id text NOT NULL PRIMARY KEY,
     dow_value TEXT,
     AvgPwr_value TEXT,
@@ -345,10 +379,10 @@ CREATE TABLE hhm.philips_hhm_units(
     long_term_boil_off_value TEXT, -- (-1 = stuck_probe) [ml/h]
     mag_dps_status_value TEXT -- (ml/h) [0=OK,  >0 =Alarm status]
 );
-ALTER TABLE ONLY hhm.philips_hhm_units
+ALTER TABLE ONLY hhm.philips_mri_units
     ADD CONSTRAINT fk_system_id FOREIGN KEY (system_id) REFERENCES public.systems(id);
 
-INSERT INTO hhm.philips_hhm_units (system_id, tech_room_humidity_value, tech_room_temp_value, cryo_comp_press_alarm_value, cryo_comp_temp_alarm_value, cryo_comp_malf_value, helium_level_value, long_term_boil_off_value, mag_dps_status_value)
+INSERT INTO hhm.philips_mri_units (system_id, tech_room_humidity_value, tech_room_temp_value, cryo_comp_press_alarm_value, cryo_comp_temp_alarm_value, cryo_comp_malf_value, helium_level_value, long_term_boil_off_value, mag_dps_status_value)
 VALUES ('SME01138', '%', 'C', 'minutes', 'minutes', 'minutes', '%', 'ml/h', 'minutes');
 
-SELECT * FROM hhm.philips_hhm_units;
+SELECT * FROM hhm.philips_mri_units;
