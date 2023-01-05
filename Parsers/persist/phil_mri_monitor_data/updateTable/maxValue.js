@@ -13,6 +13,9 @@ async function maxValue(jobId, sme, data, column) {
       sme: sme,
     });
 
+    console.log("THIS IS COLUMN NAM<E")
+    console.log(column);
+
     // Get date ranges for smaller query and loop
     const startDate = data[data.length - 1].host_date;
     const endDate = data[0].host_date;
@@ -28,8 +31,12 @@ async function maxValue(jobId, sme, data, column) {
     for await (const obs of data) {
       let currentDate = obs.host_date;
 
+      console.log(currentDate, prevData);
+      console.log(currentDate === prevData);
+
       // If dates are the same, push data to array for future aggregation
       if (currentDate === prevData) {
+        console.log(obs);
         bucket.push(obs[column]);
         prevData = currentDate;
         continue;
@@ -37,6 +44,7 @@ async function maxValue(jobId, sme, data, column) {
       if (currentDate !== prevData) {
         // Not equal means a change in dates and begin aggregation
         const maxValue = Math.max(...bucket);
+        console.log("This is max value line 43: " + maxValue);
 
         // If date exists for sme: UPDATE row
         if (systemDates.includes(prevData)) {
@@ -46,6 +54,8 @@ async function maxValue(jobId, sme, data, column) {
           bucket.push(obs[column]); // Begin by pushing new data to our aggregation bucket
         } else {
           // If date dose not exist: INSERT new row
+          console.log("********** column, [sme, prevData, maxValue] **********")
+          console.log(column, [sme, prevData, maxValue]);
           await insertData(jobId, column, [sme, prevData, maxValue]);
           bucket = [];
           prevData = obs.host_date;
@@ -58,6 +68,7 @@ async function maxValue(jobId, sme, data, column) {
     if (systemDates.includes(prevData)) {
       // If date exists for sme: UPDATE row
       const maxValue = Math.max(...bucket);
+      console.log("This is max value line 65: " + maxValue);
       await updateTable(jobId, column, [
         maxValue,
         sme,
@@ -66,6 +77,7 @@ async function maxValue(jobId, sme, data, column) {
     } else {
       // If date dose not exist: INSERT new row
       const maxValue = Math.max(...bucket);
+      console.log("This is max value line 74: " + maxValue);
       await insertData(jobId, column, [
         sme,
         data[data.length - 1].host_date,

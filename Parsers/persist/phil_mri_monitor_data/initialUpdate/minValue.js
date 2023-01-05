@@ -6,6 +6,7 @@ const {
   updateTable,
   insertData,
 } = require("../../../utils/phil_mri_monitor_helpers");
+const {convertDT} = require("../../../utils/dates");
 
 async function minValue(jobId, sme, data, column) {
   try {
@@ -35,7 +36,8 @@ async function minValue(jobId, sme, data, column) {
           bucket.push(obs[column]);
         } else {
           // If date dose not exist: INSERT new row
-          await insertData(jobId, column, [sme, prevData, minValue]);
+          let dtObj = await convertDT(prevData);
+          await insertData(jobId, column, [sme, dtObj, prevData, minValue]);
           bucket = [];
           prevData = obs.host_date;
           bucket.push(obs[column]);
@@ -55,8 +57,10 @@ async function minValue(jobId, sme, data, column) {
     } else {
       // If date dose not exist: INSERT new row
       const minValue = Math.min(...bucket);
+      let dtObj = await convertDT(data[data.length - 1].host_date);
       await insertData(jobId, column, [
         sme,
+        dtObj,
         data[data.length - 1].host_date,
         minValue,
       ]);
