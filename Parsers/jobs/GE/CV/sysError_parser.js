@@ -9,7 +9,7 @@ const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { ge_cv_syserror_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const { blankLineTest } = require("../../../utils/regExHelpers");
-const convertDates = require("../../../utils/dates");
+const {convertDates} = require("../../../utils/dates");
 const {
   isFileModified,
   updateFileModTime,

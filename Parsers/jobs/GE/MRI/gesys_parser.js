@@ -7,38 +7,61 @@ const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
 const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { ge_mri_gesys_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
-const convertDates = require("../../../utils/dates");
+const { convertDates } = require("../../../utils/dates");
 const {
-  isFileModified,
-  updateFileModTime,
-} = require("../../../utils/isFileModified");
+  getCurrentFileSize,
+  getRedisFileSize,
+  updateRedisFileSize,
+} = require("../../../utils/redis");
+const execTail = require("../../../read/exec-tail");
 
 async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
   const sme = sysConfigData.id;
 
-  const data = [];
+  const updateSizePath = "./read/sh/readFileSize.sh";
+  const fileSizePath = "./read/sh/readFileSize.sh";
+  const tailPath = "./read/sh/tail.sh";
 
-  let counter = 0;
+  const data = [];
 
   try {
     await log("info", jobId, sme, "ge_mri_gesys", "FN CALL");
 
-    // Check mod date/time
-
     let complete_file_path = `${sysConfigData.hhm_config.file_path}/${fileToParse.file_name}`;
 
-    const isUpdatedFile = await isFileModified(
-      jobId,
-      sme,
-      complete_file_path,
-      fileToParse
-    );
+    // Check mod date/time
 
-    // don't continue if file is not updated
-    if (!isUpdatedFile) return;
+    const prevFileSize = await getRedisFileSize(sme, fileToParse.file_name);
 
-    const fileData = (await fs.readFile(complete_file_path)).toString();
+    let fileData;
+    if (prevFileSize === null) {
+      console.log("This needs to be read from file");
+      fileData = (await fs.readFile(complete_file_path)).toString();
+    }
+
+    if (prevFileSize > 0 && prevFileSize !== null) {
+      console.log("File Size prev saved in Redis");
+
+      const currentFileSize = await getCurrentFileSize(
+        sme,
+        fileSizePath,
+        sysConfigData.hhm_config.file_path,
+        fileToParse.file_name
+      );
+      console.log("CURRENT FILE SIZE: " + currentFileSize);
+
+      const delta = currentFileSize - prevFileSize;
+      console.log(delta);
+
+      if (delta === 0) {
+        await log("warn", jobId, sme, "delta-0", "FN CALL");
+      }
+
+      let tailDelta = await execTail(tailPath, delta, complete_file_path);
+
+      fileData = tailDelta.toString();
+    }
 
     let matches = fileData.match(ge_re.mri.gesys.block);
 
@@ -68,7 +91,12 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
       fileToParse
     );
     if (insertSuccess) {
-      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+      await updateRedisFileSize(
+        sme,
+        updateSizePath,
+        sysConfigData.hhm_config.file_path,
+        fileToParse.file_name
+      );
     }
 
     return;

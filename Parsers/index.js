@@ -115,6 +115,10 @@ const crothal_demo = [
   "SME12450",
 ];
 
+const croth_ge_mri = ["SME12424", "SME02583", "SME02524"];
+const croth_ge_ct = ['SME12444', 'SME12446', 'SME12450', 'SME12445', 'SME12451', 'SME12412', 'SME12413', 'SME12443'];
+const croth_phil_cv = ['SME00444']
+
 const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
@@ -163,7 +167,7 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(["SME12451"]);
+onBoot(crothal_demo);
 
 /* 
 const determineManufacturer = async (jobId, system) => {

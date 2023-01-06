@@ -1,24 +1,26 @@
 ("use strict");
 require("dotenv").config({ path: "../.env" });
+const {log} = require("../logger");
 const redis = require("redis");
 const execReadFileSize = require("../read/exec-readFileSize");
 
+// SETUP ENV BASED RESOURCES -> REDIS CLIENT, JOB SCHEDULES
+const clienConfig = {
+  socket: {
+    port: 6379,
+    host: process.env.REDIS_IP,
+  },
+};
+
 async function updateRedisFileSize(sme, exec_path, file_path, file) {
   try {
-    // SETUP ENV BASED RESOURCES -> REDIS CLIENT, JOB SCHEDULES
-    const clienConfig = {
-      socket: {
-        port: 6379,
-        host: process.env.REDIS_IP,
-      },
-    };
-
+    await log("info", "NA", sme, "updateRedisFileSize", "FN CALL");
     const redisClient = redis.createClient(clienConfig);
 
     redisClient.on(
       "error",
       async (err) =>
-        await log("error", "NA", "NA", "redisClient", `ON ERROR`, {
+        await log("error", "NA", "NA", "redisClient.on", `ON ERROR`, {
           // TODO: KILL APP?
           error: err,
         })
@@ -35,26 +37,21 @@ async function updateRedisFileSize(sme, exec_path, file_path, file) {
     await redisClient.quit();
     return;
   } catch (error) {
-    console.log(error);
+    await log("error", "NA", sme, "updateRedisFileSize", "FN CALL", {
+      error: error,
+    });
   }
 }
 
 async function getRedisFileSize(sme, file) {
   try {
-    // SETUP ENV BASED RESOURCES -> REDIS CLIENT, JOB SCHEDULES
-    const clienConfig = {
-      socket: {
-        port: 6379,
-        host: process.env.REDIS_IP,
-      },
-    };
-
+    await log("info", "NA", sme, "getRedisFileSize", "FN CALL");
     const redisClient = redis.createClient(clienConfig);
 
     redisClient.on(
       "error",
       async (err) =>
-        await log("error", "NA", "NA", "redisClient", `ON ERROR`, {
+        await log("error", "NA", "NA", "redisClient.on", `ON ERROR`, {
           // TODO: KILL APP?
           error: err,
         })
@@ -63,23 +60,27 @@ async function getRedisFileSize(sme, file) {
 
     const getKey = `${sme}.${file}`;
     const fileSize = await redisClient.get(getKey);
-    console.log(fileSize);
     redisClient.quit();
     return fileSize;
   } catch (error) {
-    console.log(error);
+    await log("error", "NA", sme, "getRedisFileSize", "FN CALL", {
+      error: error,
+    });
   }
 }
 
-async function getCurrentFileSize(exec_path, file_path, file) {
+async function getCurrentFileSize(sme, exec_path, file_path, file) {
   try {
+    await log("info", "NA", sme, "getCurrentFileSize", "FN CALL");
     const currentFileSize = await execReadFileSize(
       exec_path,
       `${file_path}/${file}`
     );
     return currentFileSize;
   } catch (error) {
-    console.log(error);
+    await log("error", "NA", sme, "getCurrentFileSize", "FN CALL", {
+      error: error,
+    });
   }
 }
 
