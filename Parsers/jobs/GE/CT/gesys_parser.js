@@ -9,10 +9,6 @@ const { ge_ct_gesys_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const { convertDates } = require("../../../utils/dates");
 const {
-  isFileModified,
-  updateFileModTime,
-} = require("../../../utils/isFileModified");
-const {
   getCurrentFileSize,
   getRedisFileSize,
   updateRedisFileSize,

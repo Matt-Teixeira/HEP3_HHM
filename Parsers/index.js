@@ -133,7 +133,7 @@ const croth_ge_ct = [
   "SME12443",
 ];
 const croth_phil_cv = ["SME00444"];
-
+/* 
 const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
@@ -182,9 +182,9 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(croth_phil_cv);
+onBoot(["SME00885"]);
 
-/* 
+ */
 const determineManufacturer = async (jobId, system) => {
   try {
     await log("info", jobId, system.id, "determineManufacturer", "FN CALL", {
@@ -218,7 +218,7 @@ const onBoot = async () => {
     console.time();
 
     let queryString =
-      "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE hhm_config IS NOT NULL AND modality = $1"; // AND modality = $1
+      "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE hhm_config IS NOT NULL AND modality = $1";
     let value = [process.argv[2]];
 
     const system_array = await pgPool.query(queryString, value);
@@ -237,5 +237,4 @@ const onBoot = async () => {
   }
 };
 
-onBoot();
- */
+onBoot(); 
