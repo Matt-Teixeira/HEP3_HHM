@@ -163,7 +163,7 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(["SME01138"]);
+onBoot(["SME12451"]);
 
 /* 
 const determineManufacturer = async (jobId, system) => {

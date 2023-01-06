@@ -12,6 +12,11 @@ const {
   isFileModified,
   updateFileModTime,
 } = require("../../../utils/isFileModified");
+const {
+  getCurrentFileSize,
+  getRedisFileSize,
+  updateRedisFileSize,
+} = require("../../../utils/redis");
 
 async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
@@ -21,18 +26,28 @@ async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
 
   try {
     await log("info", jobId, sme, "ge_ct_gesys", "FN CALL");
+    const updateSizePath = "./read/sh/readFileSize.sh";
+    const fileSizePath = "./read/sh/readFileSize.sh";
 
     let complete_file_path = `${sysConfigData.hhm_config.file_path}/${fileToParse.file_name}`;
 
-    const isUpdatedFile = await isFileModified(
-      jobId,
-      sme,
-      complete_file_path,
-      fileToParse
-    );
+    // TEMP
+    //await updateRedisFileSize(sme, updateSizePath, sysConfigData.hhm_config.file_path, fileToParse.file_name);
 
-    // dont continue if file is not updated
-    if (!isUpdatedFile) return;
+    const currentFileSize = await getCurrentFileSize(
+      fileSizePath,
+      sysConfigData.hhm_config.file_path,
+      fileToParse.file_name
+    );
+    console.log("CURRENT FILE SIZE: " + currentFileSize);
+
+    const prevFileSize = await getRedisFileSize(sme, fileToParse.file_name);
+    console.log("PREV FILE SIZE: " + prevFileSize);
+
+    const delta = currentFileSize - prevFileSize;
+    console.log(delta);
+
+    return;
 
     const fileData = (await fs.readFile(complete_file_path)).toString();
 
