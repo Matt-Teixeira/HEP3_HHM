@@ -55,9 +55,13 @@ async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
       console.log("CURRENT FILE SIZE: " + currentFileSize);
 
       const delta = currentFileSize - prevFileSize;
+      await log("info", jobId, sme, "delta", "FN CALL", {delta: delta});
       console.log("DELTA: " + delta);
 
-      if (delta === 0) return;
+      if (delta === 0) {
+        await log("warn", jobId, sme, "delta-0", "FN CALL");
+        return;
+      }
 
       let tailDelta = await execTail(tailPath, delta, complete_file_path);
 
