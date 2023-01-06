@@ -6,6 +6,7 @@ const {
   updateTable,
   insertData,
 } = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_comm_error
+const {convertDT} = require("../../../utils/dates");
 
 async function booleanValue(jobId, sme, data, column) {
   try {
@@ -41,7 +42,8 @@ async function booleanValue(jobId, sme, data, column) {
           bucket.push(obs[column]);
         } else {
           // If date dose not exist: INSERT new row
-          await insertData(jobId, column, [sme, prevData, maxValue]);
+          let dtObj = await convertDT(prevData);
+          await insertData(jobId, column, [sme, dtObj, prevData, maxValue]);
           bucket = [];
           prevData = obs.host_date;
           bucket.push(obs[column]);
@@ -75,8 +77,10 @@ async function booleanValue(jobId, sme, data, column) {
         maxValue = 0;
       }
 
+      let dtObj = await convertDT(data[data.length - 1].host_date);
       await insertData(jobId, column, [
         sme,
+        dtObj,
         data[data.length - 1].host_date,
         maxValue,
       ]);

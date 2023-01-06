@@ -85,6 +85,40 @@ const filePaths = {
   },
 };
 
+const crothal_demo = [
+  "SME00444",
+  "SME00445",
+  "SME00446",
+  "SME02524",
+  "SME07761",
+  "SME00782",
+  "SME00784",
+  "SME00785",
+  "SME00786",
+  "SME01227",
+  "SME02548",
+  "SME02583",
+  "SME02535",
+  "SME02377",
+  "SME02378",
+  "SME02579",
+  "SME02580",
+  "SME02552",
+  "SME07852",
+  "SME07855",
+  "SME07860",
+  "SME07862",
+  "SME07864",
+  "SME08102",
+  "SME12444",
+  "SME12446",
+  "SME12450",
+];
+
+const croth_ge_mri = ["SME12424", "SME02583", "SME02524"];
+const croth_ge_ct = ['SME12444', 'SME12446', 'SME12450', 'SME12445', 'SME12451', 'SME12412', 'SME12413', 'SME12443'];
+const croth_phil_cv = ['SME00444']
+
 const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
@@ -133,12 +167,14 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(["SME00865"]);
+onBoot(crothal_demo);
 
 /* 
 const determineManufacturer = async (jobId, system) => {
   try {
-    await log("info", jobId, system.id, "determineManufacturer", "FN CALL");
+    await log("info", jobId, system.id, "determineManufacturer", "FN CALL", {
+      mod: process.argv[2],
+    });
     console.log(system.id);
 
     switch (system.manufacturer) {
@@ -166,9 +202,11 @@ const onBoot = async () => {
     await log("info", "NA", "NA", "onBoot", `FN CALL`);
     console.time();
 
-    const system_array = await pgPool.query(
-      "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE hhm_config IS NOT NULL"
-    );
+    let queryString =
+      "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE hhm_config IS NOT NULL AND modality = $1"; // AND modality = $1
+    let value = [process.argv[2]];
+
+    const system_array = await pgPool.query(queryString, value);
 
     for await (const system of system_array.rows) {
       let jobId = crypto.randomUUID();
@@ -184,4 +222,5 @@ const onBoot = async () => {
   }
 };
 
-onBoot(); */
+onBoot();
+ */

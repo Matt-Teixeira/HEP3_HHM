@@ -6,6 +6,7 @@ const {
   updateTable,
   insertData,
 } = require("../../../utils/phil_mri_monitor_helpers"); //cryo_comp_malf_minutes
+const {convertDT} = require("../../../utils/dates");
 
 async function maxValue(jobId, sme, data, column) {
   try {
@@ -35,7 +36,8 @@ async function maxValue(jobId, sme, data, column) {
           bucket.push(obs[column]);
         } else {
           // If date dose not exist: INSERT new row
-          await insertData(jobId, column, [sme, prevData, maxValue]);
+          let dtObj = await convertDT(prevData);
+          await insertData(jobId, column, [sme, dtObj, prevData, maxValue]);
           bucket = [];
           prevData = obs.host_date;
           bucket.push(obs[column]);
@@ -55,8 +57,10 @@ async function maxValue(jobId, sme, data, column) {
     } else {
       // If date dose not exist: INSERT new row
       const maxValue = Math.max(...bucket);
+      let dtObj = await convertDT(data[data.length - 1].host_date);
       await insertData(jobId, column, [
         sme,
+        dtObj,
         data[data.length - 1].host_date,
         maxValue,
       ]);

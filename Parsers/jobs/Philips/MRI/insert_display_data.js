@@ -5,14 +5,13 @@ const initialUpdate = require("../../../persist/phil_mri_monitor_data/initialUpd
 const updatePhilMriTable = require("../../../persist/phil_mri_monitor_data/updateTable/updatePhilMriTable");
 const { getSystemDbData } = require("../../../utils/phil_mri_monitor_helpers");
 
-async function insertDisplayData(jobId, filePath, sysConfigData, data) {
-  const sme = sysConfigData[0].id;
-  const modality = sysConfigData[0].modality;
+async function insertDisplayData(jobId, sysConfigData, data) {
+  const sme = sysConfigData.id;
+  const modality = sysConfigData.hhm_config.modality;
   try {
     await log("info", jobId, sme, "insertDisplayData", "FN CALL", {
       sme: sme,
       modality,
-      file: filePath,
     });
 
     const systemDbData = await getSystemDbData(jobId, sme);
@@ -33,11 +32,9 @@ async function insertDisplayData(jobId, filePath, sysConfigData, data) {
     }
 
   } catch (error) {
-    console.log(error);
     await log("error", jobId, sme, "insertDisplayData", "FN CALL", {
       sme: sme,
       modality,
-      file: filePath,
     });
   }
 }

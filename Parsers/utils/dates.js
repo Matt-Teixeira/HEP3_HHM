@@ -66,7 +66,7 @@ async function type_1(matchGroup) {
       minute: timeMatches.groups.minute,
       second: timeMatches.groups.second,
     });
-    matchGroup.date_time = dt.toJSDate();
+    matchGroup.date_time = dt.toISO();
   } catch (error) {
     await log("error", "NA", "NA", "convertDates-type_1", "FN CATCH", {
       error: error,
@@ -87,7 +87,7 @@ async function type_2(matchGroup) {
       minute: timeMatches.groups.minute,
       second: timeMatches.groups.second,
     });
-    matchGroup.date_time = dt.toJSDate();
+    matchGroup.date_time = dt.toISO();
   } catch (error) {
     await log("error", "NA", "NA", "convertDates-type_2", "FN CATCH", {
       error: error,
@@ -113,7 +113,7 @@ async function type_3(matchGroup) {
       minute: timeMatches.groups.minute,
       second: timeMatches.groups.second,
     });
-    matchGroup.date_time = dt.toJSDate();
+    matchGroup.date_time = dt.toISO();
   } catch (error) {
     await log("error", "NA", "NA", "convertDates-type_3", "FN CATCH", {
       error: error,
@@ -132,7 +132,7 @@ async function type_4(matchGroup) {
       minute: matchGroup.mn,
       second: matchGroup.ss,
     });
-    matchGroup.date_time = dt.toJSDate();
+    matchGroup.date_time = dt.toISO();
   } catch (error) {
     await log("error", "NA", "NA", "convertDates-type_4", "FN CATCH", {
       error: error,
@@ -146,4 +146,10 @@ function getTime(matchGroup) {
   return matchGroup.host_time.match(timeRe);
 }
 
-module.exports = convertDates;
+async function convertDT(date) {
+  let date1 = await DateTime.fromFormat(`${date}`, 'yyyy-MM-dd');
+  let newDate = new Date(date1.toISO());
+  return newDate;
+}
+
+module.exports = {convertDates, convertDT};
