@@ -1,3 +1,5 @@
+BEGIN;
+
 ALTER TABLE systems
 DROP COLUMN hhm_config;
 
@@ -339,7 +341,8 @@ CREATE TABLE hhm.philips_mri_monitor(
 CREATE TABLE hhm.philips_mri_monitoring_data(
     id BIGSERIAL PRIMARY KEY,
     equipment_id TEXT,
-    host_date TIMESTAMP,
+    date_time TIMESTAMP,
+    date TEXT,
     tech_room_humidity_value DECIMAL, -- [%] (0=sensor not connected or broken)
     tech_room_temp_value DECIMAL, -- [C](0=sensor not connected or broken)
     cryo_comp_comm_error_state DECIMAL, -- 0=OK, > 0 = alarm bool
@@ -385,4 +388,65 @@ ALTER TABLE ONLY hhm.philips_mri_units
 INSERT INTO hhm.philips_mri_units (system_id, tech_room_humidity_value, tech_room_temp_value, cryo_comp_press_alarm_value, cryo_comp_temp_alarm_value, cryo_comp_malf_value, helium_level_value, long_term_boil_off_value, mag_dps_status_value)
 VALUES ('SME01138', '%', 'C', 'minutes', 'minutes', 'minutes', '%', 'ml/h', 'minutes');
 
-SELECT * FROM hhm.philips_mri_units;
+-- >> INDEXES
+
+-- hhm.siemens_mri
+CREATE INDEX idx_siemens_mri_equipment_id ON hhm.siemens_mri(equipment_id);
+CREATE INDEX idx_siemens_mri_date_time ON hhm.siemens_mri(date_time);
+
+-- hhm.siemens_ct;
+CREATE INDEX idx_siemens_ct_equipment_id ON hhm.siemens_ct(equipment_id);
+CREATE INDEX idx_siemens_ct_date_time ON hhm.siemens_ct(date_time);
+
+-- hhm.siemens_cv;
+CREATE INDEX idx_siemens_cv_equipment_id ON hhm.siemens_cv(equipment_id);
+CREATE INDEX idx_siemens_cv_date_time ON hhm.siemens_cv(date_time);
+
+-- hhm.ge_mri_gesys;
+CREATE INDEX idx_ge_mri_gesys_equipment_id ON hhm.ge_mri_gesys(equipment_id);
+CREATE INDEX idx_ge_mri_gesys_date_time ON hhm.ge_mri_gesys(date_time);
+
+-- hhm.ge_ct_gesys;
+CREATE INDEX idx_ge_ct_gesys_equipment_id ON hhm.ge_ct_gesys(equipment_id);
+CREATE INDEX idx_ge_ct_gesys_date_time ON hhm.ge_ct_gesys(date_time);
+
+-- hhm.ge_cv_syserror;
+CREATE INDEX idx_ge_cv_syserror_equipment_id ON hhm.ge_cv_syserror(equipment_id);
+CREATE INDEX idx_ge_cv_syserror_date_time ON hhm.ge_cv_syserror(date_time);
+
+-- hhm.philips_ct_eal;
+CREATE INDEX idx_philips_ct_eal_equipment_id ON hhm.philips_ct_eal(equipment_id);
+CREATE INDEX idx_philips_ct_eal_date_time ON hhm.philips_ct_eal(date_time);
+
+-- hhm.philips_ct_events;
+CREATE INDEX idx_philips_ct_events_equipment_id ON hhm.philips_ct_events(equipment_id);
+CREATE INDEX idx_philips_ct_events_date_time ON hhm.philips_ct_events(date_time);
+
+-- hhm.philips_mri_rmmu_magnet;
+CREATE INDEX idx_philips_mri_rmmu_magnet_equipment_id ON hhm.philips_mri_rmmu_magnet(equipment_id);
+CREATE INDEX idx_philips_mri_rmmu_magnet_date_time ON hhm.philips_mri_rmmu_magnet(date_time);
+
+-- hhm.philips_mri_logcurrent;
+CREATE INDEX idx_philips_mri_logcurrent_equipment_id ON hhm.philips_mri_logcurrent(equipment_id);
+CREATE INDEX idx_philips_mri_logcurrent_date_time ON hhm.philips_mri_logcurrent(date_time);
+
+-- hhm.philips_mri_rmmu_short;
+CREATE INDEX idx_philips_mri_rmmu_short_equipment_id ON hhm.philips_mri_rmmu_short(equipment_id);
+CREATE INDEX idx_philips_mri_rmmu_short_date_time ON hhm.philips_mri_rmmu_short(date_time);
+
+-- hhm.philips_mri_rmmu_long;
+CREATE INDEX idx_philips_mri_rmmu_long_equipment_id ON hhm.philips_mri_rmmu_long(equipment_id);
+CREATE INDEX idx_philips_mri_rmmu_long_date_time ON hhm.philips_mri_rmmu_long(date_time);
+
+-- hhm.philips_cv_eventlog;
+CREATE INDEX idx_philips_cv_eventlog_equipment_id ON hhm.philips_cv_eventlog(equipment_id);
+CREATE INDEX idx_philips_cv_eventlog_date_time ON hhm.philips_cv_eventlog(date_time);
+
+-- hhm.philips_mri_monitor;
+CREATE INDEX idx_philips_mri_monitor_equipment_id ON hhm.philips_mri_monitor(equipment_id);
+
+-- hhm.philips_mri_monitoring_data;
+CREATE INDEX idx_philips_mri_monitoring_data_equipment_id ON hhm.philips_mri_monitoring_data(equipment_id);
+CREATE INDEX idx_philips_mri_monitoring_data_date_time ON hhm.philips_mri_monitoring_data(date_time);
+
+ROLLBACK;

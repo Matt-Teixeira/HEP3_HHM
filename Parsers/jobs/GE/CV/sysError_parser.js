@@ -87,6 +87,7 @@ async function ge_cv_sys_error(jobId, sysConfigData, fileToParse) {
         data.push(matchData);
       }
     }
+    data.shift();
 
     const mappedData = mapDataToSchema(data, ge_cv_syserror_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
