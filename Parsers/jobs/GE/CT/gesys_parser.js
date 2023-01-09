@@ -62,7 +62,6 @@ async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
       let tailDelta = await execTail(tailPath, delta, complete_file_path);
 
       fileData = tailDelta.toString();
-      console.log(fileData);
     }
 
     let matches = fileData.match(ge_re.ct.gesys.block);

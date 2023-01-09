@@ -7,7 +7,7 @@ const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
 const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { phil_mri_rmmu_long_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
-const convertDates = require("../../../utils/dates");
+const {convertDates} = require("../../../utils/dates");
 const constructFilePath = require("../../../utils/constructFilePath");
 const {
   isFileModified,
