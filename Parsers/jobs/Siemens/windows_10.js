@@ -69,7 +69,6 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
       let tailDelta = await execHead(headPath, delta, complete_file_path);
 
       rl = tailDelta.toString().split(/(?:\r\n|\r|\n)/g);
-      console.log(rl);
     }
 
     for await (const line of rl) {

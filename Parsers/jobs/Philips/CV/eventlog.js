@@ -11,9 +11,11 @@ const bulkInsert = require("../../../persist/queryBuilder");
 const { blankLineTest } = require("../../../utils/regExHelpers");
 const { convertDates } = require("../../../utils/dates");
 const {
-  isFileModified,
-  updateFileModTime,
-} = require("../../../utils/isFileModified");
+  getCurrentFileSize,
+  getRedisFileSize,
+  updateRedisFileSize,
+} = require("../../../utils/redis");
+const execHead = require("../../../read/exec-head");
 
 // EventLog.txt runs 1 per day
 
@@ -21,6 +23,11 @@ async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;
   const sme = sysConfigData.id;
 
+  const updateSizePath = "./read/sh/readFileSize.sh";
+  const fileSizePath = "./read/sh/readFileSize.sh";
+  const headPath = "./read/sh/head.sh";
+
+  const data = [];
 
   try {
     const complete_file_path = `${sysConfigData.hhm_config.file_path}/${fileToParse.file_name}`;
@@ -29,24 +36,43 @@ async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
       file: complete_file_path,
     });
 
-    const isUpdatedFile = await isFileModified(
-      jobId,
-      sme,
-      complete_file_path,
-      fileToParse
-    );
+    const prevFileSize = await getRedisFileSize(sme, fileToParse.file_name);
+    console.log("Redis File Size: " + prevFileSize);
 
-    // dont continue if file is not updated
-    if (!isUpdatedFile) return;
+    let rl;
+    if (prevFileSize === null) {
+      console.log("This needs to be read from file");
+      rl = readline.createInterface({
+        input: fs.createReadStream(complete_file_path),
+        crlfDelay: Infinity,
+      });
+    }
 
-   
+    if (prevFileSize > 0 && prevFileSize !== null) {
+      console.log("File Size prev saved in Redis");
 
-    const rl = readline.createInterface({
-      input: fs.createReadStream(complete_file_path),
-      crlfDelay: Infinity,
-    });
+      const currentFileSize = await getCurrentFileSize(
+        sme,
+        fileSizePath,
+        sysConfigData.hhm_config.file_path,
+        fileToParse.file_name
+      );
+      console.log("CURRENT FILE SIZE: " + currentFileSize);
 
-    const data = [];
+      const delta = currentFileSize - prevFileSize;
+      await log("info", jobId, sme, "delta", "FN CALL", { delta: delta });
+      console.log("DELTA: " + delta);
+
+      if (delta === 0) {
+        await log("warn", jobId, sme, "delta-0", "FN CALL");
+        return;
+      }
+
+      let tailDelta = await execHead(headPath, delta, complete_file_path);
+
+      rl = tailDelta.toString().split(/(?:\r\n|\r|\n)/g);
+    }
+
     for await (const line of rl) {
       let matches = line.match(philips_re.cv.eventlog);
       if (matches === null) {
@@ -77,7 +103,12 @@ async function phil_cv_eventlog(jobId, sysConfigData, fileToParse) {
       fileToParse
     );
     if (insertSuccess) {
-      await updateFileModTime(jobId, sme, complete_file_path, fileToParse);
+      await updateRedisFileSize(
+        sme,
+        updateSizePath,
+        sysConfigData.hhm_config.file_path,
+        fileToParse.file_name
+      );
     }
   } catch (error) {
     await log("error", jobId, sme, "phil_cv_eventlog", "FN CALL", {

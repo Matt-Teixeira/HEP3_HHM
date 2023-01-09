@@ -105,7 +105,6 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
 
     // Set mod date-time
   } catch (error) {
-    console.log(error);
     await log("error", sme, "ge_mri_gesys", "FN CALL", {
       error: error.message,
     });

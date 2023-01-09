@@ -220,10 +220,10 @@ const onBoot = async () => {
     console.time();
 
     let queryString =
-      "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE hhm_config IS NOT NULL AND modality = $1";
+      "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE hhm_config IS NOT NULL"; //  AND modality = $1
     let value = [process.argv[2]];
 
-    const system_array = await pgPool.query(queryString, value);
+    const system_array = await pgPool.query(queryString);
 
     for await (const system of system_array.rows) {
       let jobId = crypto.randomUUID();
@@ -239,5 +239,4 @@ const onBoot = async () => {
   }
 };
 
-onBoot(); 
-*/
+onBoot();  */
