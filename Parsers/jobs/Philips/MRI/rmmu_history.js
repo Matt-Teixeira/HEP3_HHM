@@ -9,8 +9,7 @@ const {
   philips_mri_rmmu_magnet_schema,
 } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
-const convertDates = require("../../../utils/dates");
-const constructFilePath = require("../../../utils/constructFilePath");
+const {convertDates} = require("../../../utils/dates");
 
 async function phil_mri_rmmu_history(jobId, sysConfigData, fileToParse) {
   const dateTimeVersion = fileToParse.datetimeVersion;

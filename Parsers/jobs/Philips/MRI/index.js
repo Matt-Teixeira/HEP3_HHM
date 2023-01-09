@@ -20,7 +20,7 @@ const philips_mri_parsers = async (jobId, sysConfigData) => {
       "FN CALL"
     );
 
-    /* for await (const file of sysConfigData.hhm_file_config) {
+    for await (const file of sysConfigData.hhm_file_config) {
       switch (file.query) {
         case "logcurrent":
           await phil_mri_logcurrent(jobId, sysConfigData, file);
@@ -37,7 +37,7 @@ const philips_mri_parsers = async (jobId, sysConfigData) => {
         default:
           break;
       }
-    } */
+    }
 
     // Verify that this Phil MRI has a monitoring folder. If so, parse data from it.
    const monitoring_file_path = `${sysConfigData.hhm_config.file_path}/monitoring`;

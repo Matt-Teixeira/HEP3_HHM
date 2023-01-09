@@ -133,7 +133,8 @@ const croth_ge_ct = [
   "SME12443",
 ];
 const croth_phil_cv = ["SME00444"];
-/* 
+const ge_cv = ["SME00865"];
+ 
 const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
@@ -182,9 +183,10 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(["SME00885"]);
+onBoot(["SME01138"]);
 
- */
+
+/* 
 const determineManufacturer = async (jobId, system) => {
   try {
     await log("info", jobId, system.id, "determineManufacturer", "FN CALL", {
@@ -238,3 +240,4 @@ const onBoot = async () => {
 };
 
 onBoot(); 
+*/

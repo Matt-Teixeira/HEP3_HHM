@@ -9,7 +9,7 @@ const {
   philips_mri_rmmu_magnet_schema,
 } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
-const convertDates = require("../../../utils/dates");
+const {convertDates} = require("../../../utils/dates");
 const constructFilePath = require("../../../utils/constructFilePath");
 const {
   isFileModified,
