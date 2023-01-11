@@ -135,7 +135,7 @@ const croth_ge_ct = [
 const croth_phil_cv = ["SME00444"];
 const ge_cv = ["SME00865", "SME00498", "SME01442"];
  
-const determineManufacturer = async (jobId, sme) => {
+/* const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
       "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE id = $1";
@@ -184,9 +184,9 @@ const onBoot = async (systems_list) => {
 };
 
 onBoot(ge_cv);
+ */
 
 
-/* 
 const determineManufacturer = async (jobId, system) => {
   try {
     await log("info", jobId, system.id, "determineManufacturer", "FN CALL", {
@@ -220,10 +220,10 @@ const onBoot = async () => {
     console.time();
 
     let queryString =
-      "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE hhm_config IS NOT NULL"; //  AND modality = $1
+      "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE hhm_config IS NOT NULL AND modality = $1"; //  AND modality = $1
     let value = [process.argv[2]];
 
-    const system_array = await pgPool.query(queryString);
+    const system_array = await pgPool.query(queryString, value);
 
     for await (const system of system_array.rows) {
       let jobId = crypto.randomUUID();
@@ -239,4 +239,4 @@ const onBoot = async () => {
   }
 };
 
-onBoot();  */
+onBoot();
