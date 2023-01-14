@@ -61,7 +61,7 @@ const filePaths = {
     ],
     mri_systems: [
       "SME02524",
-      //"SME02583", 1 mil + rows
+      "SME02583", //1 mil + rows
       "SME12424",
       "SME01123",
       "SME01096",
@@ -133,9 +133,11 @@ const croth_ge_ct = [
   "SME12443",
 ];
 const croth_phil_cv = ["SME00444"];
-const ge_cv = ["SME00865", "SME00498", "SME01442"];
- 
-/* const determineManufacturer = async (jobId, sme) => {
+const ge_cv = ["SME00865"]; // permission denied: "SME00498" "SME01442"
+// DEL "SME00865.sysError.log"
+//
+
+const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
       "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE id = $1";
@@ -183,10 +185,9 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(ge_cv);
- */
+onBoot(filePaths.siemens.mri_systems);
 
-
+/* 
 const determineManufacturer = async (jobId, system) => {
   try {
     await log("info", jobId, system.id, "determineManufacturer", "FN CALL", {
@@ -240,3 +241,4 @@ const onBoot = async () => {
 };
 
 onBoot();
+ */
