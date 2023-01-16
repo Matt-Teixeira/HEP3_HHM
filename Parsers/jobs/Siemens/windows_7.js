@@ -76,16 +76,18 @@ const parse_win_7 = async (jobId, sysConfigData, fileToParse) => {
       }
       let matchGroups = match.match(win_7_re.small_group);
 
+      let month = matchGroups.groups.month.slice(0, 3);
+      matchGroups.groups.host_date = `${matchGroups.groups.day}-${month}-${matchGroups.groups.year}`;
+
       //convertDates(matchGroups.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(sme, matchGroups.groups);
       data.push(matchData);
 
       // Build redis data passoff
       // Format data to pass off to redis queue for data processing
-      let month = matchData.month.slice(0, 3);
       redisData.push({
         system_id: sme,
-        host_date: `${matchData.day}-${month}-${matchData.year}`,
+        host_date: matchData.host_date,
         host_time: matchData.host_time,
         pg_table: fileToParse.pg_table,
       });

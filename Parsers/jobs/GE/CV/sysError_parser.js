@@ -99,6 +99,7 @@ async function ge_cv_sys_error(jobId, sysConfigData, fileToParse) {
     }
 
     // Remove headers - head of array
+    redisData.shift();
     data.shift();
 
     const mappedData = mapDataToSchema(data, ge_cv_syserror_schema);

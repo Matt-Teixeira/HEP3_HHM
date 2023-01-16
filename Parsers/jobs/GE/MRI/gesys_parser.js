@@ -80,13 +80,14 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
         });
         continue;
       }
+      matchGroups.groups.host_date = `${matchGroups.groups.day}-${matchGroups.groups.month}-${matchGroups.groups.year}`;
       //convertDates(matchGroups.groups, dateTimeVersion);
       const matchData = groupsToArrayObj(sme, matchGroups.groups);
       data.push(matchData);
 
       redisData.push({
         system_id: sme,
-        host_date: `${matchData.day}-${matchData.month}-${matchData.year}`,
+        host_date: matchData.host_date,
         host_time: matchData.host_time,
         pg_table: fileToParse.pg_table,
       });

@@ -1,10 +1,11 @@
 const ge_mri_gesys_schema = {
-  equipment_id: null,
+  system_id: null,
   epoch: null,
   record_number_concurrent: null,
   misc_param_1: null,
   month: null,
   day: null,
+  host_date: null,
   host_time: null,
   year: null,
   message_number: null,
@@ -25,16 +26,17 @@ const ge_mri_gesys_schema = {
   message: null,
   sr: null,
   en: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const ge_ct_gesys_schema = {
-  equipment_id: null,
+  system_id: null,
   epoch: null,
   record_number_concurrent: null,
   misc_param_1: null,
   month: null,
   day: null,
+  host_date: null,
   host_time: null,
   year: null,
   message_number: null,
@@ -55,11 +57,11 @@ const ge_ct_gesys_schema = {
   message: null,
   sr: null,
   en: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const ge_cv_syserror_schema = {
-  equipment_id: null,
+  system_id: null,
   sequencenumber: null,
   host_date: null,
   host_time: null,
@@ -78,11 +80,11 @@ const ge_cv_syserror_schema = {
   debugtext: null,
   sourcefile: null,
   sourceline: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const siemens_ct_mri = {
-  equipment_id: null,
+  system_id: null,
   host_state: null,
   host_date: null,
   host_time: null,
@@ -94,11 +96,12 @@ const siemens_ct_mri = {
   month: null,
   day: null,
   year: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const siemens_cv_schema = {
-  equipment_id: null,
+  system_id: null,
+  host_date: null,
   host_time: null,
   source_group: null,
   type_group: null,
@@ -108,11 +111,11 @@ const siemens_cv_schema = {
   month: null,
   day: null,
   year: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const philips_ct_eal_schema = {
-  equipment_id: null,
+  system_id: null,
   line: null,
   err_type: null,
   tmstamp: null,
@@ -127,11 +130,11 @@ const philips_ct_eal_schema = {
   param2: null,
   vxwerrno: null,
   controller: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const philips_ct_events_schema = {
-  equipment_id: null,
+  system_id: null,
   eventtime: null,
   blob: null,
   type: null,
@@ -141,11 +144,11 @@ const philips_ct_events_schema = {
   ermodulernum: null,
   dtime: null,
   msg: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const phil_mri_logcurrent_schema = {
-  equipment_id: null,
+  system_id: null,
   host_date: null,
   host_time: null,
   row_type: null,
@@ -160,11 +163,11 @@ const phil_mri_logcurrent_schema = {
   size_copy_value: null,
   data_8: null,
   reconstructor: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const phil_mri_rmmu_short_schema = {
-  equipment_id: null,
+  system_id: null,
   system_reference_number: null,
   hospital_name: null,
   serial_number_magnet: null,
@@ -193,11 +196,11 @@ const phil_mri_rmmu_short_schema = {
   CompressorReset_state: null,
   Chd_value: null,
   Cpr_value: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const phil_mri_rmmu_long_schema = {
-  equipment_id: null,
+  system_id: null,
   system_reference_number: null,
   hospital_name: null,
   serial_number_magnet: null,
@@ -227,11 +230,11 @@ const phil_mri_rmmu_long_schema = {
   CompressorReset_state: null,
   Chd_value: null,
   Cpr_value: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const philips_mri_rmmu_magnet_schema = {
-  equipment_id: null,
+  system_id: null,
   system_reference_number: null,
   hospital_name: null,
   serial_number_magnet: null,
@@ -247,11 +250,11 @@ const philips_mri_rmmu_magnet_schema = {
   Event: null,
   Data: null,
   Descr: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 const philips_cv_eventlog_schema = {
-  equipment_id: null,
+  system_id: null,
   category: null,
   host_date: null,
   host_time: null,
@@ -267,7 +270,7 @@ const philips_cv_eventlog_schema = {
   subsystem_number: null,
   thread_name: null,
   message: null,
-  date_time: null,
+  host_datetime: null,
 };
 
 module.exports = {

@@ -70,6 +70,7 @@ async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
     for await (let match of matches) {
       const matchGroups = match.match(ge_re.ct.gesys.new);
       //convertDates(matchGroups.groups, dateTimeVersion);
+      matchGroups.groups.host_date = `${matchGroups.groups.day}-${matchGroups.groups.month}-${matchGroups.groups.year}`;
       const matchData = groupsToArrayObj(sme, matchGroups.groups);
       data.push(matchData);
 
@@ -77,7 +78,7 @@ async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
       // Format data to pass off to redis queue for data processing
       redisData.push({
         system_id: sme,
-        host_date: `${matchData.day}-${matchData.month}-${matchData.year}`,
+        host_date: matchData.host_date,
         host_time: matchData.host_time,
         pg_table: fileToParse.pg_table,
       });
@@ -85,6 +86,7 @@ async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
 
     const mappedData = mapDataToSchema(data, ge_ct_gesys_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
+    console.log(mappedData);
 
     const insertSuccess = await bulkInsert(
       jobId,
