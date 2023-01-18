@@ -4,11 +4,11 @@ const { log } = require("../../../logger");
 const { philips_re } = require("../../../parse/parsers");
 const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
 const mapDataToSchema = require("../../../persist/map-data-to-schema");
-const { philips_ct_events_schema } = require("../../../persist/pg-schemas");
+const { philips_ct_eal_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
 const convertDates = require("../../../utils/dates");
 
-async function phil_ct_events(
+async function phil_ct_eal(
   jobId,
   sysConfigData,
   fileToParse,
@@ -18,21 +18,23 @@ async function phil_ct_events(
   const data = [];
 
   try {
-    await log("info", jobId, sme, "phil_ct_events", "FN CALL");
+    await log("info", jobId, sme, "phil_ct_eal", "FN CALL");
 
-    const events_block_groups = ct_eal_events_blocks.matchAll(
-      philips_re.ct_events_new
-    );
+    const eal_block_groups =
+      ct_eal_events_blocks.matchAll(
+        philips_re.ct_eal_new
+      );
 
-    for (let match of events_block_groups) {
+    for (let match of eal_block_groups) {
       const matchData = groupsToArrayObj(sme, match.groups);
       data.push(matchData);
     }
+    console.log(data);
 
-    const mappedData = mapDataToSchema(data, philips_ct_events_schema);
+    const mappedData = mapDataToSchema(data, philips_ct_eal_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
-
-    const query = { query: fileToParse.query.events };
+    
+    const query = {query: fileToParse.query.eal}
 
     const insertSuccess = await bulkInsert(
       jobId,
@@ -40,6 +42,7 @@ async function phil_ct_events(
       sysConfigData,
       query
     );
+
 
     /* 
       convertDates(matches.groups, dateTimeVersion);
@@ -52,10 +55,10 @@ async function phil_ct_events(
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest)); */
   } catch (error) {
     console.log(error);
-    await log("error", jobId, sme, "phil_ct_events", "FN CALL", {
+    await log("error", jobId, sme, "phil_ct_eal", "FN CALL", {
       error,
     });
   }
 }
 
-module.exports = phil_ct_events;
+module.exports = phil_ct_eal;

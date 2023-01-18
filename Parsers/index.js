@@ -171,7 +171,7 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(["SME01118"]); //...filePaths.ge.ct_systems, 
+onBoot(["SME07847"]); //...filePaths.ge.ct_systems, 
 
 /* 
 const determineManufacturer = async (jobId, system) => {

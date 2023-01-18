@@ -173,45 +173,47 @@ module.exports = queries = {
   },
   Philips: {
     CT: {
-      eal_info: `
+      eal: `
       INSERT INTO log.philips_ct_eal (
         system_id,
-        line,
-        err_type,
-        tmstamp,
-        file,
-        datatype,
-        param1,
-        errnum,
-        info,
-        dtime,
-        ealtime,
-        lognumber,
-        param2,
-        vxwerrno,
+        host_date,
+        host_time,
         controller,
+        data_type,
+        log_number,
+        tm_stamp,
+        err_type,
+        err_number,
+        vxw_err_no,
+        file,
+        line,
+        param_1,
+        param_2,
+        info,
+        eal_time,
         host_datetime
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::numeric[], $15::text[], $16::timestamp[]
+        $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::timestamp[]
       )
       `,
       events: `
       INSERT INTO log.philips_ct_events (
       system_id,
-      eventtime,
-      blob,
       type,
-      tstampnum,
-      eal,
       level,
-      ermodulernum,
-      dtime,
-      msg,
+      module,
+      time_stamp,
+      host_date,
+      host_time,
+      message,
+      eal,
+      blob,
+      event_time,
       host_datetime
     )
     SELECT * FROM UNNEST (
-      $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::timestamp[]
+      $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::timestamp[]
     )
       `,
     },
