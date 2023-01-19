@@ -2,11 +2,10 @@
 require("dotenv").config({ path: "../../.env" });
 const { log } = require("../../../logger");
 const { philips_re } = require("../../../parse/parsers");
-const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
 const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { philips_ct_eal_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
-const convertDates = require("../../../utils/dates");
+const generateDateTime = require("../../../processing/date_processing/generateDateTimes");
 
 async function phil_ct_eal(
   jobId,
@@ -20,21 +19,29 @@ async function phil_ct_eal(
   try {
     await log("info", jobId, sme, "phil_ct_eal", "FN CALL");
 
-    const eal_block_groups =
-      ct_eal_events_blocks.matchAll(
-        philips_re.ct_eal_new
-      );
+    const eal_block_groups = ct_eal_events_blocks.matchAll(
+      philips_re.ct_eal_new
+    );
 
     for (let match of eal_block_groups) {
-      const matchData = groupsToArrayObj(sme, match.groups);
-      data.push(matchData);
+      match.groups.system_id = sme;
+      const dtObject = await generateDateTime(
+        "uuid",
+        match.groups.system_id,
+        fileToParse.pg_table.eal,
+        match.groups.host_date,
+        match.groups.host_time
+      );
+
+      match.groups.host_datetime = dtObject;
+
+      data.push(match.groups);
     }
-    console.log(data);
 
     const mappedData = mapDataToSchema(data, philips_ct_eal_schema);
     const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest));
-    
-    const query = {query: fileToParse.query.eal}
+
+    const query = { query: fileToParse.query.eal };
 
     const insertSuccess = await bulkInsert(
       jobId,
@@ -42,17 +49,6 @@ async function phil_ct_eal(
       sysConfigData,
       query
     );
-
-
-    /* 
-      convertDates(matches.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(sme, matches.groups);
-      data.push(matchData);
-
-
-    //const mappedData = mapDataToSchema(data, philips_cteal_schema);
-
-    const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest)); */
   } catch (error) {
     console.log(error);
     await log("error", jobId, sme, "phil_ct_eal", "FN CALL", {

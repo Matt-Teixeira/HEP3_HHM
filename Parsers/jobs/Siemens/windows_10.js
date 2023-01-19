@@ -9,17 +9,15 @@ const mapDataToSchema = require("../../persist/map-data-to-schema");
 const { siemens_ct_mri } = require("../../persist/pg-schemas");
 const bulkInsert = require("../../persist/queryBuilder");
 const { blankLineTest } = require("../../utils/regExHelpers");
-const { convertDates } = require("../../utils/dates");
 const {
   getCurrentFileSize,
   getRedisFileSize,
   updateRedisFileSize,
-  passForProcessing,
 } = require("../../redis/redisHelpers");
 const execHead = require("../../read/exec-head");
+const generateDateTime = require("../../processing/date_processing/generateDateTimes");
 
 const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
-  const dateTimeVersion = sysConfigData.hhm_config.dateTimeVersion;
   const sme = sysConfigData.id;
   const dirPath = sysConfigData.hhm_config.file_path;
 
@@ -28,7 +26,6 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
   const headPath = "./read/sh/head.sh";
 
   const data = [];
-  const redisData = [];
 
   let line_num = 1;
   try {
@@ -86,19 +83,27 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
           });
         }
       }
-      //convertDates(matches.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(sme, matches.groups);
-      data.push(matchData);
-      line_num++;
 
-      // Build redis data passoff
-      // Format data to pass off to redis queue for data processing
-      redisData.push({
-        system_id: sme,
-        host_date: matchData.host_date,
-        host_time: matchData.host_time,
-        pg_table: fileToParse.pg_table,
-      });
+      matches.groups.system_id = sme;
+
+      const dtObject = await generateDateTime(
+        jobId,
+        matches.groups.system_id,
+        fileToParse.pg_table,
+        matches.groups.host_date,
+        matches.groups.host_time
+      );
+
+      if (dtObject === null) {
+        await log("warn", jobId, sme, "date_time", "FN CALL", {
+          message: "date_time object null",
+        });
+      }
+
+      matches.groups.host_datetime = dtObject;
+
+      data.push(matches.groups);
+      line_num++;
     }
 
     const mappedData = mapDataToSchema(data, siemens_ct_mri);
@@ -117,9 +122,6 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
         sysConfigData.hhm_config.file_path,
         fileToParse.file_name
       );
-
-      // Send data for processing to redis dp:queue
-      await passForProcessing(sme, redisData);
     }
 
     return true;

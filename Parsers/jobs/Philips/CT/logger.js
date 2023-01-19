@@ -31,7 +31,6 @@ async function philipsLogger(jobId, sysConfigData, fileToParse) {
       fileToParse,
       ct_eal_events_blocks.groups.events_block
     );
-
   } catch (error) {
     console.log(error);
     await log("error", jobId, sysConfigData.id, "philipsLogger", "FN CALL", {

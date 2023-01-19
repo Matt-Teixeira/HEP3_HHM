@@ -2,11 +2,10 @@
 require("dotenv").config({ path: "../../.env" });
 const { log } = require("../../../logger");
 const { philips_re } = require("../../../parse/parsers");
-const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
 const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { philips_ct_events_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
-const convertDates = require("../../../utils/dates");
+const generateDateTime = require("../../../processing/date_processing/generateDateTimes");
 
 async function phil_ct_events(
   jobId,
@@ -25,8 +24,25 @@ async function phil_ct_events(
     );
 
     for (let match of events_block_groups) {
-      const matchData = groupsToArrayObj(sme, match.groups);
-      data.push(matchData);
+      // non-utf8 characters existing in ERROR_BLOB entries
+      if (match.groups.type === "ERROR_BLOB") {
+        let blob_reduced = match.groups.blob.match(/(?<blob>\w+)/);
+        match.groups.blob = blob_reduced.groups.blob;
+      }
+
+      match.groups.system_id = sme;
+
+      const dtObject = await generateDateTime(
+        "uuid",
+        match.groups.system_id,
+        fileToParse.pg_table.events,
+        match.groups.host_date,
+        match.groups.host_time
+      );
+
+      match.groups.host_datetime = dtObject;
+
+      data.push(match.groups);
     }
 
     const mappedData = mapDataToSchema(data, philips_ct_events_schema);
@@ -40,16 +56,6 @@ async function phil_ct_events(
       sysConfigData,
       query
     );
-
-    /* 
-      convertDates(matches.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(sme, matches.groups);
-      data.push(matchData);
-
-
-    //const mappedData = mapDataToSchema(data, philips_cteal_schema);
-
-    const dataToArray = mappedData.map(({ ...rest }) => Object.values(rest)); */
   } catch (error) {
     console.log(error);
     await log("error", jobId, sme, "phil_ct_events", "FN CALL", {

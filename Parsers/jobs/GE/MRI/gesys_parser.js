@@ -7,17 +7,15 @@ const groupsToArrayObj = require("../../../parse/prep-groups-for-array");
 const mapDataToSchema = require("../../../persist/map-data-to-schema");
 const { ge_mri_gesys_schema } = require("../../../persist/pg-schemas");
 const bulkInsert = require("../../../persist/queryBuilder");
-const { convertDates } = require("../../../utils/dates");
 const {
   getCurrentFileSize,
   getRedisFileSize,
   updateRedisFileSize,
-  passForProcessing,
 } = require("../../../redis/redisHelpers");
 const execTail = require("../../../read/exec-tail");
+const generateDateTime = require("../../../processing/date_processing/generateDateTimes");
 
 async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
-  const dateTimeVersion = fileToParse.datetimeVersion;
   const sme = sysConfigData.id;
 
   const updateSizePath = "./read/sh/readFileSize.sh";
@@ -25,7 +23,6 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
   const tailPath = "./read/sh/tail.sh";
 
   const data = [];
-  const redisData = [];
 
   try {
     await log("info", jobId, sme, "ge_mri_gesys", "FN CALL");
@@ -80,17 +77,31 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
         });
         continue;
       }
-      matchGroups.groups.host_date = `${matchGroups.groups.day}-${matchGroups.groups.month}-${matchGroups.groups.year}`;
-      //convertDates(matchGroups.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(sme, matchGroups.groups);
-      data.push(matchData);
+      matchGroups.groups.host_date = `${
+        matchGroups.groups.day.length === 1
+          ? 0 + matchGroups.groups.day
+          : matchGroups.groups.day
+      }-${matchGroups.groups.month}-${matchGroups.groups.year}`;
 
-      redisData.push({
-        system_id: sme,
-        host_date: matchData.host_date,
-        host_time: matchData.host_time,
-        pg_table: fileToParse.pg_table,
-      });
+      matchGroups.groups.system_id = sme;
+
+      const dtObject = await generateDateTime(
+        jobId,
+        matchGroups.groups.system_id,
+        fileToParse.pg_table,
+        matchGroups.groups.host_date,
+        matchGroups.groups.host_time
+      );
+
+      if (dtObject === null) {
+        await log("warn", jobId, sme, "date_time", "FN CALL", {
+          message: "date_time object null",
+        });
+      }
+
+      matchGroups.groups.host_datetime = dtObject;
+
+      data.push(matchGroups.groups);
     }
 
     const mappedData = mapDataToSchema(data, ge_mri_gesys_schema);
@@ -109,9 +120,6 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
         sysConfigData.hhm_config.file_path,
         fileToParse.file_name
       );
-
-      // Send data for processing to redis dp:queue
-      await passForProcessing(sme, redisData);
     }
 
     return;

@@ -33,7 +33,7 @@ module.exports = queries = {
           host_datetime
         )
         SELECT * FROM UNNEST (
-          $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::text[], $8::time[], $9::numeric[], $10::numeric[], $11::numeric[], $12::text[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::numeric[], $18::text[], $19::text[], $20::text[], $21::text[], $22::text[], $23::text[], $24::text[], $25::text[], $26::numeric[], $27::numeric[], $28::timestamp[]
+          $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::text[], $8::time[], $9::numeric[], $10::numeric[], $11::numeric[], $12::text[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::numeric[], $18::text[], $19::text[], $20::text[], $21::text[], $22::text[], $23::text[], $24::text[], $25::text[], $26::numeric[], $27::numeric[], $28::timestamptz[]
         )
         `,
     },
@@ -70,7 +70,7 @@ module.exports = queries = {
         host_datetime
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::text[], $8::time[], $9::numeric[], $10::numeric[], $11::numeric[], $12::text[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::numeric[], $18::text[], $19::text[], $20::text[], $21::numeric[], $22::text[], $23::text[], $24::text[], $25::text[], $26::numeric[], $27::numeric[], $28::timestamp[]
+        $1::text[], $2::numeric[], $3::numeric[], $4::numeric[], $5::text[], $6::numeric[], $7::text[], $8::time[], $9::numeric[], $10::numeric[], $11::numeric[], $12::text[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::numeric[], $18::text[], $19::text[], $20::text[], $21::numeric[], $22::text[], $23::text[], $24::text[], $25::text[], $26::numeric[], $27::numeric[], $28::timestamptz[]
       )
       `,
     },
@@ -99,7 +99,7 @@ module.exports = queries = {
         host_datetime
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::numeric[], $3::date[], $4::text[], $5::text[], $6::numeric[], $7::text[], $8::numeric[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::numeric[], $15::numeric[], $16::numeric[], $17::text[], $18::text[], $19::numeric[], $20::timestamp[]
+        $1::text[], $2::numeric[], $3::date[], $4::text[], $5::text[], $6::numeric[], $7::text[], $8::numeric[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::numeric[], $15::numeric[], $16::numeric[], $17::text[], $18::text[], $19::numeric[], $20::timestamptz[]
       )
       `,
     },
@@ -123,12 +123,12 @@ module.exports = queries = {
           host_datetime
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::timestamp[]
+        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::timestamptz[]
       )
       `,
     },
     CV: {
-      EvtApplication_Today: `
+      Evtlog: `
       INSERT INTO log.siemens_cv (
           system_id,
           host_date,
@@ -144,7 +144,7 @@ module.exports = queries = {
           host_datetime
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::text[], $3::time[], $4::text[], $5::numeric[], $6::text[], $7::text[], $8::numeric[], $9::text[], $10::numeric[], $11::numeric[], $12::timestamp[]
+        $1::text[], $2::text[], $3::time[], $4::text[], $5::numeric[], $6::text[], $7::text[], $8::numeric[], $9::text[], $10::numeric[], $11::numeric[], $12::timestamptz[]
       )
       `,
     },
@@ -166,7 +166,7 @@ module.exports = queries = {
           host_datetime
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::timestamp[]
+        $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::text[], $8::text[], $9::numeric[], $10::text[], $11::numeric[], $12::numeric[], $13::timestamptz[]
       )
       `,
     },
@@ -194,7 +194,7 @@ module.exports = queries = {
         host_datetime
       )
       SELECT * FROM UNNEST (
-        $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::timestamp[]
+        $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::timestamptz[]
       )
       `,
       events: `
@@ -213,7 +213,7 @@ module.exports = queries = {
       host_datetime
     )
     SELECT * FROM UNNEST (
-      $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::timestamp[]
+      $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::timestamptz[]
     )
       `,
     },
@@ -238,7 +238,7 @@ module.exports = queries = {
         host_datetime
     )
     SELECT * FROM UNNEST (
-      $1::text[], $2::date[], $3::time[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::timestamp[]
+      $1::text[], $2::date[], $3::time[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[], $9::text[], $10::text[], $11::text[], $12::text[], $13::text[], $14::text[], $15::text[], $16::timestamptz[]
     )
       `,
       rmmu_short: `
@@ -275,7 +275,7 @@ module.exports = queries = {
       host_datetime
   )
   SELECT * FROM UNNEST (
-    $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::text[], $24::text[], $25::text[], $26::text[], $27::text[], $28::numeric[], $29::numeric[], $30::timestamp[]
+    $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::text[], $24::text[], $25::text[], $26::text[], $27::text[], $28::numeric[], $29::numeric[], $30::timestamptz[]
   )
     `,
       rmmu_long: `
@@ -313,7 +313,7 @@ module.exports = queries = {
       host_datetime
   )
   SELECT * FROM UNNEST (
-    $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::numeric[], $24::text[], $25::text[], $26::text[], $27::text[], $28::text[], $29::numeric[], $30::numeric[], $31::timestamp[]
+    $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::numeric[], $15::numeric[], $16::numeric[], $17::numeric[], $18::numeric[], $19::numeric[], $20::numeric[], $21::numeric[], $22::numeric[], $23::numeric[], $24::text[], $25::text[], $26::text[], $27::text[], $28::text[], $29::numeric[], $30::numeric[], $31::timestamptz[]
   )
     `,
       rmmu_magnet: `
@@ -337,7 +337,7 @@ module.exports = queries = {
       host_datetime
   )
   SELECT * FROM UNNEST (
-    $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::text[], $15::text[], $16::text[], $17::timestamp[]
+    $1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::numeric[], $7::numeric[], $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::numeric[], $14::text[], $15::text[], $16::text[], $17::timestamptz[]
   )
     `,
     },
@@ -363,7 +363,7 @@ module.exports = queries = {
         host_datetime
       )
     SELECT * FROM UNNEST (
-      $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::numeric[], $8::text[], $9::text[], $10::text[], $11::text[], $12::numeric[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::timestamp[]
+      $1::text[], $2::text[], $3::date[], $4::time[], $5::text[], $6::numeric[], $7::numeric[], $8::text[], $9::text[], $10::text[], $11::text[], $12::numeric[], $13::text[], $14::numeric[], $15::text[], $16::text[], $17::timestamptz[]
     )
       `,
     },

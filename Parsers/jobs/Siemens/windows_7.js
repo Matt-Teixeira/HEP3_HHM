@@ -7,90 +7,45 @@ const groupsToArrayObj = require("../../parse/prep-groups-for-array");
 const mapDataToSchema = require("../../persist/map-data-to-schema");
 const { siemens_cv_schema } = require("../../persist/pg-schemas");
 const bulkInsert = require("../../persist/queryBuilder");
-const { convertDates } = require("../../utils/dates");
-const {
-  getCurrentFileSize,
-  getRedisFileSize,
-  updateRedisFileSize,
-  passForProcessing
-} = require("../../redis/redisHelpers");
-const execHead = require("../../read/exec-head");
+const generateDateTime = require("../../processing/date_processing/generateDateTimes");
 
-const parse_win_7 = async (jobId, sysConfigData, fileToParse) => {
-  const dateTimeVersion = fileToParse.datetimeVersion;
+const parse_win_7 = async (jobId, sysConfigData, fileConfig, file) => {
   const sme = sysConfigData.id;
   const dirPath = sysConfigData.hhm_config.file_path;
 
-  const updateSizePath = "./read/sh/readFileSize.sh";
-  const fileSizePath = "./read/sh/readFileSize.sh";
-  const headPath = "./read/sh/head.sh";
-
   const data = [];
-  const redisData = [];
 
   try {
     await log("info", jobId, sme, "parse_win_7", "FN CALL");
 
-    const complete_file_path = `${dirPath}/${fileToParse.file_name}`;
+    const complete_file_path = `${dirPath}/${file}`;
 
-    const prevFileSize = await getRedisFileSize(sme, fileToParse.file_name);
-    console.log("Redis File Size: " + prevFileSize);
-
-    let fileData;
-    if (prevFileSize === null) {
-      console.log("This needs to be read from file");
-      fileData = (await fs.readFile(complete_file_path)).toString();
-    }
-
-    if (prevFileSize > 0) {
-      console.log("File-size previously saved in Redis");
-
-      const currentFileSize = await getCurrentFileSize(
-        sme,
-        fileSizePath,
-        sysConfigData.hhm_config.file_path,
-        fileToParse.file_name
-      );
-      console.log("CURRENT FILE SIZE IS: " + currentFileSize);
-
-      const delta = currentFileSize - prevFileSize;
-      await log("info", jobId, sme, "delta", "FN CALL", { delta: delta });
-      console.log("DELTA: " + delta);
-
-      if (delta === 0) {
-        await log("warn", jobId, sme, "delta-0", "FN CALL");
-        return;
-      }
-
-      let tailDelta = await execHead(headPath, delta, complete_file_path);
-
-      fileData = tailDelta.toString();
-    }
+    const fileData = (await fs.readFile(complete_file_path)).toString();
 
     let matches = fileData.match(win_7_re.big_group);
 
     for await (let match of matches) {
-      //console.log(match + "\n")
       if (match === null) {
         throw new Error("Bad match");
       }
       let matchGroups = match.match(win_7_re.small_group);
 
+      matchGroups.groups.system_id = sme;
+
       let month = matchGroups.groups.month.slice(0, 3);
       matchGroups.groups.host_date = `${matchGroups.groups.day}-${month}-${matchGroups.groups.year}`;
 
-      //convertDates(matchGroups.groups, dateTimeVersion);
-      const matchData = groupsToArrayObj(sme, matchGroups.groups);
-      data.push(matchData);
+      const dtObject = await generateDateTime(
+        jobId,
+        matchGroups.groups.system_id,
+        fileConfig[0].pg_table,
+        matchGroups.groups.host_date,
+        matchGroups.groups.host_time
+      );
 
-      // Build redis data passoff
-      // Format data to pass off to redis queue for data processing
-      redisData.push({
-        system_id: sme,
-        host_date: matchData.host_date,
-        host_time: matchData.host_time,
-        pg_table: fileToParse.pg_table,
-      });
+      matchGroups.groups.host_datetime = dtObject;
+
+      data.push(matchGroups.groups);
     }
 
     const mappedData = mapDataToSchema(data, siemens_cv_schema);
@@ -100,17 +55,11 @@ const parse_win_7 = async (jobId, sysConfigData, fileToParse) => {
       jobId,
       dataToArray,
       sysConfigData,
-      fileToParse
+      fileConfig[0]
     );
     if (insertSuccess) {
-      await updateRedisFileSize(
-        sme,
-        updateSizePath,
-        sysConfigData.hhm_config.file_path,
-        fileToParse.file_name
-      );
-      // Send data for processing to redis dp:queue
-      await passForProcessing(sme, redisData);
+      await fs.rename(complete_file_path, `${fileConfig[0].move_path}/${file}`);
+      console.log("SUCCESS!!!");
     }
 
     return true;

@@ -1,23 +1,34 @@
 ("use strict");
 require("dotenv").config();
 const { log } = require("../../logger");
+const fs = require("node:fs").promises;
 const parse_win_7 = require("./windows_7");
 const parse_win_10 = require("./windows_10");
 
 const determineOsVersion = async (jobId, sysConfigData) => {
   await log("info", jobId, sysConfigData.id, "determineOsVersion", "FN CALL");
 
-  for await (const file of sysConfigData.hhm_file_config) {
-    switch (sysConfigData.hhm_config.windowsVersion) {
-      case "win_7":
-        await parse_win_7(jobId, sysConfigData, file);
-        break;
-      case "win_10":
-        await parse_win_10(jobId, sysConfigData, file);
-        break;
-      default:
-        break;
-    }
+  const files = await fs.readdir(sysConfigData.hhm_config.file_path);
+  if (files.length === 0) {
+    await log("warn", jobId, sysConfigData.id, "determineOsVersion", "FN CALL", {message: "No files in directory"});
+    return;
+  }
+
+  const fileConfig = sysConfigData.hhm_file_config;
+
+  switch (sysConfigData.hhm_config.windowsVersion) {
+    case "win_7":
+      for await (let file of files) {
+        await parse_win_7(jobId, sysConfigData, fileConfig, file);
+      }
+      break;
+    case "win_10":
+      for await (let file of files) {
+        await parse_win_10(jobId, sysConfigData, fileConfig, file);
+      }
+      break;
+    default:
+      break;
   }
 
   try {

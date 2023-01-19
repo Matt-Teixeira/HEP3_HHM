@@ -9,7 +9,8 @@
     "ge_config": "node configWriter/ge_imaging/index.js",
     "phil_mri_config": "node configWriter/phil_mri/index.js",
     "phil_cv_config": "node configWriter/phil_cv/index.js",
-    "siemens_config": "node configWriter/siemens/index.js"
+    "siemens_config": "node configWriter/siemens/index.js",
+    "read_log": "node logReader/index.js"
   },
   "keywords": [],
   "author": "",
