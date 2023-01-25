@@ -1,23 +1,22 @@
 ("use strict");
 require("dotenv").config({ path: "../../.env" });
-const { log } = require("../../logger");
+const { log } = require("../../../logger");
 const fs = require("fs");
 const readline = require("readline");
-const { win_10_re } = require("../../parse/parsers");
-const groupsToArrayObj = require("../../parse/prep-groups-for-array");
-const mapDataToSchema = require("../../persist/map-data-to-schema");
-const { siemens_ct_mri } = require("../../persist/pg-schemas");
-const bulkInsert = require("../../persist/queryBuilder");
-const { blankLineTest } = require("../../utils/regExHelpers");
+const { win_10_re } = require("../../../parse/parsers");
+const mapDataToSchema = require("../../../persist/map-data-to-schema");
+const { siemens_ct_mri } = require("../../../persist/pg-schemas");
+const bulkInsert = require("../../../persist/queryBuilder");
+const { blankLineTest } = require("../../../utils/regExHelpers");
 const {
   getCurrentFileSize,
   getRedisFileSize,
   updateRedisFileSize,
-} = require("../../redis/redisHelpers");
-const execHead = require("../../read/exec-head");
-const generateDateTime = require("../../processing/date_processing/generateDateTimes");
+} = require("../../../redis/redisHelpers");
+const execHead = require("../../../read/exec-head");
+const generateDateTime = require("../../../processing/date_processing/generateDateTimes");
 
-const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
+const parse_win_10 = async (jobId, sysConfigData, fileConfig) => {
   const sme = sysConfigData.id;
   const dirPath = sysConfigData.hhm_config.file_path;
 
@@ -31,9 +30,10 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
   try {
     await log("info", jobId, sme, "parse_win_10", "FN CALL");
 
-    const complete_file_path = `${dirPath}/${fileToParse.file_name}`;
+    const complete_file_path = `${dirPath}/${fileConfig.file_name}`;
 
-    const prevFileSize = await getRedisFileSize(sme, fileToParse.file_name);
+    const prevFileSize = await getRedisFileSize(sme, fileConfig.file_name);
+    console.log(sme);
     console.log("Redis File Size: " + prevFileSize);
 
     let rl;
@@ -52,7 +52,7 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
         sme,
         fileSizePath,
         sysConfigData.hhm_config.file_path,
-        fileToParse.file_name
+        fileConfig.file_name
       );
       console.log("CURRENT FILE SIZE: " + currentFileSize);
 
@@ -89,7 +89,7 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
       const dtObject = await generateDateTime(
         jobId,
         matches.groups.system_id,
-        fileToParse.pg_table,
+        fileConfig.pg_table,
         matches.groups.host_date,
         matches.groups.host_time
       );
@@ -113,14 +113,14 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
       jobId,
       dataToArray,
       sysConfigData,
-      fileToParse
+      fileConfig
     );
     if (insertSuccess) {
       await updateRedisFileSize(
         sme,
         updateSizePath,
         sysConfigData.hhm_config.file_path,
-        fileToParse.file_name
+        fileConfig.file_name
       );
     }
 
@@ -129,7 +129,7 @@ const parse_win_10 = async (jobId, sysConfigData, fileToParse) => {
     await log("error", jobId, sme, "parse_win_10", "FN CATCH", {
       line: line_num,
       error: error,
-      file: fileToParse,
+      file: fileConfig,
     });
   }
 };

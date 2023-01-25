@@ -34,7 +34,7 @@ async function ge_mri_gesys(jobId, sysConfigData, fileToParse) {
     const prevFileSize = await getRedisFileSize(sme, fileToParse.file_name);
 
     let fileData;
-    if (prevFileSize === null) {
+    if (prevFileSize === null || prevFileSize === "0") {
       console.log("This needs to be read from file");
       fileData = (await fs.readFile(complete_file_path)).toString();
     }

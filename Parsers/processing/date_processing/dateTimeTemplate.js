@@ -8,11 +8,6 @@ const dateTimeTemplate = async (
   inputPattern,
   ianaTz
 ) => {
-  await log("info", jobId, sme, "dateTimeTemplate", "FN CALLED", {
-    dtString: dtString,
-    inputPattern: inputPattern,
-    ianaTz: ianaTz,
-  });
 
   return DateTime.fromFormat(dtString, inputPattern, {
     zone: ianaTz,

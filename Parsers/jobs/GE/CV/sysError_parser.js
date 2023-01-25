@@ -24,7 +24,6 @@ async function ge_cv_sys_error(jobId, sysConfigData, fileToParse) {
   const tailPath = "./read/sh/tail.sh";
 
   const data = [];
-  const redisData = [];
 
   try {
     await log("info", jobId, sme, "ge_ct_gesys", "FN CALL");

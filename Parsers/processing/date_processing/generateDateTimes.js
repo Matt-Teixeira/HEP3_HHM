@@ -3,7 +3,6 @@ const dateTimeTemplate = require("./dateTimeTemplate");
 
 async function generateDateTime(jobId, sme, pgTable, hostDate, hostTime) {
   try {
-    await log("info", jobId, sme, "generateDateTime", "FN CALLED", null);
     let date;
     switch (pgTable) {
       case "philips_ct_events":

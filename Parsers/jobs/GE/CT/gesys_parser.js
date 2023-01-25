@@ -28,11 +28,11 @@ async function ge_ct_gesys(jobId, sysConfigData, fileToParse) {
 
     let complete_file_path = `${sysConfigData.hhm_config.file_path}/${fileToParse.file_name}`;
 
-    const prevFileSize = await getRedisFileSize(sme, fileToParse.file_name);
+    let prevFileSize = await getRedisFileSize(sme, fileToParse.file_name);
 
     // If no file size in redis, read entire file
     let fileData;
-    if (prevFileSize === null) {
+    if (prevFileSize === null || prevFileSize === "0") {
       console.log("This needs to be read from file");
       fileData = (await fs.readFile(complete_file_path)).toString();
     }

@@ -60,7 +60,7 @@ const filePaths = {
       "SME01176",
       "SME10071",
     ],
-    cv_systems: ["SME00865"],
+    cv_systems: ["SME00865", "SME00498", "SME01442"],
     mri_systems: [
       "SME02524",
       //"SME02583", // +1 mil rows
@@ -123,7 +123,7 @@ const crothal_demo = [
   "SME12445",
 ];
 
-const determineManufacturer = async (jobId, sme) => {
+/* const determineManufacturer = async (jobId, sme) => {
   try {
     let queryString =
       "SELECT id, manufacturer, hhm_config, hhm_file_config from systems WHERE id = $1";
@@ -171,9 +171,9 @@ const onBoot = async (systems_list) => {
   }
 };
 
-onBoot(["SME00884"]);
+onBoot(["SME12444", "SME12446", "SME12450"]);
+ */
 
-/* 
 const determineManufacturer = async (jobId, system) => {
   try {
     await log("info", jobId, system.id, "determineManufacturer", "FN CALL", {
@@ -227,4 +227,3 @@ const onBoot = async () => {
 };
 
 onBoot();
- */

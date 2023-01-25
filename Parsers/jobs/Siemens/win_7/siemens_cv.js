@@ -1,22 +1,21 @@
 ("use strict");
-require("dotenv").config({ path: "../../.env" });
-const { log } = require("../../logger");
+require("dotenv").config({ path: "../../../.env" });
+const { log } = require("../../../logger");
 const fs = require("node:fs").promises;
-const { win_7_re } = require("../../parse/parsers");
-const groupsToArrayObj = require("../../parse/prep-groups-for-array");
-const mapDataToSchema = require("../../persist/map-data-to-schema");
-const { siemens_cv_schema } = require("../../persist/pg-schemas");
-const bulkInsert = require("../../persist/queryBuilder");
-const generateDateTime = require("../../processing/date_processing/generateDateTimes");
+const { win_7_re } = require("../../../parse/parsers");
+const mapDataToSchema = require("../../../persist/map-data-to-schema");
+const { siemens_cv_schema } = require("../../../persist/pg-schemas");
+const bulkInsert = require("../../../persist/queryBuilder");
+const generateDateTime = require("../../../processing/date_processing/generateDateTimes");
 
-const parse_win_7 = async (jobId, sysConfigData, fileConfig, file) => {
+const win_7_siemens_ct = async (jobId, sysConfigData, fileConfig, file) => {
   const sme = sysConfigData.id;
   const dirPath = sysConfigData.hhm_config.file_path;
 
   const data = [];
 
   try {
-    await log("info", jobId, sme, "parse_win_7", "FN CALL");
+    await log("info", jobId, sme, "win_7_siemens_ct", "FN CALL");
 
     const complete_file_path = `${dirPath}/${file}`;
 
@@ -38,7 +37,7 @@ const parse_win_7 = async (jobId, sysConfigData, fileConfig, file) => {
       const dtObject = await generateDateTime(
         jobId,
         matchGroups.groups.system_id,
-        fileConfig[0].pg_table,
+        fileConfig.pg_table,
         matchGroups.groups.host_date,
         matchGroups.groups.host_time
       );
@@ -55,20 +54,20 @@ const parse_win_7 = async (jobId, sysConfigData, fileConfig, file) => {
       jobId,
       dataToArray,
       sysConfigData,
-      fileConfig[0]
+      fileConfig
     );
     if (insertSuccess) {
-      await fs.rename(complete_file_path, `${fileConfig[0].move_path}/${file}`);
+      await fs.rename(complete_file_path, `${fileConfig.move_path}/${file}`);
       console.log("SUCCESS!!!");
     }
 
     return true;
   } catch (error) {
     console.log(error);
-    await log("error", jobId, sme, "parse_win_7", "FN CATCH", {
+    await log("error", jobId, sme, "win_7_siemens_ct", "FN CATCH", {
       error: error,
     });
   }
 };
 
-module.exports = parse_win_7;
+module.exports = win_7_siemens_ct;
